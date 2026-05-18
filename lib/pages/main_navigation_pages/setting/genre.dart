@@ -1,22 +1,20 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:anime_administration/models/genre.dart';
+import 'package:anime_administration/providers/isar_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SettingGenre extends StatefulWidget {
-  //Isarを格納する変数を設定
-  final Isar isar;
-  //コンストラクタを設定（Isarを必須にする）
-  const SettingGenre({super.key,required this.isar});
+class SettingGenre extends ConsumerStatefulWidget {
+  //コンストラクタを設定
+  const SettingGenre({super.key});
 
   @override
-  State<SettingGenre> createState() => _SettingGenreState();
+  ConsumerState<SettingGenre> createState() => _SettingGenreState();
 }
 
-class _SettingGenreState extends State<SettingGenre> {
+class _SettingGenreState extends ConsumerState<SettingGenre> {
   //テキストコントローラを登録
-  final TextEditingController _genreTextController = TextEditingController(); 
+  final TextEditingController _genreTextController = TextEditingController();
   @override //メモリ開放
   void dispose() {
     _genreTextController.dispose(); // 使い終わったらメモリを解放するお作法
@@ -24,7 +22,7 @@ class _SettingGenreState extends State<SettingGenre> {
   }
 
   //ダイアログを開いてジャンル追加画面を表示する関数を作成
-  void add_genre(){
+  void addGenre(){
     _genreTextController.clear();
     showDialog(
       context: context,
@@ -66,6 +64,7 @@ class _SettingGenreState extends State<SettingGenre> {
                   height: 45,
                   child: ElevatedButton(
                     onPressed: () async { //保存する処理を書く
+                    final Isar isar=ref.read(isarProvider);
                     //.trim()を付けることで，前後の空白をカット
                     final String genreName = _genreTextController.text.trim();
                       if(genreName.isEmpty){
@@ -76,12 +75,12 @@ class _SettingGenreState extends State<SettingGenre> {
 
                       //実際に保存する処理を書いていく
                       try{
-                        await widget.isar.writeTxn(() async {
+                        await isar.writeTxn(() async {
                           //新しいデータのインスタンスを作成
                           final newGenre = Genre()..name = genreName;
 
                           //データベースに保存する
-                          await widget.isar.genres.put(newGenre);
+                          await isar.genres.put(newGenre);
 
                           //保存が完了したら画面を閉じてメッセージを出す
                           _genreTextController.clear(); //テキストフィールドを空に
@@ -140,6 +139,7 @@ class _SettingGenreState extends State<SettingGenre> {
 
   @override
   Widget build(BuildContext context) {
+    final isar=ref.read(isarProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text("ジャンル設定"),
@@ -156,7 +156,7 @@ class _SettingGenreState extends State<SettingGenre> {
                 ),
               ),
               onTap: (){
-                add_genre();
+                addGenre();
               },
               minTileHeight: 50,
             ),
@@ -177,7 +177,7 @@ class _SettingGenreState extends State<SettingGenre> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ViewGenre(isar: widget.isar)
+                    builder: (context) => ViewGenre(isar: isar)
                   )
                 );
               },

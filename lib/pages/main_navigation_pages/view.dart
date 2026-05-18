@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:isar/isar.dart';
 
 //一覧ページ
 class ViewPage extends StatefulWidget {
-  //isarを受け取るための変数を作成
-  final Isar isar;
-  //コンストラクタを設定（isarを必須にする）
-  const ViewPage({super.key,required this.isar});
+  //コンストラクタを設定
+  const ViewPage({super.key});
 
   @override
   _ViewPageState createState() => _ViewPageState();

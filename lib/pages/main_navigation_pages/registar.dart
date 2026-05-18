@@ -1,19 +1,17 @@
+import 'package:anime_administration/providers/isar_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart'; // これがないとWidgetが使えない
 
 //データベースに関するものをインポート
-import 'package:isar/isar.dart';
 import 'package:anime_administration/models/genre.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:isar/isar.dart';
 
 //登録ページ
 
 class RegistarPage extends StatelessWidget {
-  //コールバックを登録
-  final VoidCallback back;
 
-  final Isar isar;
-
-  const RegistarPage({super.key,required this.back,required this.isar});
+  const RegistarPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +21,12 @@ class RegistarPage extends StatelessWidget {
         appBar: AppBar(
           title: const Text("登録"),
           leading: IconButton(
-            onPressed: back,
+            onPressed: (){},
             icon: Icon(Icons.keyboard_backspace)
             ),
             actions: [ //保存ボタンを右上に置いてもいいかなって思った
               TextButton(
-                onPressed: back, //一旦は戻るだけ
+                onPressed: (){}, //一旦は戻るだけ
                 child: Text(
                   "保存",
                   style: TextStyle(
@@ -51,8 +49,8 @@ class RegistarPage extends StatelessWidget {
             Expanded(
               child: TabBarView(
                 children:[
-                  TVRegistar(onSaved: back,isar: isar),
-                  MovieRegistar(onSaved: back,)
+                  TVRegistar(),
+                  MovieRegistar()
                 ]
               ),
             ),
@@ -63,16 +61,14 @@ class RegistarPage extends StatelessWidget {
   }
 }
 
-class TVRegistar extends StatefulWidget {
-  final VoidCallback onSaved;
-  final Isar isar;
-  const TVRegistar({super.key, required this.onSaved,required this.isar});
+class TVRegistar extends ConsumerStatefulWidget {
+  const TVRegistar({super.key});
 
   @override
-  State<TVRegistar> createState() => _TVRegistarState();
+  ConsumerState<TVRegistar> createState() => _TVRegistarState();
 }
 
-class _TVRegistarState extends State<TVRegistar> {
+class _TVRegistarState extends ConsumerState<TVRegistar> {
   final int? _selectedValue = 0; //プルダウンを動かせるようにするための仮の変数
   final DateTime _selectedDate = DateTime.now(); //カレンダーに登録する日付
 
@@ -109,8 +105,9 @@ class _TVRegistarState extends State<TVRegistar> {
 
   //ウィジェット立ち上げ時にデータベースからジャンルのデータを読み取る関数を宣言
   Future<void> load_db() async {
+    final Isar isar=ref.read(isarProvider);
     //データベースからデータを取り出す
-    _genres = await widget.isar.genres.where().findAll();
+    _genres = await isar.genres.where().findAll();
   }
 
   @override
@@ -675,8 +672,9 @@ class _TVRegistarState extends State<TVRegistar> {
               SizedBox(
                 width: MediaQuery.of(context).size.width*0.9,
                 child: ElevatedButton(
-                  onPressed: (){                    
-                    select_genre(widget.isar);
+                  onPressed: (){
+                    final Isar isar = ref.read(isarProvider);                
+                    select_genre(isar);
                   },
                   child: Text(
                     "ジャンル選択"
@@ -922,9 +920,8 @@ class _TVRegistarState extends State<TVRegistar> {
 }
 
 class MovieRegistar extends StatelessWidget { //地上波登録用の画面
-  final VoidCallback onSaved; //ここでもコールバックを登録
 
-  const MovieRegistar({super.key,required this.onSaved});
+  const MovieRegistar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -934,7 +931,6 @@ class MovieRegistar extends StatelessWidget { //地上波登録用の画面
           Center(
             child: ElevatedButton(
               onPressed: (){
-                onSaved();
               },
               child: const Text("保存して閉じる"),
             ),

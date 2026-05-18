@@ -31,6 +31,8 @@ dependencies:
   flutter:
     sdk: flutter
   
+  flutter_riverpod: ^2.5.1
+  
   #自分で書いた部分--------------------------------------------
   isar: ^3.1.0 # データベース本体
   isar_flutter_libs: ^3.1.0 # Flutter用ライブラリ

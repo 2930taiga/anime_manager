@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart'; // これがないとWidgetが使えない
-import 'package:isar/isar.dart';
 
 //ジャンルに関する設定ページ
 import 'setting/genre.dart';
 
 //設定ページ
 class SettingPage extends StatefulWidget {
-  //Isarを保持するための変数を宣言
-  final Isar isar;
   //コンストラクタを設定（isarを必須にする）
-  const SettingPage({super.key,required this.isar});
+  const SettingPage({super.key});
 
   @override
   _SettingPageState createState() => _SettingPageState();
@@ -26,18 +23,16 @@ class _SettingPageState extends State<SettingPage>{
       ),
       body: ListView(
         children: [
-          Center(
-            child: ListTile(
-              leading: Icon(Icons.settings),
-              title: Text(
-                "一般",
-                style: TextStyle(
-                  fontSize: 18
-                ),
+          ListTile(
+            leading: Icon(Icons.settings),
+            title: Text(
+              "一般",
+              style: TextStyle(
+                fontSize: 18
               ),
-              onTap: (){},
-              minTileHeight: 50,
             ),
+            onTap: (){},
+            minTileHeight: 50,
           ),
 
           Divider(),
@@ -55,7 +50,7 @@ class _SettingPageState extends State<SettingPage>{
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (content) => SettingGenre(isar: widget.isar)
+                    builder: (content) => SettingGenre()
                   )
                 );
               },
