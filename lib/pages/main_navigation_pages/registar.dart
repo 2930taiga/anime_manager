@@ -7,6 +7,9 @@ import 'package:anime_administration/models/genre.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 
+//登録ページ用のパーツを格納したコード
+import 'package:anime_administration/parts/registar_parts.dart';
+
 //登録ページ
 
 class RegistarPage extends StatelessWidget {
@@ -69,27 +72,14 @@ class TVRegistar extends ConsumerStatefulWidget {
 }
 
 class _TVRegistarState extends ConsumerState<TVRegistar> {
-  final int? _selectedValue = 0; //プルダウンを動かせるようにするための仮の変数
-  final DateTime _selectedDate = DateTime.now(); //カレンダーに登録する日付
-
-  final String _epNum_st = "話数選択"; //話数（ボタンに表示する用）
-  int? _epNum ; //話数（整数型で保持する用）
-
-  final String _epTime_st = "1話あたり時間選択"; //分数（ボタンに表示する用）
-  int? _epTime ; //分数（整数型で保持する用）
-
-  int _evaluation = 0; //評価（5段階）
-
+  final TextEditingController _titleController = TextEditingController(); //タイトル
+  final TextEditingController _titleKanaController = TextEditingController(); //タイトル（かな）の入力を取得するコントローラを登録
   final TextEditingController _dateController = TextEditingController(); //日付を自動で入力するコントローラーを登録
   final TextEditingController _epNumController = TextEditingController(); //話数を自動で入力するコントローラーを登録
   final TextEditingController _epTimeController = TextEditingController(); //分数を自動で入力するコントローラーを登録
+  final TextEditingController _memoController = TextEditingController(); //メモの内容を取得するコントローラ
 
   //登録画面で内容を保持する変数を宣言しておく-----------------------------------------------------------------------------------
-
-  //ピッカーで選ばれているものを保持する変数を宣言しておく------------------------------------------------------------------------
-  int _pickerSelected_EpNum=0;
-  int _pickerSelected_Hour=0;
-  int _pickerSelected_Min=0;
 
   //SnackBarで表示するテキストのインスタンスを登録しておく------------------------------------------------------------------------
   var SnackBar_Save = SnackBar(content: Text("保存しました"));
@@ -115,304 +105,6 @@ class _TVRegistarState extends ConsumerState<TVRegistar> {
     super.initState(); //おまじない
     //データベース関連の処理の関数を実行
     load_db();
-  }
-
-  //ボタンを押すと今日の日付を自動で入力する関数を宣言
-  void _setTodayDate(){
-    //今日の日付を取得
-    DateTime date = DateTime.now();
-    //日付の見た目をフォーマット
-    String FormattedDate = "${date.year}/${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}";
-
-    //コントローラのテキストを書き換えると，TextFieldの中身も書き換わる
-    setState(() {
-      _dateController.text=FormattedDate;
-    });
-  }
-
-  //ボタンを押すとカレンダーが起動し，日付を選択できるようになる関数を宣言
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker( //カレンダーを表示して，日付選択画面を出す
-      context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime(1990),
-      lastDate: DateTime(2100)
-      );
-
-      //入力された日付を変数に代入
-      if (picked != null){
-        //入力された日付を代入
-        DateTime date= picked;
-        //日付の見た目をフォーマット
-        String FormattedDate = "${date.year}/${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}";
-
-        //コントローラのテキストを書き換えて，TextFieldの中身を書き換える
-        setState(() {
-          _dateController.text=FormattedDate;
-        });
-      }
-  }
-
-  //ボタンを押すと，任意の話数を自動で入力する関数を宣言
-  void _setEpNum(int epNum){
-    FocusScope.of(context).unfocus(); //テキストのフォーカスを外す
-    setState(() {
-      _epNumController.text=epNum.toString(); //話数を自動で入力する
-    }); 
-  }
-
-  //ボタンを押すと，任意の分数を自動で入力する関数を宣言
-  void _setEpTime(int epTime){
-    FocusScope.of(context).unfocus(); //テキストのフォーカスを外す
-    setState(() {
-      _epTimeController.text="0:"+epTime.toString(); //話数を自動で入力する
-    }); 
-  }
-
-  //任意の時間（時:分）を自動で入力する関数を宣言
-  void _setEpTime1(int epHour, int epMin){
-    setState(() {
-      _epTimeController.text="${epHour}:${epMin.toString().padLeft(2,"0")}"; //話数を自動で入力する
-    }); 
-  }
-
-  //ボタンを押すと，話数選択のスロットを表示する関数を宣言
-  Future<void> _selectEpNum(BuildContext context) async{
-    showModalBottomSheet(
-      context: context, 
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadiusGeometry.circular(0) //下から出てくるやつの角を四角くする
-      ),
-      builder: (context){
-        return Container(
-          width: MediaQuery.of(context).size.width*1.0,
-          height: 250,
-          // decoration: BoxDecoration(
-          //   borderRadius: BorderRadius.circular(0)
-          // ),
-          child: Column(
-            children: [
-              SizedBox( //上部に出す「キャンセル」，「タイトル」，「決定」のボタン
-                height: 50,
-                width: MediaQuery.of(context).size.width*1.0,
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width*0.23,
-                          child: Center(
-                            child: TextButton( //話数選択画面のキャンセルボタン
-                              onPressed:(){
-                                Navigator.of(context).pop(); //画面を戻る
-                                FocusScope.of(context).unfocus(); //テキストのフォーカスを外す
-                              },
-                              child: Text(
-                                "キャンセル",
-                                style: TextStyle(
-                                  color: Colors.blue
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width*0.57,
-                          child: Center(
-                            child: Text( //話数選択画面の上部のテキスト
-                              "話数選択",
-                              style: TextStyle(
-                                fontSize: 20
-                              ),
-                              ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width*0.2,
-                          child: Center(
-                            child: TextButton( //話数選択画面の保存ボタン
-                              onPressed: (){
-                                //ScaffoldMessenger.of(context).showSnackBar(SnackBar_Save);
-                                _setEpNum(_pickerSelected_EpNum); //テキストフィールドの話数を更新
-                                Navigator.pop(context); //前の画面に戻る
-                                FocusScope.of(context).unfocus(); //テキストのフォーカスを外す
-                              },
-                              child: Text(
-                                "保存",
-                                style: TextStyle(
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.bold
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 40),
-              SizedBox(
-                height: 110,
-                width: MediaQuery.of(context).size.width*0.7,
-                child: CupertinoPicker(
-                  itemExtent: 40,
-                  onSelectedItemChanged: (index){
-                    _pickerSelected_EpNum=index;
-                  },
-                  children: List.generate(100,(index){
-                    return Center(
-                      child: Text(
-                        "${index}"
-                      ),
-                    );
-                  })
-                ),
-              ),
-            ],
-          ),
-        );
-      }
-    );
-  }
-
-  //ボタンを押すと，時間選択のスロットを表示する関数を宣言
-  Future<void> _selectEpTime(BuildContext context) async{
-    showModalBottomSheet(
-      context: context, 
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadiusGeometry.circular(0) //下から出てくるやつの角を四角くする
-      ),
-      builder: (context){
-        return Container(
-          width: MediaQuery.of(context).size.width*1.0,
-          height: 250,
-          // decoration: BoxDecoration(
-          //   borderRadius: BorderRadius.circular(0)
-          // ),
-          child: Column(
-            children: [
-              SizedBox( //上部に出す「キャンセル」，「タイトル」，「決定」のボタン
-                height: 50,
-                width: MediaQuery.of(context).size.width*1.0,
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width*0.23,
-                          child: Center(
-                            child: TextButton( //時間選択画面のキャンセルボタン部分
-                              onPressed:(){
-                                Navigator.of(context).pop(); //画面を戻る
-                                FocusScope.of(context).unfocus(); //テキストのフォーカスを外す
-                              },
-                              child: Text(
-                                "キャンセル",
-                                style: TextStyle(
-                                  color: Colors.blue
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width*0.57,
-                          child: Center(
-                            child: Text( //時間選択画面上部のテキスト部分
-                              "時間選択",
-                              style: TextStyle(
-                                fontSize: 20
-                              ),
-                              ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width*0.2,
-                          child: Center(
-                            child: TextButton( //時間選択画面の保存ボタン部分
-                              onPressed: (){
-                                //ScaffoldMessenger.of(context).showSnackBar(SnackBar_Save);
-                                //保存ボタンが押されたら，TextFieldに数値を入力して閉じる
-                                _setEpTime1(_pickerSelected_Hour, _pickerSelected_Min);
-                                Navigator.pop(context); //画面を戻る
-                                FocusScope.of(context).unfocus(); //テキストのフォーカスを外す
-                              },
-                              child: Text(
-                                "保存",
-                                style: TextStyle(
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.bold
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 40),
-              SizedBox(
-                height: 110,
-                width: MediaQuery.of(context).size.width*0.7,
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width*0.3,
-                      child: CupertinoPicker( //時間選択の「時間」部分
-                        itemExtent: 40,
-                        onSelectedItemChanged: (index){
-                          //時間が選ばれるたびに変数を更新する
-                          _pickerSelected_Hour=index;
-                        },
-                        children: List.generate(100,(index){
-                          return Center(
-                            child: Text(
-                              "${index}"
-                            ),
-                          );
-                        })
-                      ),
-                    ),
-                    SizedBox(
-                      width:  MediaQuery.of(context).size.width*0.1,
-                      child: Center(
-                        child: Text(
-                          ":",
-                          style: TextStyle(
-                            fontSize: 20
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width*0.3,
-                      child: CupertinoPicker( //時間選択の「分数」部分
-                        itemExtent: 40,
-                        onSelectedItemChanged: (index){
-                          //分数が選ばれるたびに変数を更新する
-                          _pickerSelected_Min=index;
-                        },
-                        children: List.generate(60,(index){
-                          return Center(
-                            child: Text(
-                              "${index}"
-                            ),
-                          );
-                        })
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      }
-    );
   }
 
   //-------------------------------------------------------------ボタンを押すと，ジャンル選択画面を表示する関数を宣言
@@ -540,9 +232,12 @@ class _TVRegistarState extends ConsumerState<TVRegistar> {
 
   @override //メモリ開放処理
   void dispose(){
+    _titleController.dispose();
+    _titleKanaController.dispose();
     _dateController.dispose();
     _epTimeController.dispose();
     _epNumController.dispose();
+    _memoController.dispose();
     super.dispose(); //おまじない
   }
 
@@ -571,82 +266,24 @@ class _TVRegistarState extends ConsumerState<TVRegistar> {
                   ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 20), //----------------------------------------
 
-              SizedBox( //-------------------------------------------------タイトル（文字入力欄）
-                width: MediaQuery.of(context).size.width * 0.9,
-                height: 60,
-                child: const TextField(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "タイトル",
-                  ),
-                ),
-              ),
+              //タイトル入力フォーム
+              InputField(label: "タイトル", controller: _titleController),
               
-              const SizedBox(height: 20),
+              const SizedBox(height: 20), //----------------------------------------
 
-              SizedBox( //-------------------------------------------------タイトルかな（文字入力欄）
-                width: MediaQuery.of(context).size.width * 0.9,
-                height: 60,
-                child: const TextField(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "タイトル（かな）",
-                  ),
-                ),
-              ),
+              //タイトル（かな）入力フォーム
+              InputField(label: "タイトル（かな）", controller: _titleKanaController),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 20), //----------------------------------------
 
-              SizedBox( //-------------------------------------------------日付表示（文字入力欄）
-                width: MediaQuery.of(context).size.width * 0.9,
-                height: 60,
-                child: TextField(
-                  controller: _dateController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "日付",
-                  ),
-                ),
-              ),
+              //日付入力フォーム
+              InputField(label: "日付", controller: _dateController),
+              //日付入力ボタン
+              DateInputButtons(controller: _dateController),
 
-              SizedBox( //-------------------------------------------------日付入力ボタン（カレンダー）
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.44,
-                      child: ElevatedButton(
-                        onPressed: _setTodayDate, 
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          )
-                        ),
-                        child: Text("今日の日付")
-                        )
-                    ),
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.44,
-                      child: ElevatedButton(
-                        onPressed: (){
-                          _selectDate(context);
-                        }, 
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          )
-                        ),
-                        child: Text("日付選択")
-                        )
-                    )
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 20),
+              const SizedBox(height: 20), //----------------------------------------
 
               Container( //------------------------------------------------ジャンル選択欄（選択済みジャンル表示欄）
                 height: 55,
@@ -667,7 +304,7 @@ class _TVRegistarState extends ConsumerState<TVRegistar> {
                 
               ),
 
-              SizedBox(height: 8,),
+              SizedBox(height: 8,), //----------------------------------------
 
               SizedBox(
                 width: MediaQuery.of(context).size.width*0.9,
@@ -682,234 +319,31 @@ class _TVRegistarState extends ConsumerState<TVRegistar> {
                 ),
               ),
 
-              const SizedBox(height: 20,),
+              const SizedBox(height: 20,), //----------------------------------------
 
-              SizedBox( //-------------------------------------------------話数（文字入力欄）
-                width: MediaQuery.of(context).size.width * 0.9,
-                height: 60,
-                child: TextField(
-                  controller: _epNumController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "話数",
-                  ),
-                ),
-              ),
+              //話数入力欄
+              InputField(label: "話数", controller: _epNumController),
+              //話数入力ボタン
+              EpNumInputButtons(controller: _epNumController),
 
-              SizedBox( //-------------------------------------------------話数入力ボタン（ボタン）
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.2866666,
-                      child: ElevatedButton(
-                        onPressed: (){
-                          _setEpNum(12);
-                        }, 
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          )
-                        ),
-                        child: Text("12話")
-                        )
-                    ),
+              SizedBox(height: 20,), //----------------------------------------
 
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
+              //時間入力欄
+              InputField(label: "1話あたりの時間", controller: _epTimeController),
+              //時間入力ボタン
+              EpTimeInputButtons(controller: _epTimeController),
 
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.2866666,
-                      child: ElevatedButton(
-                        onPressed: (){
-                          _setEpNum(24);
-                        }, 
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          )
-                        ),
-                        child: Text("24話")
-                        )
-                    ),
+              const SizedBox(height: 20), //----------------------------------------
 
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
+              //評価ボタン
+              EvaluationIcons(),
 
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.2866666,
-                      child: ElevatedButton(
-                        onPressed: (){
-                          _selectEpNum(context);
-                        }, 
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          )
-                        ),
-                        child: Text("話数選択")
-                        )
-                    ),
-                  ],
-                ),
-              ),
+              const SizedBox(height: 20,), //----------------------------------------
 
-              SizedBox(height: 20,),
+              //メモ
+              InputField(label: "メモ", controller: _memoController),
 
-              SizedBox( //-------------------------------------------------分数（文字入力欄）
-                width: MediaQuery.of(context).size.width * 0.9,
-                height: 60,
-                child: TextField(
-                  controller: _epTimeController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "1話あたりの時間",
-                  ),
-                ),
-              ),
-
-              SizedBox( //-------------------------------------------------分数入力ボタン（ボタン）
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.2866666,
-                      child: ElevatedButton(
-                        onPressed: (){
-                          _setEpTime(24);
-                        }, 
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          )
-                        ),
-                        child: Text("24分")
-                        )
-                    ),
-
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
-
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.2866666,
-                      child: ElevatedButton(
-                        onPressed: (){
-                          _setEpTime(12);
-                        }, 
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          )
-                        ),
-                        child: Text("12分")
-                        )
-                    ),
-
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
-
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.2866666,
-                      child: ElevatedButton(
-                        onPressed: (){
-                          _selectEpTime(context);
-                        }, 
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          )
-                        ),
-                        child: Text("時間選択")
-                        )
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              SizedBox( //----------------------------------------------------------------------評価
-                width: MediaQuery.of(context).size.width*0.8,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween, //中央寄せにする
-                  children: [
-                    Text(
-                      "評価",
-                      style: TextStyle(
-                        fontSize: 16
-                      ),
-                    ),
-                    SizedBox(width: MediaQuery.of(context).size.width*0.05,),
-                    IconButton( //評価1
-                      onPressed: (){
-                        FocusScope.of(context).unfocus(); //テキストのフォーカスを外す
-                        setState(() {
-                          _evaluation=1;
-                        });
-                      },
-                      icon: Icon(Icons.star),
-                      iconSize: 35,
-                      color:_evaluation>=1? Color.fromARGB(255, 255, 217, 0):Colors.grey,
-                    ),
-                    IconButton( //評価2
-                      onPressed: (){
-                        FocusScope.of(context).unfocus(); //テキストのフォーカスを外す
-                        setState(() {
-                          _evaluation=2;
-                        });
-                      },
-                      icon: Icon(Icons.star),
-                      iconSize: 35,
-                      color:_evaluation>=2? Color.fromARGB(255, 255, 217, 0):Colors.grey,
-                    ),
-                    IconButton( //評価3
-                      onPressed: (){
-                        FocusScope.of(context).unfocus(); //テキストのフォーカスを外す
-                        setState(() {
-                          _evaluation=3;
-                        });
-                      },
-                      icon: Icon(Icons.star),
-                      iconSize: 35,
-                      color:_evaluation>=3? Color.fromARGB(255, 255, 217, 0):Colors.grey,
-                    ),
-                    IconButton( //評価4
-                      onPressed: (){
-                        FocusScope.of(context).unfocus(); //テキストのフォーカスを外す
-                        setState(() {
-                          _evaluation=4;
-                        });
-                      },
-                      icon: Icon(Icons.star),
-                      iconSize: 35,
-                      color:_evaluation>=4? Color.fromARGB(255, 255, 217, 0):Colors.grey,
-                    ),
-                    IconButton( //評価5
-                      onPressed: (){
-                        FocusScope.of(context).unfocus(); //テキストのフォーカスを外す
-                        setState(() {
-                          _evaluation=5;
-                        });
-                      },
-                      icon: Icon(Icons.star),
-                      iconSize: 35,
-                      color:_evaluation>=5? Color.fromARGB(255, 255, 217, 0):Colors.grey,
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 20,),
-
-              SizedBox( //-------------------------------------------------メモ（複数行入力フォーム）
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: TextField(
-                  maxLines: null, //行数無制限
-                  keyboardType: TextInputType.multiline, //改行しやすくなる
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "メモ"
-                  ),
-                ),
-              ),
-
-              SizedBox(height: 20,),
+              SizedBox(height: 20,), //----------------------------------------
 
             ],
           ),
