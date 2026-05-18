@@ -531,6 +531,7 @@ class EvaluationIcons extends StatefulWidget {
 class _EvaluationIconsState extends State<EvaluationIcons> {
   @override
   Widget build(BuildContext context) {
+    int _evaluation=0;
     return SizedBox(
       width: MediaQuery.of(context).size.width*0.8,
       child: Row(
