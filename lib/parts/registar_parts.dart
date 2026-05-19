@@ -1,5 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:isar/isar.dart';
+import 'package:anime_administration/models/genre.dart';
+
+//-----------------------------------ドロップダウンメニュー--------------------------
+class StatusDropDownMenu extends StatelessWidget {
+  const StatusDropDownMenu({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.9,
+        child: DropdownMenu(
+          label: Text("ステータス"),
+          dropdownMenuEntries: const[
+            DropdownMenuEntry(value: 0, label: "未視聴"),
+            DropdownMenuEntry(value: 1, label: "視聴中"),
+            DropdownMenuEntry(value: 2, label: "視聴済"),
+            DropdownMenuEntry(value: 3, label: "視聴中止"),
+            DropdownMenuEntry(value: 4, label: "中断"),
+          ]
+        ),
+    );
+  }
+}
 
 //-----------------------------------TextField--------------------------
 class InputField extends StatelessWidget {
@@ -115,6 +139,189 @@ Future<String> inputDateText_select(BuildContext context) async {
     //もし何も入力されていなければ空白を返す
     return "";
   }
+
+//-----------------------------------ジャンル入力ボタン--------------------------
+//選択済ジャンルを表示するText
+class SelectedGenreText extends StatefulWidget {
+  //データベース
+  final Isar isar;
+  //ジャンルのリスト
+  final List<Genre> genres;
+
+  const SelectedGenreText({super.key,required this.isar, required this.genres});
+
+  @override
+  State<SelectedGenreText> createState() => _SelectedGenreTextState();
+}
+
+class _SelectedGenreTextState extends State<SelectedGenreText> {
+  //選択されているジャンル欄に表示するテキスト
+  String select_genre_text="ジャンルが選択されていません";
+  //選択されているジャンルのidを保持しておくリストを宣言
+  Set<int> selected_genre_id={};
+
+  //ジャンル選択画面を表示させる関数
+  Future<void> select_genre(Isar isar, List _genres) async{
+    //ボタンの初期状態を読み取る
+    //for文が何回回ったかカウントする変数を用意
+    int i =0;
+    //まずは中身が全てfalseのリストを用意
+    List<bool> genre_select_state = List.filled(_genres.length, false);
+    //selected_genre_idにそのidが含まれていたらfalse→trueに書き換える
+    for (Genre genre_instance in _genres){
+      //ジャンルのインスタンスのidが選ばれているジャンルのidを保持するリストに含まれているかを確認
+      if(selected_genre_id.contains(genre_instance.id)){
+        genre_select_state[i]=true;
+      }
+      //周回をカウント
+      i=i+1;
+    }
+
+    showDialog(
+      context: context,
+      builder: (context){
+        return StatefulBuilder(
+          builder: (context,setStateDialog){
+            return Dialog(
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width*0.9,
+                height: 400,
+                child: Column(
+                  children: [
+
+                    SizedBox(height: 20,),
+
+                    Text(
+                      "ジャンルを選択してください",
+                      style: TextStyle(
+                        fontSize: 20
+                      ),
+                    ),
+
+                    SizedBox(height: 10,),
+
+                    Expanded(
+                      child: Scrollbar(
+                        thumbVisibility: true,
+                        child: ListView(
+                          children: List.generate(
+                            _genres.length,
+                            (index){
+                              return SwitchListTile( //スイッチタイル部分
+                                title: Text(_genres[index].name),
+                                value: genre_select_state[index],
+                                onChanged: (bool value){ //あるジャンルが選択されたときの処理
+                                  setStateDialog((){
+                                    //off→onになったとき
+                                    if(value==true){
+                                      //選択されているジャンルのidを保持しておくSet内にidを追加
+                                      selected_genre_id.add(_genres[index].id);
+                                    }
+                                    //on→offになったとき
+                                    else{
+                                      selected_genre_id.remove(_genres[index].id);
+                                    }
+                                    //ダイアログを呼び出したときに仮で作成したboolのリストの中身を書き換える
+                                    genre_select_state[index]=value;
+                                  });
+                                },
+                              );
+                            }
+                          ),
+                        )
+                      )
+                    ),
+
+                    SizedBox(height: 10,),
+
+                    SizedBox( //保存ボタン
+                      width: MediaQuery.of(context).size.width*0.4,
+                      child: ElevatedButton(
+                        onPressed: (){
+                          //ジャンル表示テキストに表示する用のテキストを作成
+                          //初期文字列
+                          String genre_text_temp="";
+                          for(int _id in selected_genre_id){
+                            //選択されているジャンルのidから，文字列を作成
+                            genre_text_temp += _genres.firstWhere((g) => g.id == _id).name; //データベースのデータをコピーしたリストからidが一致するものを探し出し，nameを取得する
+                            //","で区切る
+                            genre_text_temp += "，";
+                          }
+
+                          //最後の","を取る
+                          if(genre_text_temp!=""){
+                            genre_text_temp = genre_text_temp.substring(0 , genre_text_temp.length - 1 );
+                          }
+
+                          //もし文字列が空白のままなら，「ジャンルが選択されていません」に戻す
+                          if(genre_text_temp == ""){
+                            genre_text_temp = "ジャンルが選択されていません";
+                          }
+
+                          //選択されているジャンルを表示するTextの中身を書き換える
+                          setState(() {
+                            select_genre_text=genre_text_temp;
+                          });
+                          
+                          //戻る
+                          Navigator.pop(context);
+                          //テキストのフォーカスを外す
+                          FocusScope.of(context).unfocus();
+                        },
+                        child: Text("保存")
+                      ),
+                    ),
+
+                    SizedBox(height: 20,)
+                  ],
+                ),
+              ),
+            );
+          }
+        );
+      }
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          height: 55,
+          width: MediaQuery.of(context).size.width*0.9,
+          decoration: BoxDecoration(
+            border: Border.all(),
+            borderRadius: BorderRadius.circular(7)
+          ),
+          child: Center(
+            child: Text(
+              select_genre_text,
+              style: TextStyle(
+                fontSize: 17
+              ),
+            ),
+          )
+          
+        ),
+
+        SizedBox(height: 8,), //----------------------------------------
+
+        SizedBox(
+          width: MediaQuery.of(context).size.width*0.9,
+          child: ElevatedButton(
+            onPressed: (){
+                select_genre(widget.isar, widget.genres);
+            },
+            child: Text(
+              "ジャンル選択"
+            )
+          ),
+        ),
+      ],
+    );
+  }
+}
 
 //-----------------------------------話数入力ボタン--------------------------
 class EpNumInputButtons extends StatelessWidget {
@@ -529,9 +736,11 @@ class EvaluationIcons extends StatefulWidget {
 }
 
 class _EvaluationIconsState extends State<EvaluationIcons> {
+  //初期値を宣言
+  int _evaluation=0;
+  
   @override
   Widget build(BuildContext context) {
-    int _evaluation=0;
     return SizedBox(
       width: MediaQuery.of(context).size.width*0.8,
       child: Row(
@@ -551,7 +760,7 @@ class _EvaluationIconsState extends State<EvaluationIcons> {
                 _evaluation=1;
               });
             },
-            icon: Icon(Icons.star),
+            icon: const Icon(Icons.star),
             iconSize: 35,
             color:_evaluation>=1? Color.fromARGB(255, 255, 217, 0):Colors.grey,
           ),
@@ -562,7 +771,7 @@ class _EvaluationIconsState extends State<EvaluationIcons> {
                 _evaluation=2;
               });
             },
-            icon: Icon(Icons.star),
+            icon: const Icon(Icons.star),
             iconSize: 35,
             color:_evaluation>=2? Color.fromARGB(255, 255, 217, 0):Colors.grey,
           ),
@@ -573,7 +782,7 @@ class _EvaluationIconsState extends State<EvaluationIcons> {
                 _evaluation=3;
               });
             },
-            icon: Icon(Icons.star),
+            icon: const Icon(Icons.star),
             iconSize: 35,
             color:_evaluation>=3? Color.fromARGB(255, 255, 217, 0):Colors.grey,
           ),
@@ -584,7 +793,7 @@ class _EvaluationIconsState extends State<EvaluationIcons> {
                 _evaluation=4;
               });
             },
-            icon: Icon(Icons.star),
+            icon: const Icon(Icons.star),
             iconSize: 35,
             color:_evaluation>=4? Color.fromARGB(255, 255, 217, 0):Colors.grey,
           ),
@@ -595,7 +804,7 @@ class _EvaluationIconsState extends State<EvaluationIcons> {
                 _evaluation=5;
               });
             },
-            icon: Icon(Icons.star),
+            icon: const Icon(Icons.star),
             iconSize: 35,
             color:_evaluation>=5? Color.fromARGB(255, 255, 217, 0):Colors.grey,
           ),
