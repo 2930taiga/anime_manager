@@ -40,14 +40,28 @@ class _ViewPageState extends State<ViewPage>{
           )
         ],
       ),
-      body: Center(
-        child: Text(
-          "データが登録されていません",
-          style: TextStyle(
-            fontSize: 20,
-            color: Colors.grey
+      body: Stack(
+        children: [
+          Center(
+            child: Text(
+              "データが登録されていません",
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.grey
+              ),
+            ),
           ),
-        ),
+          Positioned( //検索窓
+          //配置が良い感じになるように
+            top: 10,
+            left: MediaQuery.of(context).size.width*0.025,
+            width: MediaQuery.of(context).size.width*0.95,
+            child: SearchBar(
+              hintText: "検索",
+              leading: const Icon(Icons.search),
+            )
+            )
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: goToRegistarPage,

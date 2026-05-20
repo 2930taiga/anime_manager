@@ -59,11 +59,6 @@ class _MainNavigationState extends State<MainNavigation> {
         //登録中なら登録ページ，そうでないならナビゲーションのリスト
         body: navigationPageList[pageNum],
 
-        // floatingActionButton: pageNum==0? FloatingActionButton(
-        //   onPressed: goToRegistarPage,
-        //   child: const Icon(Icons.add),
-        // ):null, 
-
         bottomNavigationBar:BottomNavigationBar(
           currentIndex: pageNum,
           items: const[ //ページ一覧
