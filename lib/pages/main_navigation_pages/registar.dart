@@ -61,27 +61,6 @@ class RegistarPage extends StatelessWidget {
   }
 }
 
-// //ステータスのenum
-// enum Status{
-//   before,
-//   watching,
-//   complete,
-//   stop,
-//   pause
-// }
-  
-// //入力中のデータを保持しておくクラスを宣言
-// class AnimeInputData{
-//   Status status = Status.before; //ステータス 
-//   String title = ""; //タイトル
-//   String titleKana = ""; //タイトル（かな）
-//   String date = ""; //日付
-//   int epNum = 0; //話数
-//   String epTime =""; //1話あたりの時間
-//   int evaliation = 0; //評価
-//   String memo=""; //メモ
-// }
-
 
 class TVRegistar extends ConsumerStatefulWidget {
   const TVRegistar({super.key});
@@ -201,6 +180,11 @@ class _TVRegistarState extends ConsumerState<TVRegistar> {
 
               const SizedBox(height: 20,), //----------------------------------------
 
+              //テスト用ボタン
+              TextButton(
+                onPressed: (){},
+                child: Text("テスト")
+              )
             ],
           ),
         )

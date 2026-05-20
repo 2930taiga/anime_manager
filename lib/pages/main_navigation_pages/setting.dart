@@ -5,7 +5,6 @@ import 'setting/genre.dart';
 
 //設定ページ
 class SettingPage extends StatefulWidget {
-  //コンストラクタを設定（isarを必須にする）
   const SettingPage({super.key});
 
   @override
