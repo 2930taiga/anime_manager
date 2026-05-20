@@ -201,7 +201,17 @@ class _SelectedGenreTextState extends State<SelectedGenreText> {
                     SizedBox(height: 10,),
 
                     Expanded(
-                      child: Scrollbar(
+                      child: _genres.isEmpty 
+                      ? Center(
+                        child: Text(
+                          "ジャンルが登録されていません",
+                          style: TextStyle(
+                            fontSize: 17,
+                            color: Colors.grey
+                          ),
+                          ),
+                      )
+                      : Scrollbar( //ジャンルのリストが空でないならジャンル一覧を表示する
                         thumbVisibility: true,
                         child: ListView(
                           children: List.generate(
