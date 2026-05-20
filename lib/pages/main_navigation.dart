@@ -39,16 +39,6 @@ class _MainNavigationState extends State<MainNavigation> {
     ];
   }
 
-  //登録ページに遷移する関数
-  void goToRegistarPage(){
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context)=> RegistarPage(),
-        fullscreenDialog: true
-      )
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -69,10 +59,10 @@ class _MainNavigationState extends State<MainNavigation> {
         //登録中なら登録ページ，そうでないならナビゲーションのリスト
         body: navigationPageList[pageNum],
 
-        floatingActionButton: pageNum==0? FloatingActionButton(
-          onPressed: goToRegistarPage,
-          child: const Icon(Icons.add),
-        ):null, 
+        // floatingActionButton: pageNum==0? FloatingActionButton(
+        //   onPressed: goToRegistarPage,
+        //   child: const Icon(Icons.add),
+        // ):null, 
 
         bottomNavigationBar:BottomNavigationBar(
           currentIndex: pageNum,

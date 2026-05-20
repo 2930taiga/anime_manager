@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+//登録ページ
+import 'registar.dart';
+
 //一覧ページ
 class ViewPage extends StatefulWidget {
   //コンストラクタを設定
@@ -10,6 +13,15 @@ class ViewPage extends StatefulWidget {
 }
 
 class _ViewPageState extends State<ViewPage>{
+  //登録ページに遷移する関数
+  void goToRegistarPage(){
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context)=> RegistarPage(),
+        fullscreenDialog: true
+      )
+    );
+  }
 
   @override
   Widget build(BuildContext content){
@@ -36,6 +48,10 @@ class _ViewPageState extends State<ViewPage>{
             color: Colors.grey
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: goToRegistarPage,
+        child: Icon(Icons.add),
       ),
     ); 
   }
