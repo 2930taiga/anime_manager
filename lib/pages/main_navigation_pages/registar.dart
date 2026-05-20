@@ -9,8 +9,6 @@ import 'package:isar/isar.dart';
 //登録ページ用のパーツを格納したコード
 import 'package:anime_administration/parts/registar_parts.dart';
 
-//登録ページ
-
 class RegistarPage extends StatelessWidget {
 
   const RegistarPage({super.key});
@@ -63,6 +61,28 @@ class RegistarPage extends StatelessWidget {
   }
 }
 
+//ステータスのenum
+enum Status{
+  before,
+  watching,
+  complete,
+  stop,
+  pause
+}
+  
+//入力中のデータを保持しておくクラスを宣言
+class AnimeInputData{
+  Status status = Status.before; //ステータス 
+  String title = ""; //タイトル
+  String titleKana = ""; //タイトル（かな）
+  String date = ""; //日付
+  int epNum = 0; //話数
+  String epTime =""; //1話あたりの時間
+  int evaliation = 0; //評価
+  String memo=""; //メモ
+}
+
+
 class TVRegistar extends ConsumerStatefulWidget {
   const TVRegistar({super.key});
 
@@ -71,6 +91,7 @@ class TVRegistar extends ConsumerStatefulWidget {
 }
 
 class _TVRegistarState extends ConsumerState<TVRegistar> {
+
   final TextEditingController _titleController = TextEditingController(); //タイトル
   final TextEditingController _titleKanaController = TextEditingController(); //タイトル（かな）の入力を取得するコントローラを登録
   final TextEditingController _dateController = TextEditingController(); //日付を自動で入力するコントローラーを登録
@@ -78,13 +99,8 @@ class _TVRegistarState extends ConsumerState<TVRegistar> {
   final TextEditingController _epTimeController = TextEditingController(); //分数を自動で入力するコントローラーを登録
   final TextEditingController _memoController = TextEditingController(); //メモの内容を取得するコントローラ
 
-  //登録画面で内容を保持する変数を宣言しておく-----------------------------------------------------------------------------------
-
   //SnackBarで表示するテキストのインスタンスを登録しておく------------------------------------------------------------------------
   var SnackBar_Save = SnackBar(content: Text("保存しました"));
-
-  //選択されているジャンルを表示するTextFieldの文字列を格納しておく変数を宣言------------------------------------------------------
-  String select_genre_text="ジャンルが選択されていません";
 
   //ジャンル選択で必要となる変数を宣言しておく------------------------------------------------------------------------------------
   // //ジャンルのデータを保持するリストを宣言
@@ -101,7 +117,7 @@ class _TVRegistarState extends ConsumerState<TVRegistar> {
     //データベースからデータを取り出す
     final genres = await isar.genres.where().findAll();
     setState(() {
-      _genres = genres;  
+      _genres=genres;
     });
   }
 

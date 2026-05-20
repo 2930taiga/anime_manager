@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 //ページ関連-------------------------------------------------------------
-//登録ページ
-import 'main_navigation_pages/registar.dart';
 //一覧ページ
 import 'main_navigation_pages/view.dart';
 //分析ページ
