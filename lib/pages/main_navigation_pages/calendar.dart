@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart'; // これがないとWidgetが使えない
 
+import 'package:table_calendar/table_calendar.dart';
+
 class CalendarPage extends StatelessWidget {
   const CalendarPage({super.key});
 
@@ -10,15 +12,11 @@ class CalendarPage extends StatelessWidget {
         title: Text("カレンダー"),
         backgroundColor: Colors.lightBlue[100],
       ),
-      body: Center(
-        child: Text(
-          "データが登録されていません",
-          style: TextStyle(
-            fontSize: 20,
-            color: Colors.grey
-          ),
-        ),
-      ),
+      body: TableCalendar(
+        focusedDay: DateTime.now(),
+        firstDay: DateTime.utc(1990,1,1),
+        lastDay: DateTime.utc(2100,12,31)
+      )
     );
   }
 }
