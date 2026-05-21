@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 //登録ページ
-import 'registar.dart';
+import 'registar_navigation.dart';
 
 //一覧ページ
 class ViewPage extends StatefulWidget {
@@ -17,7 +17,7 @@ class _ViewPageState extends State<ViewPage>{
   void goToRegistarPage(){
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context)=> RegistarPage(),
+        builder: (context)=> RegistarNavigation(),
         fullscreenDialog: true
       )
     );
