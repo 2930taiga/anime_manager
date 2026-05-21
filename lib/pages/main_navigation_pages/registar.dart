@@ -19,12 +19,16 @@ class RegistarPage extends StatelessWidget {
         appBar: AppBar(
           title: const Text("登録"),
           leading: IconButton(
-            onPressed: (){},
+            onPressed: (){
+              
+            },
             icon: Icon(Icons.keyboard_backspace)
             ),
             actions: [ //保存ボタンを右上に置いてもいいかなって思った
               TextButton(
-                onPressed: (){}, //一旦は戻るだけ
+                onPressed: (){
+
+                }, //一旦は戻るだけ
                 child: Text(
                   "保存",
                   style: TextStyle(
@@ -91,6 +95,11 @@ class TVRegistar extends ConsumerWidget{
 
               const SizedBox(height: 20,),//-----------------------------------------------------
 
+              //日付
+              InputFieldDate(),
+
+              const SizedBox(height: 20,),//-----------------------------------------------------
+
               //話数
               InputFieldEpNum(),
 
@@ -114,9 +123,9 @@ class TVRegistar extends ConsumerWidget{
                 child: Text("テスト用")
               ),
               TextButton(
-                onPressed: (){print(animeCorrectInput.epNum);},
+                onPressed: (){print(animeCorrectInput.date);},
                 child: Text("テスト用1")
-              )
+              ),
             ],
           ),
         ),

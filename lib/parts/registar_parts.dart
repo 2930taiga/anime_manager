@@ -125,71 +125,134 @@ class _InputFieldTitleKanaState extends ConsumerState<InputFieldTitleKana> {
   }
 }
 
-//-----------------------------------日付入力ボタン--------------------------
-class DateInputButtons extends StatelessWidget {
-  //テキストコントローラ
-  final TextEditingController controller;
+//-----------------------------------日付欄--------------------------
+class InputFieldDate extends ConsumerStatefulWidget {
+  const InputFieldDate({super.key});
 
-  const DateInputButtons({super.key,required this.controller});
+  @override
+  ConsumerState<InputFieldDate> createState() => _InputFieldDateState();
+}
+
+class _InputFieldDateState extends ConsumerState<InputFieldDate> {
+  //テキストコントローラを登録
+  final TextEditingController _dateController = TextEditingController();
+
+  //テキストコントローラのメモリ解放
+  @override
+  void dispose(){
+    _dateController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.9,
-      child: Row(
-        children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.44,
-            child: ElevatedButton(
-              onPressed: (){
-                controller.text=inputDateText_today();
-                //テキストフィールドのフォーカスを外す
-                FocusManager.instance.primaryFocus?.unfocus();
-              }, 
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                )
-              ),
-              child: Text("今日の日付")
-              )
+    return Column(
+      children: [
+        SizedBox(
+          width: MediaQuery.of(context).size.width*0.9,
+          child: TextField(
+            onChanged: (text){
+              //有効な値が入力されているかを調べる
+              if(text.split("/").length==3){ //YYYY/MM/DDの形式で書かれているかをチェック
+                // setState((){
+                //   ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(date: true);
+                // });
+              }
+              else{
+                setState((){
+                  ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(date: false);
+                });
+              }
+            },
+            controller: _dateController,
+            decoration: InputDecoration(
+              errorText: ref.read(animeCorrectInputProvider.notifier).state.date
+              ? null
+              : "有効な値を入力してください",
+              border: OutlineInputBorder(),
+              labelText: "日付",
+            ),
           ),
-          SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.44,
-            child: ElevatedButton(
-              onPressed: () async {
-                controller.text = await inputDateText_select(context);
-                //テキストフィールドのフォーカスを外す
-                FocusManager.instance.primaryFocus?.unfocus();
-              }, 
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                )
+        ),
+        SizedBox(
+          width: MediaQuery.of(context).size.width * 0.9,
+          child: Row(
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.44,
+                child: ElevatedButton(
+                  onPressed: (){
+                    DateTime selectedDate=inputDate_today();
+                    //テキストフィールド用にフォーマット
+                    String formattedDate="${selectedDate.year}/${selectedDate.month.toString().padLeft(2, '0')}/${selectedDate.day.toString().padLeft(2, '0')}";
+                    //テキストコントローラの値を更新
+                    _dateController.text=formattedDate;
+                    //テキストフィールドのフォーカスを外す
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    //providerに値を入れる
+                    ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(date: selectedDate);
+                    //ボタンを押すと必ず正しい値が入力されるので，flagをtrueにする
+                    setState((){
+                      ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(date: true);
+                    });
+                  }, 
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    )
+                  ),
+                  child: Text("今日の日付")
+                  )
               ),
-              child: Text("日付選択")
+              SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.44,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    DateTime selectedDate = await inputDate_select(context);
+                    //テキストフィールド用にフォーマット
+                    String formattedDate = "${selectedDate.year}/${selectedDate.month.toString().padLeft(2, '0')}/${selectedDate.day.toString().padLeft(2, '0')}";
+                    //テキストコントローラの値を更新
+                    _dateController.text = formattedDate;
+                    //テキストフィールドのフォーカスを外す
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    //providerに値を入れる
+                    ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(date: selectedDate);
+                    //ボタンを押すと必ず正しい値が入力されるので，flagをtrueにする
+                    setState((){
+                      ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(date: true);
+                    });
+                  }, 
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    )
+                  ),
+                  child: Text("日付選択")
+                  )
               )
-          )
-        ],
-      ),
+            ],
+          ),
+        )
+      ],
     );
   }
 }
 
 //-----------------------------------日付入力用の関数--------------------------
 //今日の日付を入力する関数
-String inputDateText_today() {
+DateTime inputDate_today() {
   //今日の日付を取得
   DateTime date = DateTime.now();
-  //日付の見た目をフォーマット
-  String FormattedDate = "${date.year}/${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}";
+  // //日付の見た目をフォーマット
+  // String FormattedDate = "${date.year}/${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}";
 
-  return FormattedDate;
+  return date;
 }
 
 //カレンダーを表示し，任意の日付を入力する関数
-Future<String> inputDateText_select(BuildContext context) async {
+Future<DateTime> inputDate_select(BuildContext context) async {
   final DateTime? picked = await showDatePicker( //カレンダーを表示して，日付選択画面を出す
     context: context,
     initialDate: DateTime.now(),
@@ -201,14 +264,16 @@ Future<String> inputDateText_select(BuildContext context) async {
     if (picked != null){
       //入力された日付を代入
       DateTime date= picked;
-      //日付の見た目をフォーマット
-      String FormattedDate = "${date.year}/${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}";
 
-      return FormattedDate;
+      return date;
+      //日付の見た目をフォーマット
+      // String FormattedDate = "${date.year}/${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}";
+
+      // return FormattedDate;
     }
 
     //もし何も入力されていなければ空白を返す
-    return "";
+    return DateTime.now();
   }
 
 //-----------------------------------ジャンル入力ボタン--------------------------
