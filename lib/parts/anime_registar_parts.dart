@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:anime_administration/models/genre.dart';
 import 'package:anime_administration/providers/anime_input_provider.dart';
+import 'package:anime_administration/providers/isar_provider.dart';
+import 'package:anime_administration/models/genre.dart';
 
 //-----------------------------------ドロップダウンメニュー--------------------------
 class StatusDropDownMenu extends ConsumerWidget {
@@ -277,39 +279,32 @@ Future<DateTime> inputDate_select(BuildContext context) async {
   }
 
 //-----------------------------------ジャンル入力ボタン--------------------------
-//選択済ジャンルを表示するText
-class SelectedGenreText extends StatefulWidget {
-  //データベース
-  final Isar isar;
-  //ジャンルのリスト
-  final List<Genre> genres;
-
-  const SelectedGenreText({super.key,required this.isar, required this.genres});
+class SelectedGenreText extends ConsumerStatefulWidget {
+  const SelectedGenreText({super.key});
 
   @override
-  State<SelectedGenreText> createState() => _SelectedGenreTextState();
+  ConsumerState<SelectedGenreText> createState() => _SelectedGenreTextState();
 }
 
-class _SelectedGenreTextState extends State<SelectedGenreText> {
-  //選択されているジャンル欄に表示するテキスト
-  String select_genre_text="ジャンルが選択されていません";
-  //選択されているジャンルのidを保持しておくリストを宣言
+class _SelectedGenreTextState extends ConsumerState<SelectedGenreText> {
+  //入力されているジャンルを表示するテキスト
+  String select_genre_text = "ジャンルが選択されていません";
+  //選択されているジャンルのidを保持するリスト
   Set<int> selected_genre_id={};
 
-  //ジャンル選択画面を表示させる関数
-  Future<void> select_genre(Isar isar, List _genres) async{
-    //ボタンの初期状態を読み取る
-    //for文が何回回ったかカウントする変数を用意
-    int i =0;
-    //まずは中身が全てfalseのリストを用意
-    List<bool> genre_select_state = List.filled(_genres.length, false);
-    //selected_genre_idにそのidが含まれていたらfalse→trueに書き換える
-    for (Genre genre_instance in _genres){
-      //ジャンルのインスタンスのidが選ばれているジャンルのidを保持するリストに含まれているかを確認
-      if(selected_genre_id.contains(genre_instance.id)){
-        genre_select_state[i]=true;
+  //データベースに登録されているジャンルのダイアログを表示させる関数
+  Future<void> showSelectGenreDialog(Isar isar) async{
+    //データベースからデータを取り出す
+    List<Genre> _genres = await isar.genres.where().findAll();
+    //リストの要素数分，中身がfalseのリストを作る
+    List<bool> select_genre_flag=List.filled(_genres.length, false);
+    //ループカウント用
+    int i = 0;
+    //idが既に登録されているかを確かめる
+    for(Genre gen in _genres){
+      if(selected_genre_id.contains(gen.id)){
+        select_genre_flag[i]=true;
       }
-      //周回をカウント
       i=i+1;
     }
 
@@ -355,20 +350,21 @@ class _SelectedGenreTextState extends State<SelectedGenreText> {
                             (index){
                               return SwitchListTile( //スイッチタイル部分
                                 title: Text(_genres[index].name),
-                                value: genre_select_state[index],
+                                value: select_genre_flag[index],
                                 onChanged: (bool value){ //あるジャンルが選択されたときの処理
                                   setStateDialog((){
                                     //off→onになったとき
                                     if(value==true){
                                       //選択されているジャンルのidを保持しておくSet内にidを追加
-                                      selected_genre_id.add(_genres[index].id);
+                                      //selected_genre_id.add(_genres[index].id);
+                                      select_genre_flag[index]=true;
                                     }
                                     //on→offになったとき
                                     else{
-                                      selected_genre_id.remove(_genres[index].id);
+                                      //選択されているジャンルのidを保持しておくSet内からidを削除
+                                      //selected_genre_id.remove(_genres[index].id);
+                                      select_genre_flag[index]=false;
                                     }
-                                    //ダイアログを呼び出したときに仮で作成したboolのリストの中身を書き換える
-                                    genre_select_state[index]=value;
                                   });
                                 },
                               );
@@ -384,12 +380,24 @@ class _SelectedGenreTextState extends State<SelectedGenreText> {
                       width: MediaQuery.of(context).size.width*0.4,
                       child: ElevatedButton(
                         onPressed: (){
+                          //登録されているジャンルのidを書き換える
+                          int j=0; //ループカウント用
+                          for(bool flag in select_genre_flag){
+                            if(flag==true){
+                              selected_genre_id.add(_genres[j].id);
+                            }
+                            else{
+                              selected_genre_id.remove(_genres[j].id);
+                            }
+                            j=j+1;
+                          }
                           //ジャンル表示テキストに表示する用のテキストを作成
                           //初期文字列
                           String genre_text_temp="";
-                          for(int _id in selected_genre_id){
+                          //選択されているジャンルのSet<int>を小さい順に並び替え，文字列を作成
+                          for(int _id in selected_genre_id.toList()..sort()){
                             //選択されているジャンルのidから，文字列を作成
-                            genre_text_temp += _genres.firstWhere((g) => g.id == _id).name; //データベースのデータをコピーしたリストからidが一致するものを探し出し，nameを取得する
+                            genre_text_temp += _genres.firstWhere((g) => g.id == _id).name; //データベースからidが一致するものを探し出し，nameを取得する
                             //","で区切る
                             genre_text_temp += "，";
                           }
@@ -408,6 +416,9 @@ class _SelectedGenreTextState extends State<SelectedGenreText> {
                           setState(() {
                             select_genre_text=genre_text_temp;
                           });
+
+                          //providerに結果を渡す
+                          ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(genreId: selected_genre_id);
                           
                           //戻る
                           Navigator.pop(context);
@@ -417,6 +428,7 @@ class _SelectedGenreTextState extends State<SelectedGenreText> {
                         child: Text("保存")
                       ),
                     ),
+                    
 
                     SizedBox(height: 20,)
                   ],
@@ -428,12 +440,15 @@ class _SelectedGenreTextState extends State<SelectedGenreText> {
       }
     );
   }
-
+  
   @override
   Widget build(BuildContext context) {
+    //providerからisarのインスタンスを取得
+    final isar = ref.watch(isarProvider);
+    
     return Column(
       children: [
-        Container(
+        Container( //テキスト表示エリア
           height: 55,
           width: MediaQuery.of(context).size.width*0.9,
           decoration: BoxDecoration(
@@ -453,11 +468,11 @@ class _SelectedGenreTextState extends State<SelectedGenreText> {
 
         SizedBox(height: 8,), //----------------------------------------
 
-        SizedBox(
+        SizedBox( //ジャンル選択ボタン
           width: MediaQuery.of(context).size.width*0.9,
           child: ElevatedButton(
             onPressed: (){
-                select_genre(widget.isar, widget.genres);
+              showSelectGenreDialog(isar);
             },
             child: Text(
               "ジャンル選択"
@@ -468,7 +483,199 @@ class _SelectedGenreTextState extends State<SelectedGenreText> {
     );
   }
 }
+// //選択済ジャンルを表示するText
+// class SelectedGenreText extends StatefulWidget {
+//   //データベース
+//   final Isar isar;
+//   //ジャンルのリスト
+//   final List<Genre> genres;
 
+//   const SelectedGenreText({super.key,required this.isar, required this.genres});
+
+//   @override
+//   State<SelectedGenreText> createState() => _SelectedGenreTextState();
+// }
+
+// class _SelectedGenreTextState extends State<SelectedGenreText> {
+//   //選択されているジャンル欄に表示するテキスト
+//   String select_genre_text="ジャンルが選択されていません";
+//   //選択されているジャンルのidを保持しておくリストを宣言
+//   Set<int> selected_genre_id={};
+
+//   //ジャンル選択画面を表示させる関数
+//   Future<void> select_genre(Isar isar, List _genres) async{
+//     //ボタンの初期状態を読み取る
+//     //for文が何回回ったかカウントする変数を用意
+//     int i =0;
+//     //まずは中身が全てfalseのリストを用意
+//     List<bool> genre_select_state = List.filled(_genres.length, false);
+//     //selected_genre_idにそのidが含まれていたらfalse→trueに書き換える
+//     for (Genre genre_instance in _genres){
+//       //ジャンルのインスタンスのidが選ばれているジャンルのidを保持するリストに含まれているかを確認
+//       if(selected_genre_id.contains(genre_instance.id)){
+//         genre_select_state[i]=true;
+//       }
+//       //周回をカウント
+//       i=i+1;
+//     }
+
+//     showDialog(
+//       context: context,
+//       builder: (context){
+//         return StatefulBuilder(
+//           builder: (context,setStateDialog){
+//             return Dialog(
+//               child: SizedBox(
+//                 width: MediaQuery.of(context).size.width*0.9,
+//                 height: 400,
+//                 child: Column(
+//                   children: [
+
+//                     SizedBox(height: 20,),
+
+//                     Text(
+//                       "ジャンルを選択してください",
+//                       style: TextStyle(
+//                         fontSize: 20
+//                       ),
+//                     ),
+
+//                     SizedBox(height: 10,),
+
+//                     Expanded(
+//                       child: _genres.isEmpty 
+//                       ? Center(
+//                         child: Text(
+//                           "ジャンルが登録されていません",
+//                           style: TextStyle(
+//                             fontSize: 17,
+//                             color: Colors.grey
+//                           ),
+//                           ),
+//                       )
+//                       : Scrollbar( //ジャンルのリストが空でないならジャンル一覧を表示する
+//                         thumbVisibility: true,
+//                         child: ListView(
+//                           children: List.generate(
+//                             _genres.length,
+//                             (index){
+//                               return SwitchListTile( //スイッチタイル部分
+//                                 title: Text(_genres[index].name),
+//                                 value: genre_select_state[index],
+//                                 onChanged: (bool value){ //あるジャンルが選択されたときの処理
+//                                   setStateDialog((){
+//                                     //off→onになったとき
+//                                     if(value==true){
+//                                       //選択されているジャンルのidを保持しておくSet内にidを追加
+//                                       selected_genre_id.add(_genres[index].id);
+//                                     }
+//                                     //on→offになったとき
+//                                     else{
+//                                       selected_genre_id.remove(_genres[index].id);
+//                                     }
+//                                     //ダイアログを呼び出したときに仮で作成したboolのリストの中身を書き換える
+//                                     genre_select_state[index]=value;
+//                                   });
+//                                 },
+//                               );
+//                             }
+//                           ),
+//                         )
+//                       )
+//                     ),
+
+//                     SizedBox(height: 10,),
+
+//                     SizedBox( //保存ボタン
+//                       width: MediaQuery.of(context).size.width*0.4,
+//                       child: ElevatedButton(
+//                         onPressed: (){
+//                           //ジャンル表示テキストに表示する用のテキストを作成
+//                           //初期文字列
+//                           String genre_text_temp="";
+//                           for(int _id in selected_genre_id){
+//                             //選択されているジャンルのidから，文字列を作成
+//                             genre_text_temp += _genres.firstWhere((g) => g.id == _id).name; //データベースのデータをコピーしたリストからidが一致するものを探し出し，nameを取得する
+//                             //","で区切る
+//                             genre_text_temp += "，";
+//                           }
+
+//                           //最後の","を取る
+//                           if(genre_text_temp!=""){
+//                             genre_text_temp = genre_text_temp.substring(0 , genre_text_temp.length - 1 );
+//                           }
+
+//                           //もし文字列が空白のままなら，「ジャンルが選択されていません」に戻す
+//                           if(genre_text_temp == ""){
+//                             genre_text_temp = "ジャンルが選択されていません";
+//                           }
+
+//                           //選択されているジャンルを表示するTextの中身を書き換える
+//                           setState(() {
+//                             select_genre_text=genre_text_temp;
+//                           });
+                          
+//                           //戻る
+//                           Navigator.pop(context);
+//                           //テキストのフォーカスを外す
+//                           FocusScope.of(context).unfocus();
+//                         },
+//                         child: Text("保存")
+//                       ),
+//                     ),
+
+//                     SizedBox(height: 20,)
+//                   ],
+//                 ),
+//               ),
+//             );
+//           }
+//         );
+//       }
+//     );
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       children: [
+//         Container(
+//           height: 55,
+//           width: MediaQuery.of(context).size.width*0.9,
+//           decoration: BoxDecoration(
+//             border: Border.all(),
+//             borderRadius: BorderRadius.circular(7)
+//           ),
+//           child: Center(
+//             child: Text(
+//               select_genre_text,
+//               style: TextStyle(
+//                 fontSize: 17
+//               ),
+//             ),
+//           )
+          
+//         ),
+
+//         SizedBox(height: 8,), //----------------------------------------
+
+//         SizedBox(
+//           width: MediaQuery.of(context).size.width*0.9,
+//           child: ElevatedButton(
+//             onPressed: (){
+//                 select_genre(widget.isar, widget.genres);
+//             },
+//             child: Text(
+//               "ジャンル選択"
+//             )
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+
+//-----------------------------------話数入力欄--------------------------
 class InputFieldEpNum extends ConsumerStatefulWidget {
   const InputFieldEpNum({super.key});
 
@@ -476,7 +683,6 @@ class InputFieldEpNum extends ConsumerStatefulWidget {
   ConsumerState<InputFieldEpNum> createState() => _InputFieldEpNumState();
 }
 
-//-----------------------------------話数入力欄--------------------------
 class _InputFieldEpNumState extends ConsumerState<InputFieldEpNum> {
   //コントローラを登録
   final TextEditingController _epNumController = TextEditingController();

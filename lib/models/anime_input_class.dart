@@ -3,11 +3,11 @@
 import 'package:flutter/widgets.dart';
 
 enum Status{
-  before,
+  never,
   watching,
   complete,
-  stop,
-  pause
+  cancel,
+  interruption
 }
 
 class AnimeInputData {
@@ -22,7 +22,7 @@ class AnimeInputData {
   final String memo;
 
   AnimeInputData({
-    this.status = Status.before,
+    this.status = Status.never,
     this.title="",
     this.titleKana="",
     DateTime? date ,

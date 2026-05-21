@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-
+//providerに関するコードをインポート
 import 'package:anime_administration/providers/anime_input_provider.dart';
 //データベースに関するものをインポート
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 //登録ページ用のパーツを格納したコード
-import 'package:anime_administration/parts/registar_parts.dart';
+import 'package:anime_administration/parts/anime_registar_parts.dart';
 
 class AnimeRegistar extends ConsumerWidget{
   const AnimeRegistar({super.key});
@@ -18,11 +17,23 @@ class AnimeRegistar extends ConsumerWidget{
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("テスト1"),
-        leading: IconButton(
-          onPressed: (){},
+        title: Text("アニメ登録"),
+        leading: IconButton( //戻るボタン
+          onPressed: (){
+          },
           icon: Icon(Icons.arrow_back)
         ),
+        actions: [
+          TextButton(
+            onPressed: (){},
+            child: Text(
+              "保存",
+              style: TextStyle(
+                color: Colors.grey
+              ),
+            )
+          )
+        ],
       ),
       body: SingleChildScrollView(
         child: Align(
@@ -51,6 +62,11 @@ class AnimeRegistar extends ConsumerWidget{
 
               const SizedBox(height: 20,),//-----------------------------------------------------
 
+              //ジャンル選択ボタン
+              SelectedGenreText(),
+
+              const SizedBox(height: 20,),//-----------------------------------------------------
+
               //話数
               InputFieldEpNum(),
 
@@ -70,7 +86,7 @@ class AnimeRegistar extends ConsumerWidget{
               InputFieldMemo(),
 
               TextButton(
-                onPressed: (){print(animeInput.epTime);},
+                onPressed: (){print(animeInput.genreId);},
                 child: Text("テスト用")
               ),
               TextButton(
