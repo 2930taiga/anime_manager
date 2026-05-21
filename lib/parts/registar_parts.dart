@@ -1,18 +1,32 @@
+import 'package:anime_administration/models/anime_input_class.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:anime_administration/models/genre.dart';
+import 'package:anime_administration/providers/anime_input_provider.dart';
 
 //-----------------------------------ドロップダウンメニュー--------------------------
-class StatusDropDownMenu extends StatelessWidget {
+class StatusDropDownMenu extends ConsumerWidget {
+
   const StatusDropDownMenu({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.9,
         child: DropdownMenu(
           label: Text("ステータス"),
+          onSelected: (value){ //何かが選ばれたらproviderの値を書き換える 
+            if(value==null) return;
+
+            //数値をStatusのenumに変換
+            final selectedStatus=Status.values[value];
+            //providerを更新
+            ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(status: selectedStatus);
+            //正しい値が入力されているflagをtrueに
+            ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(status: true);
+          },
           dropdownMenuEntries: const[
             DropdownMenuEntry(value: 0, label: "未視聴"),
             DropdownMenuEntry(value: 1, label: "視聴中"),
@@ -25,29 +39,86 @@ class StatusDropDownMenu extends StatelessWidget {
   }
 }
 
-//-----------------------------------TextField--------------------------
-class InputField extends StatelessWidget {
-  //入力フォームに表示するラベル
-  final String label;
-  //テキストコントローラ
-  final TextEditingController controller;
+//-----------------------------------タイトル--------------------------
+class InputFieldTitle extends ConsumerStatefulWidget {
+  const InputFieldTitle({super.key});
 
-  const InputField({
-    super.key,
-    required this.label,
-    required this.controller
-  });
+  @override
+  ConsumerState<InputFieldTitle> createState() => _InputFieldTitleState();
+}
+
+class _InputFieldTitleState extends ConsumerState<InputFieldTitle> {
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width*0.9,
-      height: 60,
       child: TextField(
-        controller: controller,
+        onChanged: (text){
+          //入力された文字を判定
+          //空白でなければproviderを更新
+          if(text!=""){
+            ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(title: text);
+            setState(() {
+              ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(title: true);
+            });
+          }
+          //空白なら警告を出す
+          else{
+            setState(() {
+              ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(title: false);
+            });
+          }
+        },
         decoration: InputDecoration(
+          errorText: ref.read(animeCorrectInputProvider.notifier).state.title
+          ? null
+          : "タイトルを入力してください",
           border: OutlineInputBorder(),
-          labelText: label,
+          labelText: "タイトル",
+        ),
+      ),
+    );
+  }
+}
+
+//-----------------------------------タイトル（かな）--------------------------
+class InputFieldTitleKana extends ConsumerStatefulWidget {
+  const InputFieldTitleKana({super.key});
+
+  @override
+  ConsumerState<InputFieldTitleKana> createState() => _InputFieldTitleKanaState();
+}
+
+class _InputFieldTitleKanaState extends ConsumerState<InputFieldTitleKana> {
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width*0.9,
+      child: TextField(
+        onChanged: (text){
+          //入力された文字を判定
+          //空白でなければproviderを更新
+          if(text!=""){
+            ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(titleKana: text);
+            setState(() {
+              ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(titleKana: true);
+            });
+          }
+          //空白なら警告を出す
+          else{
+            setState(() {
+              ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(titleKana: false);
+            });
+          }
+        },
+        decoration: InputDecoration(
+          errorText: ref.read(animeCorrectInputProvider.notifier).state.titleKana
+          ? null
+          : "タイトル（かな）を入力してください",
+          border: OutlineInputBorder(),
+          labelText: "タイトル（かな）",
         ),
       ),
     );
@@ -333,81 +404,146 @@ class _SelectedGenreTextState extends State<SelectedGenreText> {
   }
 }
 
-//-----------------------------------話数入力ボタン--------------------------
-class EpNumInputButtons extends StatelessWidget {
-  //テキストコントローラを登録
-  final TextEditingController controller;
+class InputFieldEpNum extends ConsumerStatefulWidget {
+  const InputFieldEpNum({super.key});
 
-  const EpNumInputButtons({super.key, required this.controller});
+  @override
+  ConsumerState<InputFieldEpNum> createState() => _InputFieldEpNumState();
+}
+
+//-----------------------------------話数入力欄--------------------------
+class _InputFieldEpNumState extends ConsumerState<InputFieldEpNum> {
+  //コントローラを登録
+  final TextEditingController _epNumController = TextEditingController();
+  //正しい値が入力されているかどうかを判定するflag
+  //あくまでTextFieldにエラーメッセージを表示するかどうかを判定するためのflag．保存時に確認する用ではない
+  bool correctInputFlag=true;
+
+  @override
+  void dispose(){
+    _epNumController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.9,
-      child: Row(
-        children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.2866666,
-            child: ElevatedButton(
-              onPressed: (){
-                controller.text="12";
-                //TextFieldのフォーカスを外す
-                FocusManager.instance.primaryFocus?.unfocus();
-              }, 
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                )
-              ),
-              child: Text("12話")
-              )
+
+    return Column(
+      children: [
+        SizedBox(
+          width: MediaQuery.of(context).size.width*0.9,
+          child: TextField(
+            onChanged: (text){
+              //入力された値を読み取る
+              int? _inputValue = int.tryParse(text);
+              //正しい値が入力されているかを判定する
+              if(_inputValue!=null){ //正しい
+                ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(epNum: int.tryParse(text));
+                setState(() {
+                  ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epNum: true);
+                });
+              }
+              else{ //正しくない
+                setState(() {
+                  ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epNum: false);
+                });
+              }
+            },
+            controller: _epNumController,
+            decoration: InputDecoration(
+              errorText: ref.read(animeCorrectInputProvider.notifier).state.epNum
+              ? null
+              : "正しい値を入力してください",
+              border: OutlineInputBorder(),
+              labelText: "話数",
+            ),
           ),
+        ),
 
-          SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
-
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.2866666,
-            child: ElevatedButton(
-              onPressed: (){
-                controller.text="24";
-                //TextFieldのフォーカスを外す
-                FocusManager.instance.primaryFocus?.unfocus();
-              }, 
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                )
+        SizedBox(
+          width: MediaQuery.of(context).size.width * 0.9,
+          child: Row(
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.2866666,
+                child: ElevatedButton(
+                  onPressed: (){
+                    //TextFieldのフォーカスを外す
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    //providerの値を変更
+                    ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(epNum: 12);
+                    //コントローラの中身を変える
+                    _epNumController.text="12";
+                    //ボタンを押すと必ず正しい値が入るので，flagをtrueにする
+                    setState(() {
+                      ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epNum: true);
+                    });
+                  }, 
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    )
+                  ),
+                  child: Text("12話")
+                  )
               ),
-              child: Text("24話")
-              )
-          ),
 
-          SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
+              SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
 
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.2866666,
-            child: ElevatedButton(
-              onPressed: () async{
-                //ボタン選択時の入力を保持しておく
-                String text_temp=controller.text;
-                final result = (await inputEpNum(context)).toString();
-                if(result!="null"){
-                  controller.text=result;
-                }
-                else{
-                  controller.text=text_temp;
-                }
-              }, 
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                )
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.2866666,
+                child: ElevatedButton(
+                  onPressed: (){
+                    //TextFieldのフォーカスを外す
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    //providerの値を変更
+                    ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(epNum: 24);
+                    //コントローラの中身を変える
+                    _epNumController.text="24";
+                    //ボタンを押すと必ず正しい値が入るので，flagをtrueにする
+                    setState(() {
+                      ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epNum: true);
+                    });
+                  }, 
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    )
+                  ),
+                  child: Text("24話")
+                  )
               ),
-              child: Text("話数選択")
-              )
+
+              SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
+
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.2866666,
+                child: ElevatedButton(
+                  onPressed: () async{
+                    final result = (await inputEpNum(context)).toString();
+                    if(result!="null"){
+                      //providerの値を変更
+                      ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(epNum: int.tryParse(result));
+                      //コントローラの中身を変える
+                      _epNumController.text=result.toString();
+                      //ボタンを押すと必ず正しい値が入るので，flagをtrueにする
+                      setState(() {
+                        ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epNum: true);
+                      });
+                    }
+                  }, 
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    )
+                  ),
+                  child: Text("話数選択")
+                  )
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -471,6 +607,7 @@ Future<int?> inputEpNum(BuildContext context) async{
                             onPressed: (){
                               Navigator.pop(context,_pickerSelected_EpNum); //前の画面に戻りつつ，値を返す
                               FocusManager.instance.primaryFocus?.unfocus(); //テキストのフォーカスを外す
+                              //print("保存された");
                             },
                             child: Text(
                               "保存",
@@ -496,7 +633,7 @@ Future<int?> inputEpNum(BuildContext context) async{
                 onSelectedItemChanged: (index){
                   _pickerSelected_EpNum=index;
                 },
-                children: List.generate(100,(index){
+                children: List.generate(10000,(index){
                   return Center(
                     child: Text(
                       "${index}"
@@ -512,81 +649,137 @@ Future<int?> inputEpNum(BuildContext context) async{
   );
 }
 
-//-----------------------------------時間入力用の関数--------------------------
-class EpTimeInputButtons extends StatelessWidget {
-  //テキストコントローラを登録
-  final TextEditingController controller;
+//-----------------------------------時間入力用のTextField--------------------------
+class InputFieldEpTime extends ConsumerStatefulWidget {
+  const InputFieldEpTime({super.key});
 
-  const EpTimeInputButtons({super.key, required this.controller});
+  @override
+  ConsumerState<InputFieldEpTime> createState() => _InputFieldEpTimeState();
+}
+
+class _InputFieldEpTimeState extends ConsumerState<InputFieldEpTime> {
+  //テキストコントローラを作成
+  final TextEditingController _epTimeController = TextEditingController();
+  //正しい値が入力されているかどうかを判定するflag
+  //あくまでTextFieldにエラーメッセージを表示するかどうかを判定するためのflag．保存時に確認する用ではない
+  bool correctInputFlag=true;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.9,
-      child: Row(
-        children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.2866666,
-            child: ElevatedButton(
-              onPressed: (){
-                controller.text = inputEpTimeText(0, 24);
-              }, 
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                )
-              ),
-              child: Text("24分")
-              )
-          ),
-
-          SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
-
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.2866666,
-            child: ElevatedButton(
-              onPressed: (){
-                controller.text = inputEpTimeText(0, 12);
-              }, 
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                )
-              ),
-              child: Text("12分")
-              )
-          ),
-
-          SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
-
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.2866666,
-            child: ElevatedButton(
-              onPressed: ()async {
-                //入力時点での入力値を保持しておく
-                String text_temp=controller.text;
-                final result=await inputEpTime(context);
-                if(result !=null){
-                  controller.text=result;
+    return Column(
+      children: [
+        SizedBox(
+          width: MediaQuery.of(context).size.width*0.9,
+          child: TextField(
+            onChanged: (text){
+              //入力された値 を読み取る
+                if(int.tryParse(text)==null){ //正しくない
+                  setState(() {
+                    ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epTime: false);
+                  });
                 }
-                else{
-                  controller.text=text_temp;
+                else{ //正しい
+                  setState(() {
+                    ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epTime: true);
+                  });
                 }
-              }, 
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                )
-              ),
-              child: Text("時間選択")
-              )
+              },
+            controller: _epTimeController,
+            decoration: InputDecoration(
+              errorText: ref.read(animeCorrectInputProvider.notifier).state.epTime
+              ? null
+              : "正しい値を入力してください",
+              border: OutlineInputBorder(),
+              labelText: "1話あたりの時間(分)",
+            ),
           ),
-        ],
-      ),
+        ),
+
+        SizedBox(
+          width: MediaQuery.of(context).size.width * 0.9,
+          child: Row(
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.2866666,
+                child: ElevatedButton(
+                  onPressed: (){
+                    _epTimeController.text = "24";
+                    //providerの値を書き換える
+                    ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(epTime: 24);
+                    //ボタンを押すと必ず正しい値が入るので，flagをtrueにする
+                    setState(() {
+                      ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epTime: true);
+                    });
+                  }, 
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    )
+                  ),
+                  child: Text("24分")
+                  )
+              ),
+
+              SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
+
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.2866666,
+                child: ElevatedButton(
+                  onPressed: (){
+                    _epTimeController.text = "12";
+                    //providerの値を書き換える
+                    ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(epTime: 12);
+                    //ボタンを押すと必ず正しい値が入るので，flagをtrueにする
+                    setState(() {
+                      ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epTime: true);
+                    });
+                  }, 
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    )
+                  ),
+                  child: Text("12分")
+                  )
+              ),
+
+              SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
+
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.2866666,
+                child: ElevatedButton(
+                  onPressed: ()async {
+                    //入力時点での入力値を保持しておく
+                    String text_temp=_epTimeController.text;
+                    final result=await inputEpTime(context);
+                    if(result !=null){
+                      _epTimeController.text=result;
+                      //providerの値を書き換える
+                      ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(epTime: int.tryParse(result));
+                      //ボタンを押すと必ず正しい値が入るので，flagをtrueにする
+                      setState(() {
+                        ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epTime: true);
+                      });
+                    }
+                    else{
+                      _epTimeController.text=text_temp;
+                    }
+                  }, 
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    )
+                  ),
+                  child: Text("時間選択")
+                  )
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
-
 
 //-----------------------------------時間入力用の関数--------------------------
 //ボタンを押すと時間入力のスロットを表示する関数を宣言
@@ -650,7 +843,7 @@ Future<String?> inputEpTime(BuildContext context) async{
                         child: Center(
                           child: TextButton( //時間選択画面の保存ボタン部分
                             onPressed: (){
-                              _pickerSelected_text = inputEpTimeText(_pickerSelected_Hour,_pickerSelected_Min);
+                              _pickerSelected_text = (_pickerSelected_Hour*60 + _pickerSelected_Min).toString();
                               Navigator.pop(context,_pickerSelected_text); //画面を戻りつつ，値を返す
                               FocusScope.of(context).unfocus(); //テキストのフォーカスを外す
                             },
@@ -730,22 +923,16 @@ Future<String?> inputEpTime(BuildContext context) async{
   );
 }
 
-//-----------------------------------時間入力用の関数--------------------------
-//任意の時間（時:分）を自動で入力する関数を宣言
-  String inputEpTimeText(int epHour, int epMin){
-    return "${epHour}:${epMin.toString().padLeft(2,"0")}"; //話数を自動で入力する
-  }
-
 
 //-----------------------------------評価入力用の関数--------------------------
-class EvaluationIcons extends StatefulWidget {
+class EvaluationIcons extends ConsumerStatefulWidget {
   const EvaluationIcons({super.key});
 
   @override
-  State<EvaluationIcons> createState() => _EvaluationIconsState();
+  ConsumerState<EvaluationIcons> createState() => _EvaluationIconsState();
 }
 
-class _EvaluationIconsState extends State<EvaluationIcons> {
+class _EvaluationIconsState extends ConsumerState<EvaluationIcons> {
   //初期値を宣言
   int _evaluation=0;
   
@@ -769,6 +956,10 @@ class _EvaluationIconsState extends State<EvaluationIcons> {
               setState(() {
                 _evaluation=1;
               });
+              //providerの評価を書き換える
+              ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(evaluation: _evaluation);
+              //正しく入力されているflagをtrueに
+              ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(evaluation: true);
             },
             icon: const Icon(Icons.star),
             iconSize: 35,
@@ -780,6 +971,10 @@ class _EvaluationIconsState extends State<EvaluationIcons> {
               setState(() {
                 _evaluation=2;
               });
+              //providerの評価を書き換える
+              ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(evaluation: _evaluation);
+              //正しく入力されているflagをtrueに
+              ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(evaluation: true);
             },
             icon: const Icon(Icons.star),
             iconSize: 35,
@@ -791,6 +986,10 @@ class _EvaluationIconsState extends State<EvaluationIcons> {
               setState(() {
                 _evaluation=3;
               });
+              //providerの評価を書き換える
+              ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(evaluation: _evaluation);
+              //正しく入力されているflagをtrueに
+              ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(evaluation: true);
             },
             icon: const Icon(Icons.star),
             iconSize: 35,
@@ -802,6 +1001,10 @@ class _EvaluationIconsState extends State<EvaluationIcons> {
               setState(() {
                 _evaluation=4;
               });
+              //providerの評価を書き換える
+              ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(evaluation: _evaluation);
+              //正しく入力されているflagをtrueに
+              ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(evaluation: true);
             },
             icon: const Icon(Icons.star),
             iconSize: 35,
@@ -813,12 +1016,43 @@ class _EvaluationIconsState extends State<EvaluationIcons> {
               setState(() {
                 _evaluation=5;
               });
+              //providerの評価を書き換える
+              ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(evaluation: _evaluation);
+              //正しく入力されているflagをtrueに
+              ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(evaluation: true);
             },
             icon: const Icon(Icons.star),
             iconSize: 35,
             color:_evaluation>=5? Color.fromARGB(255, 255, 217, 0):Colors.grey,
           ),
         ],
+      ),
+    );
+  }
+}
+
+//-----------------------------------メモ--------------------------
+//改行ができる
+class InputFieldMemo extends ConsumerWidget {
+  const InputFieldMemo({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width*0.9,
+      //height: 60,
+      child: TextField(
+        onChanged: (text){
+          ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(memo: text);
+        },
+        keyboardType: TextInputType.multiline,
+        maxLines: null,
+        decoration: InputDecoration(
+          border: OutlineInputBorder(),
+          labelText: "メモ",
+        ),
       ),
     );
   }

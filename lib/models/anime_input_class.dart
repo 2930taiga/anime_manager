@@ -1,5 +1,7 @@
 //登録画面で入力中のデータを保持しておくクラス
 
+import 'package:flutter/widgets.dart';
+
 enum Status{
   before,
   watching,
@@ -43,6 +45,56 @@ class AnimeInputData {
     String? memo,
   }) {
     return AnimeInputData(
+      status: status ?? this.status,
+      title: title ?? this.title,
+      titleKana: titleKana ?? this.titleKana,
+      date: date ?? this.date,
+      genreId: genreId ?? this.genreId,
+      epNum: epNum ?? this.epNum,
+      epTime: epTime ?? this.epTime,
+      evaluation: evaluation ?? this.evaluation,
+      memo: memo ?? this.memo,
+    );
+  }
+}
+
+//正しい値を入力しているかを判定するクラス
+@immutable
+class AnimeCorrectInputData {
+  final bool status;
+  final bool title;
+  final bool titleKana;
+  final bool date;
+  final bool genreId;
+  final bool epNum;
+  final bool epTime;
+  final bool evaluation;
+  final bool memo;
+
+  const AnimeCorrectInputData({
+    this.status = false,
+    this.title = false,
+    this.titleKana= false,
+    this.date = false,
+    this.genreId = false,
+    this.epNum = false,
+    this.epTime = false,
+    this.evaluation = false,
+    this.memo = false
+  });
+
+  AnimeCorrectInputData copyWith({
+    bool? status,
+    bool? title,
+    bool? titleKana,
+    bool? date,
+    bool? genreId,
+    bool? epNum,
+    bool? epTime,
+    bool? evaluation,
+    bool? memo,
+  }) {
+    return AnimeCorrectInputData(
       status: status ?? this.status,
       title: title ?? this.title,
       titleKana: titleKana ?? this.titleKana,
