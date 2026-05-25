@@ -81,7 +81,7 @@ class AnimeCorrectInputData {
     this.epNum = false,
     this.epTime = false,
     this.evaluation = false,
-    this.memo = false
+    this.memo = true
   });
 
   AnimeCorrectInputData copyWith({

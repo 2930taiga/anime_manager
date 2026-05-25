@@ -26,51 +26,92 @@ class AnimeRegistar extends ConsumerWidget{
       else{ //保存できない
         //入力に不備がある箇所を取得
         List<String> erroeParameters = animeCorrectInput.invalidFields;
-        //エラーパラメータ
-        List<String> errorParametorText=[];
 
-        //エラーメッセージを作成
+        //パラメータのリスト
+        List<String> parametors = [
+          "status",
+          "title",
+          "titleKana",
+          "date",
+          "genre",
+          "epNum",
+          "epTime",
+          "evaluation",
+          "memo"
+        ];
+
+        //パラメータのリスト（日本語）
+        List<String> parametorsJP = [
+          "ステータス",
+          "タイトル",
+          "タイトル（かな）",
+          "日付",
+          "ジャンル",
+          "話数",
+          "1話あたりの時間",
+          "評価",
+          "メモ"
+        ];
+
+        //エラーのパラメータ
+        Map<String,bool> errorParametorFlags = {
+          "status" : true,
+          "title" : true,
+          "titleKana" : true,
+          "date" : true,
+          "genre" : true,
+          "epNum" : true,
+          "epTime" : true,
+          "evaluation" : true,
+          "memo" : true
+        };
+
+        //エラー判定を行い，エラーメッセージを作成
         if(erroeParameters.contains("status")){ //ステータスに不備
-          errorParametorText.add("ステータス");
+          errorParametorFlags["status"]=false;
         }
         if(erroeParameters.contains("title")){ //タイトルに不備
-          errorParametorText.add("タイトル");
+          errorParametorFlags["title"]=false;
         }
         if(erroeParameters.contains("titleKana")){ //タイトル（かな）に不備
-          errorParametorText.add("タイトル（かな）");
+          errorParametorFlags["titleKana"]=false;
         }
-        if(erroeParameters.contains("genre")){ //ジャンルに不備
-          errorParametorText.add("ジャンル");
+        if(erroeParameters.contains("genreId")){ //ジャンルに不備
+          errorParametorFlags["genre"]=false;
         }
         if(erroeParameters.contains("date")){ //日付に不備
-          errorParametorText.add("日付");
+          errorParametorFlags["date"]=false;
         }
         if(erroeParameters.contains("epNum")){ //話数に不備
-          errorParametorText.add("話数");
+          errorParametorFlags["epNum"]=false;
         }
         if(erroeParameters.contains("epTime")){ //時間に不備
-          errorParametorText.add("1話あたりの時間（分）");
+          errorParametorFlags["epTime"]=false;
         }
         if(erroeParameters.contains("evaluation")){ //評価に不備
-          errorParametorText.add("評価");
+          errorParametorFlags["evaluation"]=false;
         }
 
         //エラーメッセージに表示するエラー項目を作成
         List<Widget> errorParameterWidgets = 
-          List.generate(errorParametorText.length,(index){
+          List.generate(errorParametorFlags.length,(index){
             return SizedBox(
               child: Row(
                 children: [
                   Icon(
-                    Icons.highlight_off,
-                    color: Colors.red,
+                    errorParametorFlags[parametors[index]] ?? false
+                    ? Icons.done
+                    : Icons.close,
+                    color: errorParametorFlags[parametors[index]] ?? false
+                    ? Colors.lightGreen
+                    :Colors.red,
                   ),
 
                   SizedBox(width: MediaQuery.of(context).size.width*0.02,),
 
                   Expanded(
                     child: Text(
-                      errorParametorText[index],
+                      parametorsJP[index],
                       style: TextStyle(
                         fontSize: 17
                       ),
@@ -87,7 +128,7 @@ class AnimeRegistar extends ConsumerWidget{
           return Dialog(
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.9,
-              height: 400,
+              height: 450,
               child: Column(
                 children: [
 
@@ -96,7 +137,7 @@ class AnimeRegistar extends ConsumerWidget{
                   Text( //タイトル
                     "エラー",
                     style: TextStyle(
-                      fontSize: 25,
+                      fontSize: 27,
                       color: Texts.errorMessageColor,
                       fontWeight: FontWeight.bold
                     ),
@@ -105,10 +146,10 @@ class AnimeRegistar extends ConsumerWidget{
                   SizedBox(height: 15,),
 
                   Text( //サブメッセージ
-                    "以下の項目に有効な値を入力してください",
+                    "入力を確認してください",
                     style: TextStyle(
                       color: Texts.subMessageColor,
-                      fontSize: 15
+                      fontSize: 17
                     ),
                   ),
                   
@@ -117,7 +158,7 @@ class AnimeRegistar extends ConsumerWidget{
                   Expanded( //エラー項目を表示する
                     child: Row(
                       children: [
-                        SizedBox(width: MediaQuery.of(context).size.width * 0.05,),
+                        SizedBox(width: MediaQuery.of(context).size.width * 0.1,),
 
                         Expanded(
                         child: Column(
@@ -167,6 +208,7 @@ class AnimeRegistar extends ConsumerWidget{
         title: Text("アニメ登録"),
         leading: IconButton( //戻るボタン
           onPressed: (){
+            Navigator.pop(context);
           },
           icon: Icon(Icons.arrow_back)
         ),
