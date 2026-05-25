@@ -1,3 +1,4 @@
+import 'package:anime_administration/pages/main_navigation_pages/setting/genre_registar.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:anime_administration/models/genre.dart';
@@ -462,6 +463,20 @@ class _ViewGenreState extends State<ViewGenre> {
               }
               )
             ).toList(),
+      ),
+      //登録ボタン
+      floatingActionButton: Editting
+      ? null
+      : FloatingActionButton(
+        onPressed: (){
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => GenreRegistar(initialNewAdd: true)
+            )
+          );
+        },
+        child: Icon(Icons.add),
       ),
     );
   }

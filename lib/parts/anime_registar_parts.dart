@@ -279,10 +279,6 @@ Future<DateTime> inputDate_select(BuildContext context) async {
       DateTime date= picked;
 
       return date;
-      //日付の見た目をフォーマット
-      // String FormattedDate = "${date.year}/${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}";
-
-      // return FormattedDate;
     }
 
     //もし何も入力されていなければ空白を返す
