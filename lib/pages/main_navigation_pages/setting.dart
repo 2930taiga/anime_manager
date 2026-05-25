@@ -22,8 +22,11 @@ class _SettingPageState extends State<SettingPage>{
       ),
       body: ListView(
         children: [
+          SizedBox(height: 7,),
+
           ListTile(
             leading: Icon(Icons.settings),
+            trailing: Icon(Icons.chevron_right),
             title: Text(
               "一般",
               style: TextStyle(
@@ -39,6 +42,7 @@ class _SettingPageState extends State<SettingPage>{
           Center(
             child: ListTile(
               leading: Icon(Icons.view_week_outlined),
+              trailing: Icon(Icons.chevron_right),
               title: Text(
                 "ジャンル",
                 style: TextStyle(
@@ -62,6 +66,7 @@ class _SettingPageState extends State<SettingPage>{
           Center(
             child: ListTile(
               leading: Icon(Icons.palette_outlined),
+              trailing: Icon(Icons.chevron_right),
               title: Text(
                 "テーマカラー",
                 style: TextStyle(
@@ -78,6 +83,7 @@ class _SettingPageState extends State<SettingPage>{
           Center(
             child: ListTile(
               leading: Icon(Icons.abc),
+              trailing: Icon(Icons.chevron_right),
               title: Text(
                 "文字サイズ",
                 style: TextStyle(
