@@ -58,6 +58,7 @@ class AnimeInputData {
   }
 }
 
+
 //正しい値を入力しているかを判定するクラス
 @immutable
 class AnimeCorrectInputData {
@@ -106,4 +107,36 @@ class AnimeCorrectInputData {
       memo: memo ?? this.memo,
     );
   }
+
+  //全てtrueかを判定する
+  bool get isInvalid => 
+  status &&
+  title &&
+  titleKana &&
+  date &&
+  genreId &&
+  epNum &&
+  epTime &&
+  evaluation &&
+  memo;
+
+  //どこがfalseかを取得する
+  Map<String, bool> get validationMap => {
+    'status': status,
+    'title': title,
+    'titleKana': titleKana,
+    'date': date,
+    'genreId': genreId,
+    'epNum': epNum,
+    'epTime': epTime,
+    'evaluation': evaluation,
+    'memo': memo,
+  };
+
+  // falseの項目だけ抽出
+  List<String> get invalidFields =>
+    validationMap.entries
+      .where((e) => e.value == false)
+      .map((e) => e.key)
+      .toList();
 }
