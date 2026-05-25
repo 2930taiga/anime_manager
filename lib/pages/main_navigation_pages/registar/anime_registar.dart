@@ -86,11 +86,15 @@ class AnimeRegistar extends ConsumerWidget{
               InputFieldMemo(),
 
               TextButton(
-                onPressed: (){print(animeInput.genreId);},
+                onPressed: (){
+                  print(animeInput.genreId);
+                },
                 child: Text("テスト用")
               ),
               TextButton(
-                onPressed: (){print(animeCorrectInput.date);},
+                onPressed: (){
+                  print(animeCorrectInput.date);
+                },
                 child: Text("テスト用1")
               ),
             ],

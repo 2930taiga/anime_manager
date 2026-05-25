@@ -7,6 +7,7 @@ import 'package:anime_administration/models/genre.dart';
 import 'package:anime_administration/providers/anime_input_provider.dart';
 import 'package:anime_administration/providers/isar_provider.dart';
 import 'package:anime_administration/models/genre.dart';
+import 'package:intl/intl.dart';
 
 //-----------------------------------ドロップダウンメニュー--------------------------
 class StatusDropDownMenu extends ConsumerWidget {
@@ -50,32 +51,32 @@ class InputFieldTitle extends ConsumerStatefulWidget {
 }
 
 class _InputFieldTitleState extends ConsumerState<InputFieldTitle> {
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width*0.9,
-      child: TextField(
-        onChanged: (text){
-          //入力された文字を判定
-          //空白でなければproviderを更新
-          if(text!=""){
-            ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(title: text);
-            setState(() {
-              ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(title: true);
-            });
+      child: TextFormField(
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        validator: (text){
+          if(text=="" || text==null){ //入力が正しくない
+            return "タイトルを入力してください";
           }
-          //空白なら警告を出す
-          else{
-            setState(() {
-              ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(title: false);
-            });
+          else{ //入力が正しい
+            return null;
+          }
+        },
+        onChanged: (text){
+          if(text==""){ //入力が正しくない
+            //providerのflagを書き換える
+            ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(title: text);
+            ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(title: false);
+          }
+          else{ //入力が正しい
+            //providerのflagを書き換える
+            ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(title: true);
           }
         },
         decoration: InputDecoration(
-          errorText: ref.read(animeCorrectInputProvider.notifier).state.title
-          ? null
-          : "タイトルを入力してください",
           border: OutlineInputBorder(),
           labelText: "タイトル",
         ),
@@ -98,27 +99,28 @@ class _InputFieldTitleKanaState extends ConsumerState<InputFieldTitleKana> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width*0.9,
-      child: TextField(
-        onChanged: (text){
-          //入力された文字を判定
-          //空白でなければproviderを更新
-          if(text!=""){
-            ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(titleKana: text);
-            setState(() {
-              ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(titleKana: true);
-            });
+      child: TextFormField(
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        validator: (text){
+          if(text=="" || text==null){ //入力が正しくない
+            return "タイトル（かな）を入力してください";
           }
-          //空白なら警告を出す
           else{
-            setState(() {
-              ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(titleKana: false);
-            });
+            return null;
+          }
+        },
+        onChanged: (text){
+          if(text==""){ //入力が正しくない
+            //providerのflagを書き換える
+            ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(titleKana: false);
+          }
+          else{
+            //providerの値を更新
+            ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(titleKana: text);
+            ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(titleKana: true);
           }
         },
         decoration: InputDecoration(
-          errorText: ref.read(animeCorrectInputProvider.notifier).state.titleKana
-          ? null
-          : "タイトル（かな）を入力してください",
           border: OutlineInputBorder(),
           labelText: "タイトル（かな）",
         ),
@@ -152,25 +154,38 @@ class _InputFieldDateState extends ConsumerState<InputFieldDate> {
       children: [
         SizedBox(
           width: MediaQuery.of(context).size.width*0.9,
-          child: TextField(
+          child: TextFormField(
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: (text){
+              //正しい入力がされているかを判定
+              if(text!=null){
+                try{
+                  //正しい値が入力されていないとここでエラーになる
+                  DateFormat("yyyy/MM/dd").parseStrict(text);
+                  return null;
+                }
+                catch(e){
+                  //正しい値が入力されていない
+                  return "正しい値を入力してください";
+                }
+              }
+            },
             onChanged: (text){
-              //有効な値が入力されているかを調べる
-              if(text.split("/").length==3){ //YYYY/MM/DDの形式で書かれているかをチェック
-                // setState((){
-                //   ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(date: true);
-                // });
-              }
-              else{
-                setState((){
-                  ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(date: false);
-                });
-              }
+              //正しい入力がされているかを判定
+                try{
+                  //正しい値が入力されていないとここでエラーになる
+                  DateTime inputDate = DateFormat("yyyy/MM/DD").parseStrict(text);
+                  //正しい値が入力されているならproviderの値を更新
+                  ref.read(animeInputProvider.notifier).state = ref.read(animeInputProvider).copyWith(date: inputDate);
+                  ref.read(animeCorrectInputProvider.notifier).state = ref.read(animeCorrectInputProvider).copyWith(date: true);
+                }
+                catch(e){
+                  //正しい値が入力されていない
+                  ref.read(animeCorrectInputProvider.notifier).state = ref.read(animeCorrectInputProvider).copyWith(date: true);
+                }
             },
             controller: _dateController,
             decoration: InputDecoration(
-              errorText: ref.read(animeCorrectInputProvider.notifier).state.date
-              ? null
-              : "有効な値を入力してください",
               border: OutlineInputBorder(),
               labelText: "日付",
             ),
@@ -194,9 +209,7 @@ class _InputFieldDateState extends ConsumerState<InputFieldDate> {
                     //providerに値を入れる
                     ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(date: selectedDate);
                     //ボタンを押すと必ず正しい値が入力されるので，flagをtrueにする
-                    setState((){
-                      ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(date: true);
-                    });
+                    ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(date: true);
                   }, 
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
@@ -222,9 +235,7 @@ class _InputFieldDateState extends ConsumerState<InputFieldDate> {
                     //providerに値を入れる
                     ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(date: selectedDate);
                     //ボタンを押すと必ず正しい値が入力されるので，flagをtrueにする
-                    setState((){
-                      ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(date: true);
-                    });
+                    ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(date: true);
                   }, 
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
@@ -483,197 +494,6 @@ class _SelectedGenreTextState extends ConsumerState<SelectedGenreText> {
     );
   }
 }
-// //選択済ジャンルを表示するText
-// class SelectedGenreText extends StatefulWidget {
-//   //データベース
-//   final Isar isar;
-//   //ジャンルのリスト
-//   final List<Genre> genres;
-
-//   const SelectedGenreText({super.key,required this.isar, required this.genres});
-
-//   @override
-//   State<SelectedGenreText> createState() => _SelectedGenreTextState();
-// }
-
-// class _SelectedGenreTextState extends State<SelectedGenreText> {
-//   //選択されているジャンル欄に表示するテキスト
-//   String select_genre_text="ジャンルが選択されていません";
-//   //選択されているジャンルのidを保持しておくリストを宣言
-//   Set<int> selected_genre_id={};
-
-//   //ジャンル選択画面を表示させる関数
-//   Future<void> select_genre(Isar isar, List _genres) async{
-//     //ボタンの初期状態を読み取る
-//     //for文が何回回ったかカウントする変数を用意
-//     int i =0;
-//     //まずは中身が全てfalseのリストを用意
-//     List<bool> genre_select_state = List.filled(_genres.length, false);
-//     //selected_genre_idにそのidが含まれていたらfalse→trueに書き換える
-//     for (Genre genre_instance in _genres){
-//       //ジャンルのインスタンスのidが選ばれているジャンルのidを保持するリストに含まれているかを確認
-//       if(selected_genre_id.contains(genre_instance.id)){
-//         genre_select_state[i]=true;
-//       }
-//       //周回をカウント
-//       i=i+1;
-//     }
-
-//     showDialog(
-//       context: context,
-//       builder: (context){
-//         return StatefulBuilder(
-//           builder: (context,setStateDialog){
-//             return Dialog(
-//               child: SizedBox(
-//                 width: MediaQuery.of(context).size.width*0.9,
-//                 height: 400,
-//                 child: Column(
-//                   children: [
-
-//                     SizedBox(height: 20,),
-
-//                     Text(
-//                       "ジャンルを選択してください",
-//                       style: TextStyle(
-//                         fontSize: 20
-//                       ),
-//                     ),
-
-//                     SizedBox(height: 10,),
-
-//                     Expanded(
-//                       child: _genres.isEmpty 
-//                       ? Center(
-//                         child: Text(
-//                           "ジャンルが登録されていません",
-//                           style: TextStyle(
-//                             fontSize: 17,
-//                             color: Colors.grey
-//                           ),
-//                           ),
-//                       )
-//                       : Scrollbar( //ジャンルのリストが空でないならジャンル一覧を表示する
-//                         thumbVisibility: true,
-//                         child: ListView(
-//                           children: List.generate(
-//                             _genres.length,
-//                             (index){
-//                               return SwitchListTile( //スイッチタイル部分
-//                                 title: Text(_genres[index].name),
-//                                 value: genre_select_state[index],
-//                                 onChanged: (bool value){ //あるジャンルが選択されたときの処理
-//                                   setStateDialog((){
-//                                     //off→onになったとき
-//                                     if(value==true){
-//                                       //選択されているジャンルのidを保持しておくSet内にidを追加
-//                                       selected_genre_id.add(_genres[index].id);
-//                                     }
-//                                     //on→offになったとき
-//                                     else{
-//                                       selected_genre_id.remove(_genres[index].id);
-//                                     }
-//                                     //ダイアログを呼び出したときに仮で作成したboolのリストの中身を書き換える
-//                                     genre_select_state[index]=value;
-//                                   });
-//                                 },
-//                               );
-//                             }
-//                           ),
-//                         )
-//                       )
-//                     ),
-
-//                     SizedBox(height: 10,),
-
-//                     SizedBox( //保存ボタン
-//                       width: MediaQuery.of(context).size.width*0.4,
-//                       child: ElevatedButton(
-//                         onPressed: (){
-//                           //ジャンル表示テキストに表示する用のテキストを作成
-//                           //初期文字列
-//                           String genre_text_temp="";
-//                           for(int _id in selected_genre_id){
-//                             //選択されているジャンルのidから，文字列を作成
-//                             genre_text_temp += _genres.firstWhere((g) => g.id == _id).name; //データベースのデータをコピーしたリストからidが一致するものを探し出し，nameを取得する
-//                             //","で区切る
-//                             genre_text_temp += "，";
-//                           }
-
-//                           //最後の","を取る
-//                           if(genre_text_temp!=""){
-//                             genre_text_temp = genre_text_temp.substring(0 , genre_text_temp.length - 1 );
-//                           }
-
-//                           //もし文字列が空白のままなら，「ジャンルが選択されていません」に戻す
-//                           if(genre_text_temp == ""){
-//                             genre_text_temp = "ジャンルが選択されていません";
-//                           }
-
-//                           //選択されているジャンルを表示するTextの中身を書き換える
-//                           setState(() {
-//                             select_genre_text=genre_text_temp;
-//                           });
-                          
-//                           //戻る
-//                           Navigator.pop(context);
-//                           //テキストのフォーカスを外す
-//                           FocusScope.of(context).unfocus();
-//                         },
-//                         child: Text("保存")
-//                       ),
-//                     ),
-
-//                     SizedBox(height: 20,)
-//                   ],
-//                 ),
-//               ),
-//             );
-//           }
-//         );
-//       }
-//     );
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       children: [
-//         Container(
-//           height: 55,
-//           width: MediaQuery.of(context).size.width*0.9,
-//           decoration: BoxDecoration(
-//             border: Border.all(),
-//             borderRadius: BorderRadius.circular(7)
-//           ),
-//           child: Center(
-//             child: Text(
-//               select_genre_text,
-//               style: TextStyle(
-//                 fontSize: 17
-//               ),
-//             ),
-//           )
-          
-//         ),
-
-//         SizedBox(height: 8,), //----------------------------------------
-
-//         SizedBox(
-//           width: MediaQuery.of(context).size.width*0.9,
-//           child: ElevatedButton(
-//             onPressed: (){
-//                 select_genre(widget.isar, widget.genres);
-//             },
-//             child: Text(
-//               "ジャンル選択"
-//             )
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }
 
 //-----------------------------------話数入力欄--------------------------
 class InputFieldEpNum extends ConsumerStatefulWidget {
@@ -686,9 +506,6 @@ class InputFieldEpNum extends ConsumerStatefulWidget {
 class _InputFieldEpNumState extends ConsumerState<InputFieldEpNum> {
   //コントローラを登録
   final TextEditingController _epNumController = TextEditingController();
-  //正しい値が入力されているかどうかを判定するflag
-  //あくまでTextFieldにエラーメッセージを表示するかどうかを判定するためのflag．保存時に確認する用ではない
-  bool correctInputFlag=true;
 
   @override
   void dispose(){
@@ -703,28 +520,35 @@ class _InputFieldEpNumState extends ConsumerState<InputFieldEpNum> {
       children: [
         SizedBox(
           width: MediaQuery.of(context).size.width*0.9,
-          child: TextField(
+          child: TextFormField(
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: (text){
+              //入力された値を読み取る
+              if(text!=null){
+                int? inputValue = int.tryParse(text);
+                //正しい値が入力されているかを判定する
+                if(inputValue!=null){ //正しい
+                  return null;
+                }
+                else{ //正しくない
+                  return "正しい値を入力してください";
+                }
+              }
+            },
             onChanged: (text){
               //入力された値を読み取る
-              int? _inputValue = int.tryParse(text);
+              int? inputValue = int.tryParse(text);
               //正しい値が入力されているかを判定する
-              if(_inputValue!=null){ //正しい
+              if(inputValue!=null){ //正しい
                 ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(epNum: int.tryParse(text));
-                setState(() {
-                  ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epNum: true);
-                });
+                ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epNum: true);
               }
               else{ //正しくない
-                setState(() {
-                  ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epNum: false);
-                });
+                ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epNum: false);
               }
             },
             controller: _epNumController,
             decoration: InputDecoration(
-              errorText: ref.read(animeCorrectInputProvider.notifier).state.epNum
-              ? null
-              : "正しい値を入力してください",
               border: OutlineInputBorder(),
               labelText: "話数",
             ),
@@ -741,14 +565,12 @@ class _InputFieldEpNumState extends ConsumerState<InputFieldEpNum> {
                   onPressed: (){
                     //TextFieldのフォーカスを外す
                     FocusManager.instance.primaryFocus?.unfocus();
-                    //providerの値を変更
-                    ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(epNum: 12);
                     //コントローラの中身を変える
                     _epNumController.text="12";
+                    //providerの値を変更
+                    ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(epNum: 12);
                     //ボタンを押すと必ず正しい値が入るので，flagをtrueにする
-                    setState(() {
-                      ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epNum: true);
-                    });
+                    ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epNum: true);
                   }, 
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
@@ -767,14 +589,13 @@ class _InputFieldEpNumState extends ConsumerState<InputFieldEpNum> {
                   onPressed: (){
                     //TextFieldのフォーカスを外す
                     FocusManager.instance.primaryFocus?.unfocus();
-                    //providerの値を変更
-                    ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(epNum: 24);
                     //コントローラの中身を変える
                     _epNumController.text="24";
+                    //providerの値を変更
+                    ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(epNum: 24);
                     //ボタンを押すと必ず正しい値が入るので，flagをtrueにする
-                    setState(() {
-                      ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epNum: true);
-                    });
+                    ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epNum: true);
+
                   }, 
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
@@ -793,14 +614,12 @@ class _InputFieldEpNumState extends ConsumerState<InputFieldEpNum> {
                   onPressed: () async{
                     final result = (await inputEpNum(context)).toString();
                     if(result!="null"){
-                      //providerの値を変更
-                      ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(epNum: int.tryParse(result));
                       //コントローラの中身を変える
                       _epNumController.text=result.toString();
+                      //providerの値を変更
+                      ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(epNum: int.tryParse(result));
                       //ボタンを押すと必ず正しい値が入るので，flagをtrueにする
-                      setState(() {
-                        ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epNum: true);
-                      });
+                      ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epNum: true);
                     }
                   }, 
                   style: ElevatedButton.styleFrom(
@@ -941,25 +760,32 @@ class _InputFieldEpTimeState extends ConsumerState<InputFieldEpTime> {
       children: [
         SizedBox(
           width: MediaQuery.of(context).size.width*0.9,
-          child: TextField(
+          child: TextFormField(
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: (text){
+              //入力された値を読み取る
+              if(text!=null){
+                if(int.tryParse(text)==null){ //正しくない
+                  return "正しい値を入力してください";
+                }
+                else{ //正しい
+                  return null;
+                }
+              }
+            },
             onChanged: (text){
               //入力された値 を読み取る
                 if(int.tryParse(text)==null){ //正しくない
-                  setState(() {
-                    ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epTime: false);
-                  });
+                  ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epTime: false);
                 }
                 else{ //正しい
-                  setState(() {
-                    ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epTime: true);
-                  });
+                //providerの値を更新
+                  ref.read(animeInputProvider.notifier).state = ref.read(animeInputProvider).copyWith(epTime: int.tryParse(text));
+                  ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epTime: true);
                 }
               },
             controller: _epTimeController,
             decoration: InputDecoration(
-              errorText: ref.read(animeCorrectInputProvider.notifier).state.epTime
-              ? null
-              : "正しい値を入力してください",
               border: OutlineInputBorder(),
               labelText: "1話あたりの時間(分)",
             ),
@@ -974,36 +800,12 @@ class _InputFieldEpTimeState extends ConsumerState<InputFieldEpTime> {
                 width: MediaQuery.of(context).size.width * 0.2866666,
                 child: ElevatedButton(
                   onPressed: (){
-                    _epTimeController.text = "24";
-                    //providerの値を書き換える
-                    ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(epTime: 24);
-                    //ボタンを押すと必ず正しい値が入るので，flagをtrueにする
-                    setState(() {
-                      ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epTime: true);
-                    });
-                  }, 
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    )
-                  ),
-                  child: Text("24分")
-                  )
-              ),
-
-              SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
-
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.2866666,
-                child: ElevatedButton(
-                  onPressed: (){
+                    //コントローラの値を更新
                     _epTimeController.text = "12";
                     //providerの値を書き換える
                     ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(epTime: 12);
                     //ボタンを押すと必ず正しい値が入るので，flagをtrueにする
-                    setState(() {
-                      ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epTime: true);
-                    });
+                    ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epTime: true);
                   }, 
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
@@ -1019,18 +821,39 @@ class _InputFieldEpTimeState extends ConsumerState<InputFieldEpTime> {
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.2866666,
                 child: ElevatedButton(
+                  onPressed: (){
+                    //コントローラの値を更新
+                    _epTimeController.text = "24";
+                    //providerの値を書き換える
+                    ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(epTime: 24);
+                    //ボタンを押すと必ず正しい値が入るので，flagをtrueにする
+                    ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epTime: true);
+                  }, 
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    )
+                  ),
+                  child: Text("24分")
+                  )
+              ),
+
+              SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
+
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.2866666,
+                child: ElevatedButton(
                   onPressed: ()async {
                     //入力時点での入力値を保持しておく
                     String text_temp=_epTimeController.text;
                     final result=await inputEpTime(context);
                     if(result !=null){
+                      //コントローラの値を更新
                       _epTimeController.text=result;
                       //providerの値を書き換える
                       ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(epTime: int.tryParse(result));
                       //ボタンを押すと必ず正しい値が入るので，flagをtrueにする
-                      setState(() {
-                        ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epTime: true);
-                      });
+                      ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epTime: true);
                     }
                     else{
                       _epTimeController.text=text_temp;
