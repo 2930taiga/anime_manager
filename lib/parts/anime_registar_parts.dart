@@ -418,9 +418,15 @@ class _SelectedGenreTextState extends ConsumerState<SelectedGenreText> {
                             genre_text_temp = genre_text_temp.substring(0 , genre_text_temp.length - 1 );
                           }
 
-                          //もし文字列が空白のままなら，「ジャンルが選択されていません」に戻す
-                          if(genre_text_temp == ""){
+                          //もし文字列が空白のままなら，「ジャンルが選択されていません」に戻し，providerの値を更新する
+                          if(genre_text_temp == ""){ //何も入力されていない
                             genre_text_temp = "ジャンルが選択されていません";
+                            //providerの値を更新する
+                            ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(genreId: false);
+                          }
+                          else{ //ジャンルが選択されている
+                            //providerの値を更新する
+                            ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(genreId: true);
                           }
 
                           //選択されているジャンルを表示するTextの中身を書き換える
