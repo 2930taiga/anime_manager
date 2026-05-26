@@ -1,6 +1,3 @@
-import 'dart:ffi';
-
-import 'package:anime_administration/providers/anime_input_provider.dart';
 import 'package:flutter/material.dart';
 //providerに関するものをインポート
 import 'package:flutter_riverpod/flutter_riverpod.dart';
