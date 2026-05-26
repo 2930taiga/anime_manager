@@ -141,7 +141,13 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
 
               SizedBox(height: 20,),
 
-              SizedBox( //色入力欄
+              //プレビュー画面
+              PreviewColor(),
+
+              SizedBox(height: 20,),
+
+              //色入力欄
+              SizedBox( 
                 width: MediaQuery.of(context).size.width*0.9,
                 child: Column(
                   children: [
@@ -153,23 +159,16 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
                     GreenInputField(),
 
                     //青
-                    BlueInputField()
+                    BlueInputField(),
+
 
                   ],
                 ),
               ),
-              TextButton(
-                onPressed: (){
-                  print(genreInput.blueValue);
-                },
-                child: Text("テスト")
-              ),
-              TextButton(
-                onPressed: (){
-                  print(genreCorrectInput.blueValue);
-                },
-                child: Text("テスト")
-              )
+
+              SizedBox(height: 20,),
+
+              ColorPickIcons()
             ],
           ),
         ),

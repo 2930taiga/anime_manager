@@ -1,8 +1,16 @@
+import 'dart:ffi';
+
+import 'package:anime_administration/providers/anime_input_provider.dart';
 import 'package:flutter/material.dart';
 //providerに関するものをインポート
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 //providerの定義に関するスクリプトをインポート
 import 'package:anime_administration/pages/main_navigation_pages/setting/genre_registar.dart';
+
+//コントローラをどうするかのprovider
+final onEditiongFlagProvider = StateProvider<bool>((ref){
+  return false;
+});
 
 //タイトル入力欄---------------------------------------------------------------------------------------
 class TitleIputField extends ConsumerStatefulWidget {
@@ -45,6 +53,62 @@ class _TitleIputFieldState extends ConsumerState<TitleIputField> {
   }
 }
 
+//プレビュー欄---------------------------------------------------------------------------------------
+class PreviewColor extends ConsumerStatefulWidget {
+  const PreviewColor({super.key});
+
+  @override
+  ConsumerState<PreviewColor> createState() => _PreviewColorState();
+}
+
+class _PreviewColorState extends ConsumerState<PreviewColor> {
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width*0.9,
+      child: Column(
+        children: [
+          //プレビューテキスト
+          Row(
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width*0.02,
+              ),
+              Text(
+                "プレビュー",
+                style: TextStyle(
+                  fontSize: 20
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 10,),
+
+          Row(
+            children: [
+              IconButton(
+                onPressed: null,
+                icon: Icon(
+                  Icons.circle,
+                  color: Color.fromARGB(255, ref.read(genreInputProvider.notifier).state.redValue, ref.read(genreInputProvider.notifier).state.greenValue, ref.read(genreInputProvider.notifier).state.blueValue),
+                  size: 30,
+                )
+              ),
+              Text(
+                ref.read(genreInputProvider.notifier).state.title,
+                style: TextStyle(
+                  fontSize: 19
+                ),
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
 //色入力欄---------------------------------------------------------------------------------------
 //赤---------------------------------------------------------------------------------------
 class RedInputField extends ConsumerStatefulWidget {
@@ -55,14 +119,6 @@ class RedInputField extends ConsumerStatefulWidget {
 }
 
 class _RedInputFieldState extends ConsumerState<RedInputField> {
-  //テキストコントローラを登録
-  final TextEditingController _redController = TextEditingController();
-  //メモリ解放
-  @override
-  void dispose(){
-    _redController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -120,8 +176,8 @@ class _RedInputFieldState extends ConsumerState<RedInputField> {
                         onChanged: (index){
                           //スライダーが触られたらフォーカスを外す
                           FocusManager.instance.primaryFocus?.unfocus();
-                          //テキストフィールドの値を更新
-                          _redController.text=index.toInt().toString();
+                          //編集中を解除
+                          ref.read(onEditiongFlagProvider.notifier).state=false;
                           //providerの値を更新
                           ref.read(genreInputProvider.notifier).state=ref.read(genreInputProvider).copyWith(redValue: index.toInt());
                           ref.read(genreCorrectInputProvider.notifier).state=ref.read(genreCorrectInputProvider).copyWith(redValue: true);
@@ -152,8 +208,13 @@ class _RedInputFieldState extends ConsumerState<RedInputField> {
               //入力が異常
               return "異常値";
             },
-            controller: _redController,
+            controller: ref.read(onEditiongFlagProvider.notifier).state
+            ? null
+            : TextEditingController(text: ref.watch(genreInputProvider.notifier).state.redValue.toString()),
             onChanged: (text){
+              //入力が始まったら，コントローラを無効化
+              ref.read(onEditiongFlagProvider.notifier).state=true;
+
               //入力を確認
               if(int.tryParse(text)!=null){
                 int inputNum = int.tryParse(text) ?? -1;
@@ -188,14 +249,6 @@ class GreenInputField extends ConsumerStatefulWidget {
 }
 
 class _GreenInputFieldState extends ConsumerState<GreenInputField> {
-  //テキストコントローラを登録
-  final TextEditingController _greenController = TextEditingController();
-  //メモリ解放
-  @override
-  void dispose(){
-    _greenController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -253,8 +306,8 @@ class _GreenInputFieldState extends ConsumerState<GreenInputField> {
                         onChanged: (index){
                           //スライダーが触られたらフォーカスを外す
                           FocusManager.instance.primaryFocus?.unfocus();
-                          //テキストフィールドの値を更新
-                          _greenController.text=index.toInt().toString();
+                          //編集中を解除
+                          ref.read(onEditiongFlagProvider.notifier).state=false;
                           //providerの値を更新
                           ref.read(genreInputProvider.notifier).state=ref.read(genreInputProvider).copyWith(greenValue: index.toInt());
                           ref.read(genreCorrectInputProvider.notifier).state=ref.read(genreCorrectInputProvider).copyWith(greenValue: true);
@@ -285,8 +338,13 @@ class _GreenInputFieldState extends ConsumerState<GreenInputField> {
               //入力が異常
               return "異常値";
             },
-            controller: _greenController,
+            controller: ref.read(onEditiongFlagProvider.notifier).state
+            ? null
+            : TextEditingController(text: ref.watch(genreInputProvider.notifier).state.greenValue.toString()),
             onChanged: (text){
+              //入力が始まったら，コントローラを無効化
+              ref.read(onEditiongFlagProvider.notifier).state=true;
+
               //入力を確認
               if(int.tryParse(text)!=null){
                 int inputNum = int.tryParse(text) ?? -1;
@@ -321,18 +379,10 @@ class BlueInputField extends ConsumerStatefulWidget {
 }
 
 class _BlueInputFieldState extends ConsumerState<BlueInputField> {
-  //テキストコントローラを登録
-  final TextEditingController _blueController = TextEditingController();
-  //メモリ解放
-  @override
-  void dispose(){
-    _blueController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
-    return Row( //-------Red
+    return Row( //-------Blue
       children: [
         SizedBox(
           width: MediaQuery.of(context).size.width * 0.75,
@@ -386,8 +436,8 @@ class _BlueInputFieldState extends ConsumerState<BlueInputField> {
                         onChanged: (index){
                           //スライダーが触られたらフォーカスを外す
                           FocusManager.instance.primaryFocus?.unfocus();
-                          //テキストフィールドの値を更新
-                          _blueController.text=index.toInt().toString();
+                          //編集中を解除
+                          ref.read(onEditiongFlagProvider.notifier).state=false;
                           //providerの値を更新
                           ref.read(genreInputProvider.notifier).state=ref.read(genreInputProvider).copyWith(blueValue: index.toInt());
                           ref.read(genreCorrectInputProvider.notifier).state=ref.read(genreCorrectInputProvider).copyWith(blueValue: true);
@@ -418,8 +468,13 @@ class _BlueInputFieldState extends ConsumerState<BlueInputField> {
               //入力が異常
               return "異常値";
             },
-            controller: _blueController,
+            controller: ref.read(onEditiongFlagProvider.notifier).state
+            ? null
+            : TextEditingController(text: ref.watch(genreInputProvider.notifier).state.blueValue.toString()),
             onChanged: (text){
+              //入力が始まったら，コントローラを無効化
+              ref.read(onEditiongFlagProvider.notifier).state=true;
+
               //入力を確認
               if(int.tryParse(text)!=null){
                 int inputNum = int.tryParse(text) ?? -1;
@@ -441,6 +496,104 @@ class _BlueInputFieldState extends ConsumerState<BlueInputField> {
           )
         )
       ],
+    );
+  }
+}
+
+//色入力アイコン---------------------------------------------------------------------------------------
+//アイコン一つ
+class ColorPickIcon extends ConsumerWidget {
+  //色を含んだリスト
+  final List<int> RGBColors;
+
+  const ColorPickIcon({super.key,required this.RGBColors});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return IconButton(
+      onPressed: (){
+        //編集中を解除
+        ref.read(onEditiongFlagProvider.notifier).state=false;
+        //providerの値を更新
+        ref.read(genreInputProvider.notifier).state=ref.read(genreInputProvider).copyWith(redValue: RGBColors[0]);
+        ref.read(genreInputProvider.notifier).state=ref.read(genreInputProvider).copyWith(greenValue: RGBColors[1]);
+        ref.read(genreInputProvider.notifier).state=ref.read(genreInputProvider).copyWith(blueValue: RGBColors[2]);
+        ref.read(genreCorrectInputProvider.notifier).state=ref.read(genreCorrectInputProvider).copyWith(redValue: true);
+        ref.read(genreCorrectInputProvider.notifier).state=ref.read(genreCorrectInputProvider).copyWith(greenValue: true);
+        ref.read(genreCorrectInputProvider.notifier).state=ref.read(genreCorrectInputProvider).copyWith(blueValue: true);
+      },
+      icon: Icon(
+        Icons.circle,
+        size: 40,
+        color: Color.fromARGB(255, RGBColors[0], RGBColors[1], RGBColors[2]),
+        )
+    );
+  }
+}
+
+//色入力アイコン---------------------------------------------------------------------------------------
+//まとめたやつ
+class ColorPickIcons extends ConsumerWidget {
+  const ColorPickIcons({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width*0.9,
+      child: Column(
+        children: [
+          Row(
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width*0.02,
+              ),
+
+              Text(
+                "デフォルトカラー",
+                style: TextStyle(
+                  fontSize: 20
+                ),
+              )
+            ],
+          ),
+
+          SizedBox(height: 10,),
+
+          Center(
+            child: Row(
+              children: [
+                ColorPickIcon(RGBColors: [192,0,0]), //濃い赤
+                SizedBox(width: MediaQuery.of(context).size.width*0.01,),
+                ColorPickIcon(RGBColors: [255,0,0]), //赤
+                SizedBox(width: MediaQuery.of(context).size.width*0.01,),
+                ColorPickIcon(RGBColors: [255, 102, 255]), //ピンク
+                SizedBox(width: MediaQuery.of(context).size.width*0.01,),
+                ColorPickIcon(RGBColors: [255,192,0]), //オレンジ
+                SizedBox(width: MediaQuery.of(context).size.width*0.01,),
+                ColorPickIcon(RGBColors: [255,255,0]), //黄色
+                SizedBox(width: MediaQuery.of(context).size.width*0.01,),
+                ColorPickIcon(RGBColors: [146, 208, 80]), //黄緑
+              ],
+            ),
+
+          ),
+          Row(
+            children: [
+              ColorPickIcon(RGBColors: [0, 176, 80]), //緑
+              SizedBox(width: MediaQuery.of(context).size.width*0.01,),
+              ColorPickIcon(RGBColors: [0, 176, 240]), //水色
+              SizedBox(width: MediaQuery.of(context).size.width*0.01,),
+              ColorPickIcon(RGBColors: [0, 112, 192]), //青
+              SizedBox(width: MediaQuery.of(context).size.width*0.01,),
+              ColorPickIcon(RGBColors: [0, 32, 96]), //濃い青
+              SizedBox(width: MediaQuery.of(context).size.width*0.01,),
+              ColorPickIcon(RGBColors: [112, 48, 160]), //紫
+              SizedBox(width: MediaQuery.of(context).size.width*0.01,),
+              ColorPickIcon(RGBColors: [0,0,0]), //黒
+            ],
+          )
+        ],
+      ),
     );
   }
 }
