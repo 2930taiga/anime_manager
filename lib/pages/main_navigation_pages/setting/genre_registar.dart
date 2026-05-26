@@ -1,16 +1,92 @@
 import 'package:flutter/material.dart';
+//providerに関するものをインポート
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+//ページに配置するパーツをインポート
+import 'package:anime_administration/parts/genre_registar_parts.dart';
 
-class GenreRegistar extends StatefulWidget {
+//登録時のデータを保持するクラス
+class GenreInputData{
+  final String title;
+  final int redValue;
+  final int greenValue;
+  final int blueValue;
+
+  GenreInputData({
+    this.title = "",
+    this.redValue=0,
+    this.greenValue=0,
+    this.blueValue=0,
+  });
+
+  GenreInputData copyWith({
+    String? title,
+    int? redValue,
+    int? greenValue,
+    int? blueValue,
+  }){
+    return GenreInputData(
+      title: title ?? this.title,
+      redValue: redValue ?? this.redValue,
+      greenValue: greenValue ?? this.greenValue,
+      blueValue: blueValue ?? this.blueValue,
+    );
+  }
+}
+
+//登録時に正しいデータが登録されているかを確認するクラス
+class GenreCorrectInputData{
+  final bool title;
+  final bool redValue;
+  final bool greenValue;
+  final bool blueValue;
+
+  GenreCorrectInputData({
+    this.title=false,
+    this.redValue=false,
+    this.greenValue=false,
+    this.blueValue=false,
+  });
+
+  GenreCorrectInputData copyWith({
+    bool? title,
+    bool? redValue,
+    bool? greenValue,
+    bool? blueValue,
+  }){
+    return GenreCorrectInputData(
+      title: title ?? this.title,
+      redValue: redValue ?? this.redValue,
+      greenValue: greenValue ?? this.greenValue,
+      blueValue: blueValue ?? this.blueValue,
+    );
+  }
+}
+
+//入力データ保持用のprovider
+//入力データを保持するprovider
+//autoDisposeを追記することによって，画面内からこのproviderの監視者がいなくなったら，値を自動的にリセットする
+final genreInputProvider = StateProvider.autoDispose<GenreInputData>((ref){
+  return GenreInputData();
+});
+
+//入力データ保持用のprovider
+//入力データを保持するprovider
+//autoDisposeを追記することによって，画面内からこのproviderの監視者がいなくなったら，値を自動的にリセットする
+final genreCorrectInputProvider = StateProvider.autoDispose<GenreCorrectInputData>((ref){
+  return GenreCorrectInputData();
+});
+
+class GenreRegistar extends ConsumerStatefulWidget {
   //ジャンルを新しく登録するかどうか
   final bool initialNewAdd ;
 
   const GenreRegistar({super.key,required this.initialNewAdd});
 
   @override
-  State<GenreRegistar> createState() => _GenreRegistarState();
+  ConsumerState<GenreRegistar> createState() => _GenreRegistarState();
 }
 
-class _GenreRegistarState extends State<GenreRegistar> {
+class _GenreRegistarState extends ConsumerState<GenreRegistar> {
   //初期化でコピーする
   late bool newAdd;
 
@@ -32,9 +108,25 @@ class _GenreRegistarState extends State<GenreRegistar> {
 
   @override
   Widget build(BuildContext context) {
+    //providerのインスタンスを作成
+    final genreInput = ref.watch(genreInputProvider);
+    final genreCorrectInput = ref.watch(genreCorrectInputProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: Text("ジャンル登録"),
+        actions: [
+          TextButton(
+            onPressed:(){},
+            child: Text(
+              "保存",
+              style: TextStyle(
+                color: Colors.blue,
+                fontSize: 16
+              ),
+            )
+          )
+        ],
       ),
       body: SingleChildScrollView(
         child: Align(
@@ -44,25 +136,8 @@ class _GenreRegistarState extends State<GenreRegistar> {
 
               SizedBox(height: 20,),
 
-              SizedBox( //--------------------------------------------------------ジャンル名入力欄
-                width: MediaQuery.of(context).size.width*0.9,
-                child: TextFormField(
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (text){
-                    if(text==null || text ==""){
-                      return "ジャンル名を入力してください";
-                    }
-                    else{return null;}
-                  },
-                  onChanged: (text){
-
-                  },
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "ジャンル名",
-                  ),
-                ),
-              ),
+              //ジャンル名入力欄
+              TitleIputField(),
 
               SizedBox(height: 20,),
 
@@ -70,258 +145,31 @@ class _GenreRegistarState extends State<GenreRegistar> {
                 width: MediaQuery.of(context).size.width*0.9,
                 child: Column(
                   children: [
-                    Row( //-------Red
-                      children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.75,
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  SizedBox(width: MediaQuery.of(context).size.width*0.05,),
-                                  SizedBox(
-                                    child: Text(
-                                      "Red",
-                                      style: TextStyle(
-                                        fontSize: 20
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: SizedBox()
-                                  )
-                                ],
-                              ),
-                              SizedBox(
-                                child: Stack(
-                                  alignment: AlignmentGeometry.center,
-                                  children: [
-                                    Container(
-                                      height: 6,
-                                      width: MediaQuery.of(context).size.width*0.65,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(3),
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            Colors.black,
-                                            Color.fromARGB(255, 255, 0, 0)
-                                          ]
-                                        )
-                                      ),
-                                    ),
-                                    SliderTheme(
-                                      data: SliderTheme.of(context).copyWith(
-                                        thumbColor: Colors.white,
-                                        trackHeight: 0,
-                                        thumbShape: RoundSliderThumbShape(
-                                          enabledThumbRadius: 12
-                                        )
-                                      ),
-                                      child: Slider(
-                                        min: 0,
-                                        max: 255,
-                                        value: redValue,
-                                        onChanged: (index){
-                                          //スライダーが触られたらフォーカスを外す
-                                          FocusManager.instance.primaryFocus?.unfocus();
-                                          //テキストフィールドの値を更新
-                                          _redController.text=index.toInt().toString();
-                                          setState(() {
-                                            //数値を更新
-                                            redValue=index;
-                                          });
-                                        }
-                                      )
-                                    )
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: TextFormField(
-                            controller: _redController,
-                            style: TextStyle(
-                            ),
-                            decoration: InputDecoration(
-                            isDense: true,
-                            border: OutlineInputBorder(),
-                            ),
-                          )
-                        )
-                      ],
-                    ),
 
-                    Row( //-------Green
-                      children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.75,
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  SizedBox(width: MediaQuery.of(context).size.width*0.05,),
-                                  SizedBox(
-                                    child: Text(
-                                      "Green",
-                                      style: TextStyle(
-                                        fontSize: 20
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: SizedBox()
-                                  )
-                                ],
-                              ),
-                              SizedBox(
-                                child: Stack(
-                                  alignment: AlignmentGeometry.center,
-                                  children: [
-                                    Container(
-                                      height: 6,
-                                      width: MediaQuery.of(context).size.width*0.65,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(3),
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            Colors.black,
-                                            Color.fromARGB(255, 0, 255, 0)
-                                          ]
-                                        )
-                                      ),
-                                    ),
-                                    SliderTheme(
-                                      data: SliderTheme.of(context).copyWith(
-                                        thumbColor: Colors.white,
-                                        trackHeight: 0,
-                                        thumbShape: RoundSliderThumbShape(
-                                          enabledThumbRadius: 12
-                                        )
-                                      ),
-                                      child: Slider(
-                                        min: 0,
-                                        max: 255,
-                                        value: greenValue,
-                                        onChanged: (index){
-                                          //スライダーが触られたらフォーカスを外す
-                                          FocusManager.instance.primaryFocus?.unfocus();
-                                          //テキストフィールドの値を更新
-                                          _greenController.text=index.toInt().toString();
-                                          setState(() {
-                                            //数値を更新
-                                            greenValue=index;
-                                          });
-                                        }
-                                      )
-                                    )
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: TextFormField(
-                            controller: _greenController,
-                            //initialValue: "0",
-                            style: TextStyle(
-                            ),
-                            decoration: InputDecoration(
-                            isDense: true,
-                            border: OutlineInputBorder(),
-                            ),
-                          )
-                        )
-                      ],
-                    ),
+                    //赤色
+                    RedInputField(),
 
-                    Row( //-------Blue
-                      children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.75,
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  SizedBox(width: MediaQuery.of(context).size.width*0.05,),
-                                  SizedBox(
-                                    child: Text(
-                                      "Blue",
-                                      style: TextStyle(
-                                        fontSize: 20
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: SizedBox()
-                                  )
-                                ],
-                              ),
-                              SizedBox(
-                                child: Stack(
-                                  alignment: AlignmentGeometry.center,
-                                  children: [
-                                    Container(
-                                      height: 6,
-                                      width: MediaQuery.of(context).size.width*0.65,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(3),
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            Colors.black,
-                                            Color.fromARGB(255, 0, 0, 255)
-                                          ]
-                                        )
-                                      ),
-                                    ),
-                                    SliderTheme(
-                                      data: SliderTheme.of(context).copyWith(
-                                        thumbColor: Colors.white,
-                                        trackHeight: 0,
-                                        thumbShape: RoundSliderThumbShape(
-                                          enabledThumbRadius: 12
-                                        )
-                                      ),
-                                      child: Slider(
-                                        min: 0,
-                                        max: 255,
-                                        value: blueValue,
-                                        onChanged: (index){
-                                          //スライダーが触られたらフォーカスを外す
-                                          FocusManager.instance.primaryFocus?.unfocus();
-                                          //テキストフィールドの値を更新
-                                          _blueController.text=index.toInt().toString();
-                                          setState(() {
-                                            //数値を更新
-                                            blueValue=index;
-                                          });
-                                        }
-                                      )
-                                    )
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: TextFormField(
-                            controller: _blueController,
-                            style: TextStyle(
-                            ),
-                            decoration: InputDecoration(
-                            isDense: true,
-                            border: OutlineInputBorder(),
-                            ),
-                          )
-                        )
-                      ],
-                    )
+                    //緑
+                    GreenInputField(),
+
+                    //青
+                    BlueInputField()
+
                   ],
                 ),
               ),
+              TextButton(
+                onPressed: (){
+                  print(genreInput.blueValue);
+                },
+                child: Text("テスト")
+              ),
+              TextButton(
+                onPressed: (){
+                  print(genreCorrectInput.blueValue);
+                },
+                child: Text("テスト")
+              )
             ],
           ),
         ),
