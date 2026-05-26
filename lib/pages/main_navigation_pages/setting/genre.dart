@@ -22,96 +22,96 @@ class _SettingGenreState extends ConsumerState<SettingGenre> {
     super.dispose(); //親クラスにメモリが解放されたことを伝える
   }
 
-  //ダイアログを開いてジャンル追加画面を表示する関数を作成
-  void addGenre(){
-    _genreTextController.clear();
-    showDialog(
-      context: context,
-      builder:(context){
-        return Dialog(
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width*0.9,
-            height: 250,
-            child: Column(
-              children: [
-                SizedBox(height: 20,),
+  // //ダイアログを開いてジャンル追加画面を表示する関数を作成
+  // void addGenre(){
+  //   _genreTextController.clear();
+  //   showDialog(
+  //     context: context,
+  //     builder:(context){
+  //       return Dialog(
+  //         child: SizedBox(
+  //           width: MediaQuery.of(context).size.width*0.9,
+  //           height: 250,
+  //           child: Column(
+  //             children: [
+  //               SizedBox(height: 20,),
 
-                Center(child: Text( //ダイアログの一番上に出すタイトル
-                  "ジャンルを登録してください",
-                  style: TextStyle(
-                    fontSize: 20
-                  ),
-                  ),
-                ),
+  //               Center(child: Text( //ダイアログの一番上に出すタイトル
+  //                 "ジャンルを登録してください",
+  //                 style: TextStyle(
+  //                   fontSize: 20
+  //                 ),
+  //                 ),
+  //               ),
 
-                SizedBox(height: 40,),
+  //               SizedBox(height: 40,),
 
-                SizedBox( //ジャンル名入力欄
-                  width: MediaQuery.of(context).size.width*0.6,
-                  //height: ,
-                  child: TextField(
-                    controller: _genreTextController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: "ジャンル名を入力"
-                    ),
-                  ),
-                ),
+  //               SizedBox( //ジャンル名入力欄
+  //                 width: MediaQuery.of(context).size.width*0.6,
+  //                 //height: ,
+  //                 child: TextField(
+  //                   controller: _genreTextController,
+  //                   decoration: InputDecoration(
+  //                     border: OutlineInputBorder(),
+  //                     labelText: "ジャンル名を入力"
+  //                   ),
+  //                 ),
+  //               ),
 
-                SizedBox(height: 30,),
+  //               SizedBox(height: 30,),
 
-                SizedBox( //保存ボタン
-                  width: MediaQuery.of(context).size.width*0.55,
-                  height: 45,
-                  child: ElevatedButton(
-                    onPressed: () async { //保存する処理を書く
-                    final Isar isar=ref.read(isarProvider);
-                    //.trim()を付けることで，前後の空白をカット
-                    final String genreName = _genreTextController.text.trim();
-                      if(genreName.isEmpty){
-                        //ジャンル名が空ならアラートを出す
-                        text_error_alert("ジャンル名が入力されていません");
-                        return;
-                      }
+  //               SizedBox( //保存ボタン
+  //                 width: MediaQuery.of(context).size.width*0.55,
+  //                 height: 45,
+  //                 child: ElevatedButton(
+  //                   onPressed: () async { //保存する処理を書く
+  //                   final Isar isar=ref.read(isarProvider);
+  //                   //.trim()を付けることで，前後の空白をカット
+  //                   final String genreName = _genreTextController.text.trim();
+  //                     if(genreName.isEmpty){
+  //                       //ジャンル名が空ならアラートを出す
+  //                       text_error_alert("ジャンル名が入力されていません");
+  //                       return;
+  //                     }
 
-                      //実際に保存する処理を書いていく
-                      try{
-                        await isar.writeTxn(() async {
-                          //新しいデータのインスタンスを作成
-                          final newGenre = Genre()..name = genreName;
+  //                     //実際に保存する処理を書いていく
+  //                     try{
+  //                       await isar.writeTxn(() async {
+  //                         //新しいデータのインスタンスを作成
+  //                         final newGenre = Genre()..name = genreName;
 
-                          //データベースに保存する
-                          await isar.genres.put(newGenre);
+  //                         //データベースに保存する
+  //                         await isar.genres.put(newGenre);
 
-                          //保存が完了したら画面を閉じてメッセージを出す
-                          _genreTextController.clear(); //テキストフィールドを空に
-                          Navigator.pop(context); //画面を閉じる
-                          ScaffoldMessenger.of(context).showSnackBar( //スナックバーにメッセージを表示
-                            SnackBar(
-                              content: Text("ジャンル「$genreName」を保存しました")
-                            )
-                          );
-                        });
-                      }
-                      catch(e){
-                        text_error_alert("ジャンル「$genreName」は既に登録されています");
-                      }
-                    },
-                    child: Text(
-                      "保存",
-                      style: TextStyle(
-                        fontSize: 13
-                      ),
-                    )
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      }
-    );
-  }
+  //                         //保存が完了したら画面を閉じてメッセージを出す
+  //                         _genreTextController.clear(); //テキストフィールドを空に
+  //                         Navigator.pop(context); //画面を閉じる
+  //                         ScaffoldMessenger.of(context).showSnackBar( //スナックバーにメッセージを表示
+  //                           SnackBar(
+  //                             content: Text("ジャンル「$genreName」を保存しました")
+  //                           )
+  //                         );
+  //                       });
+  //                     }
+  //                     catch(e){
+  //                       text_error_alert("ジャンル「$genreName」は既に登録されています");
+  //                     }
+  //                   },
+  //                   child: Text(
+  //                     "保存",
+  //                     style: TextStyle(
+  //                       fontSize: 13
+  //                     ),
+  //                   )
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     }
+  //   );
+  // }
 
   //保存するときに，テキストフィールドが空，または内容が重複しているとアラートを出す関数を定義
   void text_error_alert(String message){
@@ -157,7 +157,11 @@ class _SettingGenreState extends ConsumerState<SettingGenre> {
                 ),
               ),
               onTap: (){
-                addGenre();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context)=> GenreRegistar(initialNewAdd: true),
+                  )
+                );
               },
               minTileHeight: 50,
             ),
@@ -405,6 +409,7 @@ class _ViewGenreState extends State<ViewGenre> {
     super.dispose();
   }
   
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -443,10 +448,11 @@ class _ViewGenreState extends State<ViewGenre> {
               (index){
                 return ListTile( //登録されているジャンル一覧が表示される
                     title: Text(_genres[index].name), //編集中なら並び替えボタンが表示される
-                    leading: Editting? IconButton(
-                      onPressed: (){},
-                      icon: Icon(Icons.menu)
-                    ): null, 
+                    leading: Icon(
+                      Icons.circle,
+                      color: Color.fromARGB(255, _genres[index].redValue, _genres[index].greenValue, _genres[index].blueValue),
+                      size: 30,
+                    ), 
                     trailing: Editting? IconButton( //編集中なら削除ボタンが表示される
                       onPressed: (){
                         delete_config_alert(_genres[index].name,index);
@@ -468,13 +474,16 @@ class _ViewGenreState extends State<ViewGenre> {
       floatingActionButton: Editting
       ? null
       : FloatingActionButton(
-        onPressed: (){
-          Navigator.push(
+        onPressed: () async {
+          await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => GenreRegistar(initialNewAdd: true)
             )
           );
+            
+          //画面に戻ってきたら画面を更新
+          _refreshGenres();
         },
         child: Icon(Icons.add),
       ),

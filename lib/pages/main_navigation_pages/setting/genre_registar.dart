@@ -1,3 +1,4 @@
+import 'package:anime_administration/models/genre.dart';
 import 'package:flutter/material.dart';
 //providerに関するものをインポート
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,6 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:anime_administration/parts/genre_registar_parts.dart';
 //見た目の設定に関するコードをインポート
 import 'package:anime_administration/parameter_settings.dart';
+//isarのprovider
+import 'package:anime_administration/providers/isar_provider.dart';
+import 'package:isar/isar.dart';
 
 //登録時のデータを保持するクラス
 class GenreInputData{
@@ -119,6 +123,31 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
     newAdd = widget.initialNewAdd;
   }
 
+  //保存するときに，テキストフィールドが空，または内容が重複しているとアラートを出す関数を定義
+  void text_error_alert(String message){
+    showDialog(
+      context: context,
+      builder: (_){
+        return AlertDialog(
+          title: Text("入力エラー"),
+          content: Text(message),
+          actions: [
+            TextButton(onPressed: (){ //「OK」を押すと前の画面に戻る
+              Navigator.pop(context);
+            },
+              child: Text(
+                "OK",
+                style: TextStyle(
+                  color: Colors.blue
+                ),
+              )
+            )
+          ],
+        );
+      }
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     //providerのインスタンスを作成
@@ -126,9 +155,43 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
     final genreCorrectInput = ref.watch(genreCorrectInputProvider);
 
     //保存に関する関数を定義
-    void Save(){
+    Future<void> Save() async {
       if(genreCorrectInput.isInvalid==true){ //保存できる
+        final isar=ref.read(isarProvider);
+        //.trim()を付けることで，前後の空白をカット
+        final String genreName = ref.read(genreInputProvider.notifier).state.title.trim();
 
+        //ジャンル名が空ならアラートを出す
+        if(genreName.isEmpty){
+          text_error_alert("ジャンル名が入力されていません");
+          return;
+        }
+
+        //実際に保存する処理を書いていく
+        try{
+          //新しいデータのインスタンスを作成
+          await isar.writeTxn(() async {
+            final newGenre = Genre()
+            ..name = genreInput.title
+            ..redValue = genreInput.redValue
+            ..greenValue = genreInput.greenValue
+            ..blueValue = genreInput.blueValue;
+
+            //データベースに保存する
+            await isar.genres.put(newGenre);
+          });
+          //戻る
+          Navigator.pop(context);
+
+          ScaffoldMessenger.of(context).showSnackBar( //スナックバーにメッセージを表示
+            SnackBar(
+              content: Text("ジャンル「$genreName」を保存しました")
+            )
+          );
+        }
+        catch(e){
+          text_error_alert("ジャンル「$genreName」は既に登録されています");
+        }
       }
       else{ //保存できない
         //入力に不備がある箇所を取得
