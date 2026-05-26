@@ -59,7 +59,34 @@ const AnimeSchema = CollectionSchema(
   deserialize: _animeDeserialize,
   deserializeProp: _animeDeserializeProp,
   idName: r'id',
-  indexes: {},
+  indexes: {
+    r'episode': IndexSchema(
+      id: 5077628722353948045,
+      name: r'episode',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'episode',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    ),
+    r'evaluation': IndexSchema(
+      id: -6076097278353109056,
+      name: r'evaluation',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'evaluation',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    )
+  },
   links: {
     r'genres': LinkSchema(
       id: -4595269950727152923,
@@ -181,6 +208,22 @@ extension AnimeQueryWhereSort on QueryBuilder<Anime, Anime, QWhere> {
       return query.addWhereClause(const IdWhereClause.any());
     });
   }
+
+  QueryBuilder<Anime, Anime, QAfterWhere> anyEpisode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'episode'),
+      );
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhere> anyEvaluation() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'evaluation'),
+      );
+    });
+  }
 }
 
 extension AnimeQueryWhere on QueryBuilder<Anime, Anime, QWhereClause> {
@@ -244,6 +287,184 @@ extension AnimeQueryWhere on QueryBuilder<Anime, Anime, QWhereClause> {
         lower: lowerId,
         includeLower: includeLower,
         upper: upperId,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> episodeEqualTo(int episode) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'episode',
+        value: [episode],
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> episodeNotEqualTo(int episode) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'episode',
+              lower: [],
+              upper: [episode],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'episode',
+              lower: [episode],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'episode',
+              lower: [episode],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'episode',
+              lower: [],
+              upper: [episode],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> episodeGreaterThan(
+    int episode, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'episode',
+        lower: [episode],
+        includeLower: include,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> episodeLessThan(
+    int episode, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'episode',
+        lower: [],
+        upper: [episode],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> episodeBetween(
+    int lowerEpisode,
+    int upperEpisode, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'episode',
+        lower: [lowerEpisode],
+        includeLower: includeLower,
+        upper: [upperEpisode],
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> evaluationEqualTo(
+      int evaluation) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'evaluation',
+        value: [evaluation],
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> evaluationNotEqualTo(
+      int evaluation) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'evaluation',
+              lower: [],
+              upper: [evaluation],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'evaluation',
+              lower: [evaluation],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'evaluation',
+              lower: [evaluation],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'evaluation',
+              lower: [],
+              upper: [evaluation],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> evaluationGreaterThan(
+    int evaluation, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'evaluation',
+        lower: [evaluation],
+        includeLower: include,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> evaluationLessThan(
+    int evaluation, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'evaluation',
+        lower: [],
+        upper: [evaluation],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> evaluationBetween(
+    int lowerEvaluation,
+    int upperEvaluation, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'evaluation',
+        lower: [lowerEvaluation],
+        includeLower: includeLower,
+        upper: [upperEvaluation],
         includeUpper: includeUpper,
       ));
     });

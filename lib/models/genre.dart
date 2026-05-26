@@ -14,4 +14,9 @@ class Genre {
   //今回はジャンルでフィルターやデータ分析を行うため，@Indexを付ける
   @Index(unique:true)
   late String name;
+
+  //各色のパラメータ
+  late int redValue;
+  late int greenValue;
+  late int blueValue;
 }

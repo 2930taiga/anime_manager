@@ -17,10 +17,25 @@ const GenreSchema = CollectionSchema(
   name: r'Genre',
   id: -453881181692258612,
   properties: {
-    r'name': PropertySchema(
+    r'blueValue': PropertySchema(
       id: 0,
+      name: r'blueValue',
+      type: IsarType.long,
+    ),
+    r'greenValue': PropertySchema(
+      id: 1,
+      name: r'greenValue',
+      type: IsarType.long,
+    ),
+    r'name': PropertySchema(
+      id: 2,
       name: r'name',
       type: IsarType.string,
+    ),
+    r'redValue': PropertySchema(
+      id: 3,
+      name: r'redValue',
+      type: IsarType.long,
     )
   },
   estimateSize: _genreEstimateSize,
@@ -67,7 +82,10 @@ void _genreSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.name);
+  writer.writeLong(offsets[0], object.blueValue);
+  writer.writeLong(offsets[1], object.greenValue);
+  writer.writeString(offsets[2], object.name);
+  writer.writeLong(offsets[3], object.redValue);
 }
 
 Genre _genreDeserialize(
@@ -77,8 +95,11 @@ Genre _genreDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Genre();
+  object.blueValue = reader.readLong(offsets[0]);
+  object.greenValue = reader.readLong(offsets[1]);
   object.id = id;
-  object.name = reader.readString(offsets[0]);
+  object.name = reader.readString(offsets[2]);
+  object.redValue = reader.readLong(offsets[3]);
   return object;
 }
 
@@ -90,7 +111,13 @@ P _genreDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
+      return (reader.readLong(offset)) as P;
+    case 1:
+      return (reader.readLong(offset)) as P;
+    case 2:
       return (reader.readString(offset)) as P;
+    case 3:
+      return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -281,6 +308,112 @@ extension GenreQueryWhere on QueryBuilder<Genre, Genre, QWhereClause> {
 }
 
 extension GenreQueryFilter on QueryBuilder<Genre, Genre, QFilterCondition> {
+  QueryBuilder<Genre, Genre, QAfterFilterCondition> blueValueEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'blueValue',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterFilterCondition> blueValueGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'blueValue',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterFilterCondition> blueValueLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'blueValue',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterFilterCondition> blueValueBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'blueValue',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterFilterCondition> greenValueEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'greenValue',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterFilterCondition> greenValueGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'greenValue',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterFilterCondition> greenValueLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'greenValue',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterFilterCondition> greenValueBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'greenValue',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<Genre, Genre, QAfterFilterCondition> idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -460,6 +593,58 @@ extension GenreQueryFilter on QueryBuilder<Genre, Genre, QFilterCondition> {
       ));
     });
   }
+
+  QueryBuilder<Genre, Genre, QAfterFilterCondition> redValueEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'redValue',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterFilterCondition> redValueGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'redValue',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterFilterCondition> redValueLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'redValue',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterFilterCondition> redValueBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'redValue',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
 }
 
 extension GenreQueryObject on QueryBuilder<Genre, Genre, QFilterCondition> {}
@@ -467,6 +652,30 @@ extension GenreQueryObject on QueryBuilder<Genre, Genre, QFilterCondition> {}
 extension GenreQueryLinks on QueryBuilder<Genre, Genre, QFilterCondition> {}
 
 extension GenreQuerySortBy on QueryBuilder<Genre, Genre, QSortBy> {
+  QueryBuilder<Genre, Genre, QAfterSortBy> sortByBlueValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'blueValue', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterSortBy> sortByBlueValueDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'blueValue', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterSortBy> sortByGreenValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'greenValue', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterSortBy> sortByGreenValueDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'greenValue', Sort.desc);
+    });
+  }
+
   QueryBuilder<Genre, Genre, QAfterSortBy> sortByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -478,9 +687,45 @@ extension GenreQuerySortBy on QueryBuilder<Genre, Genre, QSortBy> {
       return query.addSortBy(r'name', Sort.desc);
     });
   }
+
+  QueryBuilder<Genre, Genre, QAfterSortBy> sortByRedValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'redValue', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterSortBy> sortByRedValueDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'redValue', Sort.desc);
+    });
+  }
 }
 
 extension GenreQuerySortThenBy on QueryBuilder<Genre, Genre, QSortThenBy> {
+  QueryBuilder<Genre, Genre, QAfterSortBy> thenByBlueValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'blueValue', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterSortBy> thenByBlueValueDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'blueValue', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterSortBy> thenByGreenValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'greenValue', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterSortBy> thenByGreenValueDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'greenValue', Sort.desc);
+    });
+  }
+
   QueryBuilder<Genre, Genre, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -504,13 +749,43 @@ extension GenreQuerySortThenBy on QueryBuilder<Genre, Genre, QSortThenBy> {
       return query.addSortBy(r'name', Sort.desc);
     });
   }
+
+  QueryBuilder<Genre, Genre, QAfterSortBy> thenByRedValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'redValue', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterSortBy> thenByRedValueDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'redValue', Sort.desc);
+    });
+  }
 }
 
 extension GenreQueryWhereDistinct on QueryBuilder<Genre, Genre, QDistinct> {
+  QueryBuilder<Genre, Genre, QDistinct> distinctByBlueValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'blueValue');
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QDistinct> distinctByGreenValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'greenValue');
+    });
+  }
+
   QueryBuilder<Genre, Genre, QDistinct> distinctByName(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'name', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QDistinct> distinctByRedValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'redValue');
     });
   }
 }
@@ -522,9 +797,27 @@ extension GenreQueryProperty on QueryBuilder<Genre, Genre, QQueryProperty> {
     });
   }
 
+  QueryBuilder<Genre, int, QQueryOperations> blueValueProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'blueValue');
+    });
+  }
+
+  QueryBuilder<Genre, int, QQueryOperations> greenValueProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'greenValue');
+    });
+  }
+
   QueryBuilder<Genre, String, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
+    });
+  }
+
+  QueryBuilder<Genre, int, QQueryOperations> redValueProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'redValue');
     });
   }
 }
