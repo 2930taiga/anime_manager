@@ -92,11 +92,13 @@ class _PreviewColorState extends ConsumerState<PreviewColor> {
                   size: 30,
                 )
               ),
-              Text(
-                ref.read(genreInputProvider.notifier).state.title,
-                style: TextStyle(
-                  fontSize: 19
-                ),
+              Expanded(
+                child: Text(
+                  ref.read(genreInputProvider.notifier).state.title,
+                  style: TextStyle(
+                    fontSize: 19
+                  ),
+                )
               )
             ],
           )

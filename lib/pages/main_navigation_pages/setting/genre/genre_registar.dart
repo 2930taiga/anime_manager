@@ -8,7 +8,6 @@ import 'package:anime_administration/parts/genre_registar_parts.dart';
 import 'package:anime_administration/parameter_settings.dart';
 //isarのprovider
 import 'package:anime_administration/providers/isar_provider.dart';
-import 'package:isar/isar.dart';
 
 //登録時のデータを保持するクラス
 class GenreInputData{
@@ -210,11 +209,8 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
             //戻る
             Navigator.pop(context);
 
-            ScaffoldMessenger.of(context).showSnackBar( //スナックバーにメッセージを表示
-              SnackBar(
-                content: Text("ジャンル「$genreName」を保存しました")
-              )
-            );
+            //スナックバーにメッセージを表示
+            showSnackBar(context, "ジャンル「$genreName」を保存しました");
           }
           catch(e){
             text_error_alert("ジャンル「$genreName」は既に登録されています");
@@ -243,15 +239,10 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
             Navigator.pop(context);
 
             //スナックバーにメッセージを表示
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text("「$beforeName」を「$afterName」に変更しました")
-              )
-            );
-
+            showSnackBar(context, "「$beforeName」を「$afterName」に変更しました");
           }
           catch(e){
-            print("編集中にエラーが発生しました");
+            text_error_alert("ジャンル「$genreName」は既に登録されています");
           }
         }
       }

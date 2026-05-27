@@ -110,44 +110,6 @@ class _ViewGenreState extends State<ViewGenre> {
         );
       }
     );
-    // showDialog(
-    //   context: context,
-    //   builder: (_){
-    //     return AlertDialog(
-    //       title: Text("確認"),
-    //       content: Text(
-    //         "$Genre_nameを削除します\nよろしいですか？",
-    //         style: TextStyle(
-    //           fontSize: 16
-    //         ),
-    //       ),
-    //       actions: [
-    //         TextButton(onPressed: (){ //「キャンセル」を押すと前の画面に戻る
-    //           Navigator.pop(context);
-    //         },
-    //           child: Text(
-    //             "キャンセル",
-    //             style: TextStyle(
-    //               color: Colors.blue,
-    //             ),
-    //           )
-    //         ),
-    //         TextButton(onPressed: () async { //「OK」を押すと消す（削除は時間がかかるのでasyncを付ける）----------------------------------------
-    //           Navigator.pop(context);
-    //           await delete_genre(delte_index); //データを消す関数を呼ぶ（時間がかかる処理なので，awaitを付ける）
-    //           _refreshGenres();; //画面をリフレッシュする
-    //         },
-    //           child: Text(
-    //             "OK",
-    //             style: TextStyle(
-    //               color: Colors.blue,
-    //             ),
-    //           )
-    //         )
-    //       ],
-    //     );
-    //   }
-    // );
   }
 
   //データベースからジャンルを削除する関数を宣言
@@ -167,11 +129,17 @@ class _ViewGenreState extends State<ViewGenre> {
       });
 
       //削除に成功したメッセージを表示 
-      ScaffoldMessenger.of(context).showSnackBar( //スナックバーにメッセージを表示
-        SnackBar(
-          content: Text("ジャンル「$deleted_genre_name」を削除しました")
-        )
-      );
+      // ScaffoldMessenger.of(context).showSnackBar( //スナックバーにメッセージを表示
+      //   SnackBar(
+      //     content: Row(
+      //       children: [
+      //         Icon(Icons.check),
+      //         Text("ジャンル「$deleted_genre_name」を削除しました")
+      //       ],
+      //     )
+      //   )
+      // );
+      showSnackBar(context,"ジャンル「$deleted_genre_name」を削除しました");
     } catch(e){
       //print("削除中にエラーが発生しました");
     }
