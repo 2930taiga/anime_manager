@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 //providerに関するものをインポート
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 //providerの定義に関するスクリプトをインポート
-import 'package:anime_administration/pages/main_navigation_pages/setting/genre_registar.dart';
+import 'package:anime_administration/pages/main_navigation_pages/setting/genre/genre_registar.dart';
 
 //コントローラをどうするかのprovider
 final onEditiongFlagProvider = StateProvider<bool>((ref){

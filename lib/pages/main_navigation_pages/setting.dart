@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart'; // これがないとWidgetが使えない
 
 //ジャンルに関する設定ページ
-import 'setting/genre.dart';
+import 'setting/genre/genre.dart';
 
 //設定ページ
 class SettingPage extends StatefulWidget {

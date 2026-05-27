@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:anime_administration/models/genre.dart';
-import 'package:anime_administration/pages/main_navigation_pages/setting/genre_registar.dart';
+import 'package:anime_administration/pages/main_navigation_pages/setting/genre/genre_registar.dart';
 
 //登録されているジャンルを一覧で表示するページのクラス
 class ViewGenre extends StatefulWidget {

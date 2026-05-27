@@ -1,5 +1,5 @@
-import 'package:anime_administration/pages/main_navigation_pages/setting/genre_registar.dart';
-import 'package:anime_administration/pages/main_navigation_pages/setting/genre_view.dart';
+import 'package:anime_administration/pages/main_navigation_pages/setting/genre/genre_registar.dart';
+import 'package:anime_administration/pages/main_navigation_pages/setting/genre/genre_view.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:anime_administration/models/genre.dart';
