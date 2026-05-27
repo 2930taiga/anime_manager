@@ -6,6 +6,11 @@ class ElevatedButtons{
   static Color fontColor = Color.fromARGB(255, 255, 255, 255);
   //ボタンの背景色
   static Color backgroundColor = Color.fromARGB(255, 7, 125, 223);
+
+  //キャンセルボタンのテキストカラー
+  static Color cancelFontColor = Colors.black;
+  //キャンセルボタンの背景色
+  static Color cancelButtonBackgroundColor = Colors.white;
 }
 
 //テキスト系

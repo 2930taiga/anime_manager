@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:anime_administration/models/genre.dart';
 import 'package:anime_administration/pages/main_navigation_pages/setting/genre/genre_registar.dart';
+import 'package:anime_administration/parameter_settings.dart';
 
 //登録されているジャンルを一覧で表示するページのクラス
 class ViewGenre extends StatefulWidget {
@@ -22,45 +23,131 @@ class _ViewGenreState extends State<ViewGenre> {
   List<Genre> _genres = [];
 
   //削除するときに，本当に消していいか確認するアラートを表示する関数を定義
-  void delete_config_alert(String Genre_name,int delte_index){
-    showDialog(
-      context: context,
+  void delete_config_alert(String Genre_name,int delete_index){
+    showDialog(context: context,
       builder: (_){
-        return AlertDialog(
-          title: Text("確認"),
-          content: Text(
-            "$Genre_nameを削除します\nよろしいですか？",
-            style: TextStyle(
-              fontSize: 16
+        return Dialog(
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width*0.9,
+            height: 205,
+            child: Column(
+              children: [
+                SizedBox(height: 20,),
+
+                Text( //タイトル
+                  "確認",
+                  style: TextStyle(
+                    fontSize: 27,
+                    color: Texts.errorMessageColor,
+                    fontWeight: FontWeight.bold
+                  ),
+                ),
+
+                SizedBox(height: 20,),
+
+                Text( //サブメッセージ
+                  "「$Genre_name」を削除しますか？",
+                  style: TextStyle(
+                    color: Texts.subMessageColor,
+                    fontSize: 17
+                  ),
+                ),
+
+                SizedBox(height: 30,),
+
+                Row( //OK．キャンセルボタン
+                mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width*0.30,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: (){
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ElevatedButtons.cancelButtonBackgroundColor,
+                          padding: EdgeInsets.symmetric(horizontal: 2) //余白を小さくする
+                        ),
+                        child: Text(
+                          "キャンセル",
+                          style: TextStyle(
+                            color: ElevatedButtons.cancelFontColor,
+                            fontSize: 15
+                          ),
+                        )
+                      ),
+                    ),
+
+                    SizedBox(width: MediaQuery.of(context).size.width*0.03,),
+                    
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width*0.30,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          await delete_genre(delete_index); //データを消す関数を呼ぶ（時間がかかる処理なので，awaitを付ける）
+                          _refreshGenres(); //画面をリフレッシュする
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ElevatedButtons.backgroundColor
+                        ),
+                        child: Text(
+                          "OK",
+                          style: TextStyle(
+                            color: ElevatedButtons.fontColor,
+                            fontSize: 18
+                          ),
+                        )
+                      ),
+                    )
+                  ],
+                ),
+              ],
             ),
           ),
-          actions: [
-            TextButton(onPressed: (){ //「キャンセル」を押すと前の画面に戻る
-              Navigator.pop(context);
-            },
-              child: Text(
-                "キャンセル",
-                style: TextStyle(
-                  color: Colors.blue,
-                ),
-              )
-            ),
-            TextButton(onPressed: () async { //「OK」を押すと消す（削除は時間がかかるのでasyncを付ける）----------------------------------------
-              Navigator.pop(context);
-              await delete_genre(delte_index); //データを消す関数を呼ぶ（時間がかかる処理なので，awaitを付ける）
-              _refreshGenres();; //画面をリフレッシュする
-            },
-              child: Text(
-                "OK",
-                style: TextStyle(
-                  color: Colors.blue,
-                ),
-              )
-            )
-          ],
         );
       }
     );
+    // showDialog(
+    //   context: context,
+    //   builder: (_){
+    //     return AlertDialog(
+    //       title: Text("確認"),
+    //       content: Text(
+    //         "$Genre_nameを削除します\nよろしいですか？",
+    //         style: TextStyle(
+    //           fontSize: 16
+    //         ),
+    //       ),
+    //       actions: [
+    //         TextButton(onPressed: (){ //「キャンセル」を押すと前の画面に戻る
+    //           Navigator.pop(context);
+    //         },
+    //           child: Text(
+    //             "キャンセル",
+    //             style: TextStyle(
+    //               color: Colors.blue,
+    //             ),
+    //           )
+    //         ),
+    //         TextButton(onPressed: () async { //「OK」を押すと消す（削除は時間がかかるのでasyncを付ける）----------------------------------------
+    //           Navigator.pop(context);
+    //           await delete_genre(delte_index); //データを消す関数を呼ぶ（時間がかかる処理なので，awaitを付ける）
+    //           _refreshGenres();; //画面をリフレッシュする
+    //         },
+    //           child: Text(
+    //             "OK",
+    //             style: TextStyle(
+    //               color: Colors.blue,
+    //             ),
+    //           )
+    //         )
+    //       ],
+    //     );
+    //   }
+    // );
   }
 
   //データベースからジャンルを削除する関数を宣言
@@ -166,7 +253,10 @@ class _ViewGenreState extends State<ViewGenre> {
                       onPressed: (){
                         delete_config_alert(_genres[index].name,index);
                       },
-                      icon: Icon(Icons.delete),
+                      icon: Icon(
+                        Icons.delete,
+                        size: 28,
+                      ),
                       color: Colors.red[300],
                     ): null,
                     onTap: () async { //編集中にタップするとジャンルを編集できる
