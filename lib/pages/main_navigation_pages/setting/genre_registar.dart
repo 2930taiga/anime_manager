@@ -106,8 +106,14 @@ final genreCorrectInputProvider = StateProvider.autoDispose<GenreCorrectInputDat
 class GenreRegistar extends ConsumerStatefulWidget {
   //ジャンルを新しく登録するかどうか
   final bool initialNewAdd ;
+  //タイトルの初期値
+  final String title;
+  //RGBの初期値（ジャンルを編集する場合）
+  final List<int> rgbColors;
+  //データベースのインデックス（ジャンルを編集する場合）
+  final int id;
 
-  const GenreRegistar({super.key,required this.initialNewAdd});
+  const GenreRegistar({super.key,required this.initialNewAdd,required this.title,required this.rgbColors,required this.id});
 
   @override
   ConsumerState<GenreRegistar> createState() => _GenreRegistarState();
@@ -116,11 +122,31 @@ class GenreRegistar extends ConsumerStatefulWidget {
 class _GenreRegistarState extends ConsumerState<GenreRegistar> {
   //初期化でコピーする
   late bool newAdd;
+  late String _title;
+  late List<int> _rgbColors;
+  late int _id;
 
   @override
   void initState(){
     super.initState();
     newAdd = widget.initialNewAdd;
+    _title = widget.title;
+    _rgbColors = widget.rgbColors;
+    _id = widget.id;
+
+    //編集モードなら初期値を入力
+    //build終了後に実行
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      if(newAdd == false){
+        ref.read(genreInputProvider.notifier).state=
+        GenreInputData(
+          title: _title,
+          redValue: _rgbColors[0],
+          greenValue: _rgbColors[1],
+          blueValue: _rgbColors[2]
+        );
+      }
+    });
   }
 
   //保存するときに，テキストフィールドが空，または内容が重複しているとアラートを出す関数を定義
@@ -153,11 +179,11 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
     //providerのインスタンスを作成
     final genreInput = ref.watch(genreInputProvider);
     final genreCorrectInput = ref.watch(genreCorrectInputProvider);
+    final isar=ref.read(isarProvider);
 
     //保存に関する関数を定義
     Future<void> Save() async {
       if(genreCorrectInput.isInvalid==true){ //保存できる
-        final isar=ref.read(isarProvider);
         //.trim()を付けることで，前後の空白をカット
         final String genreName = ref.read(genreInputProvider.notifier).state.title.trim();
 
@@ -168,29 +194,65 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
         }
 
         //実際に保存する処理を書いていく
-        try{
-          //新しいデータのインスタンスを作成
-          await isar.writeTxn(() async {
-            final newGenre = Genre()
-            ..name = genreInput.title
-            ..redValue = genreInput.redValue
-            ..greenValue = genreInput.greenValue
-            ..blueValue = genreInput.blueValue;
+        if(newAdd==true){ //新しく登録する場合
+          try{
+            //新しいデータのインスタンスを作成
+            await isar.writeTxn(() async {
+              final newGenre = Genre()
+              ..name = genreInput.title
+              ..redValue = genreInput.redValue
+              ..greenValue = genreInput.greenValue
+              ..blueValue = genreInput.blueValue;
 
-            //データベースに保存する
-            await isar.genres.put(newGenre);
-          });
-          //戻る
-          Navigator.pop(context);
+              //データベースに保存する
+              await isar.genres.put(newGenre);
+            });
+            //戻る
+            Navigator.pop(context);
 
-          ScaffoldMessenger.of(context).showSnackBar( //スナックバーにメッセージを表示
-            SnackBar(
-              content: Text("ジャンル「$genreName」を保存しました")
-            )
-          );
+            ScaffoldMessenger.of(context).showSnackBar( //スナックバーにメッセージを表示
+              SnackBar(
+                content: Text("ジャンル「$genreName」を保存しました")
+              )
+            );
+          }
+          catch(e){
+            text_error_alert("ジャンル「$genreName」は既に登録されています");
+          }
         }
-        catch(e){
-          text_error_alert("ジャンル「$genreName」は既に登録されています");
+
+        else{ //編集する場合
+          //元のデータと新しいデータ
+          String beforeName = _title;
+          String afterName = genreInput.title;
+          try{
+            //新しいデータのインスタンスを作成
+            await isar.writeTxn(() async{
+              final newGenre = Genre()
+              ..id = _id
+              ..name = genreInput.title
+              ..redValue = genreInput.redValue
+              ..greenValue = genreInput.greenValue
+              ..blueValue = genreInput.blueValue;
+
+              //データベースに保存する
+              await isar.genres.put(newGenre);
+            });
+
+            //戻る
+            Navigator.pop(context);
+
+            //スナックバーにメッセージを表示
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("「$beforeName」を「$afterName」に変更しました")
+              )
+            );
+
+          }
+          catch(e){
+            print("編集中にエラーが発生しました");
+          }
         }
       }
       else{ //保存できない
@@ -393,7 +455,6 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
 
                     //青
                     BlueInputField(),
-
 
                   ],
                 ),

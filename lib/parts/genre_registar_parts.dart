@@ -122,7 +122,7 @@ class _RedInputFieldState extends ConsumerState<RedInputField> {
     return Row( //-------Red
       children: [
         SizedBox(
-          width: MediaQuery.of(context).size.width * 0.75,
+          width: MediaQuery.of(context).size.width * 0.73,
           child: Column(
             children: [
               Row(
@@ -226,6 +226,7 @@ class _RedInputFieldState extends ConsumerState<RedInputField> {
               //providerの値を更新
               ref.read(genreCorrectInputProvider.notifier).state=ref.read(genreCorrectInputProvider).copyWith(redValue: false);
             },
+            textAlign: TextAlign.center, // 横方向の中央揃え
             decoration: InputDecoration(
               isDense: true,
               border: OutlineInputBorder(),
@@ -252,7 +253,7 @@ class _GreenInputFieldState extends ConsumerState<GreenInputField> {
     return Row( //-------Green
       children: [
         SizedBox(
-          width: MediaQuery.of(context).size.width * 0.75,
+          width: MediaQuery.of(context).size.width * 0.73,
           child: Column(
             children: [
               Row(
@@ -356,6 +357,7 @@ class _GreenInputFieldState extends ConsumerState<GreenInputField> {
               //providerの値を更新
               ref.read(genreCorrectInputProvider.notifier).state=ref.read(genreCorrectInputProvider).copyWith(greenValue: false);
             },
+            textAlign: TextAlign.center, // 横方向の中央揃え
             decoration: InputDecoration(
               isDense: true,
               border: OutlineInputBorder(),
@@ -382,7 +384,7 @@ class _BlueInputFieldState extends ConsumerState<BlueInputField> {
     return Row( //-------Blue
       children: [
         SizedBox(
-          width: MediaQuery.of(context).size.width * 0.75,
+          width: MediaQuery.of(context).size.width * 0.73,
           child: Column(
             children: [
               Row(
@@ -486,6 +488,7 @@ class _BlueInputFieldState extends ConsumerState<BlueInputField> {
               //providerの値を更新
               ref.read(genreCorrectInputProvider.notifier).state=ref.read(genreCorrectInputProvider).copyWith(blueValue: false);
             },
+            textAlign: TextAlign.center, // 横方向の中央揃え
             decoration: InputDecoration(
               isDense: true,
               border: OutlineInputBorder(),
