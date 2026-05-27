@@ -149,35 +149,90 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
   }
 
   //保存するときに，テキストフィールドが空，または内容が重複しているとアラートを出す関数を定義
-  void text_error_alert(String message){
-    showDialog(
-      context: context,
+  void text_error_alert(String text){
+    showDialog(context: context,
       builder: (_){
-        return AlertDialog(
-          title: Text("入力エラー"),
-          content: Text(message),
-          actions: [
-            TextButton(onPressed: (){ //「OK」を押すと前の画面に戻る
-              Navigator.pop(context);
-            },
-              child: Text(
-                "OK",
-                style: TextStyle(
-                  color: Colors.blue
+        return Dialog(
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.9,
+            height: 240,
+            child: Column(
+              children: [
+                SizedBox(height: 30,),
+
+                Text(
+                  "エラー",
+                  style: TextStyle(
+                    fontSize: 27,
+                    color: Texts.errorMessageColor,
+                    fontWeight: FontWeight.bold
+                  ),
                 ),
-              )
-            )
-          ],
+
+                SizedBox(height: 15,),
+
+                Text(
+                  "「$text」は\n既に登録されています",
+                  style: TextStyle(
+                    color: Texts.subMessageColor,
+                    fontSize: 17
+                  ),
+                ),
+
+                SizedBox(height: 20,),
+
+                SizedBox(
+                  width: MediaQuery.of(context).size.width*0.6,
+                  height: 50,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ElevatedButtons.backgroundColor
+                    ),
+                    onPressed: (){
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      "OK",
+                      style: TextStyle(
+                        color: ElevatedButtons.fontColor,
+                        fontSize: 18
+                      ),
+                    )
+                  ),
+                )
+              ],
+            ),
+          ),
         );
-      }
-    );
+      });
+    // showDialog(
+    //   context: context,
+    //   builder: (_){
+    //     return AlertDialog(
+    //       title: Text("入力エラー"),
+    //       content: Text(message),
+    //       actions: [
+    //         TextButton(onPressed: (){ //「OK」を押すと前の画面に戻る
+    //           Navigator.pop(context);
+    //         },
+    //           child: Text(
+    //             "OK",
+    //             style: TextStyle(
+    //               color: Colors.blue
+    //             ),
+    //           )
+    //         )
+    //       ],
+    //     );
+    //   }
+    // );
   }
 
   @override
   Widget build(BuildContext context) {
     //providerのインスタンスを作成
-    final genreInput = ref.watch(genreInputProvider);
     final genreCorrectInput = ref.watch(genreCorrectInputProvider);
+    final genreInput = ref.watch(genreInputProvider);
     final isar=ref.read(isarProvider);
 
     //保存に関する関数を定義
@@ -213,7 +268,7 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
             showSnackBar(context, "ジャンル「$genreName」を保存しました");
           }
           catch(e){
-            text_error_alert("ジャンル「$genreName」は既に登録されています");
+            text_error_alert(genreName);
           }
         }
 
@@ -242,7 +297,7 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
             showSnackBar(context, "「$beforeName」を「$afterName」に変更しました");
           }
           catch(e){
-            text_error_alert("ジャンル「$genreName」は既に登録されています");
+            text_error_alert(genreName);
           }
         }
       }
