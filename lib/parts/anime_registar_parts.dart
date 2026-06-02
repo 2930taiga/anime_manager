@@ -19,9 +19,13 @@ class StatusDropDownMenu extends ConsumerWidget {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.9,
         child: DropdownMenu(
+          width: MediaQuery.of(context).size.width*0.45,
           label: Text("ステータス"),
           onSelected: (value){ //何かが選ばれたらproviderの値を書き換える 
-            if(value==null) return;
+            if(value==null) {
+              //print("何も選ばれてません");
+              return;
+            };
 
             //数値をStatusのenumに変換
             final selectedStatus=Status.values[value];
@@ -181,7 +185,7 @@ class _InputFieldDateState extends ConsumerState<InputFieldDate> {
                 }
                 catch(e){
                   //正しい値が入力されていない
-                  ref.read(animeCorrectInputProvider.notifier).state = ref.read(animeCorrectInputProvider).copyWith(date: true);
+                  ref.read(animeCorrectInputProvider.notifier).state = ref.read(animeCorrectInputProvider).copyWith(date: false);
                 }
             },
             controller: _dateController,
@@ -191,6 +195,9 @@ class _InputFieldDateState extends ConsumerState<InputFieldDate> {
             ),
           ),
         ),
+
+        SizedBox(height: 6,),
+
         SizedBox(
           width: MediaQuery.of(context).size.width * 0.9,
           child: Row(
@@ -300,6 +307,182 @@ Future<DateTime> inputDate_select(BuildContext context) async {
     //もし何も入力されていなければ空白を返す
     return DateTime.now();
   }
+
+//-----------------------------------放送年入力ボタン--------------------------
+class InputOnAirDate extends ConsumerStatefulWidget {
+  const InputOnAirDate({super.key});
+
+  @override
+  ConsumerState<InputOnAirDate> createState() => _InputOnAirDateState();
+}
+
+class _InputOnAirDateState extends ConsumerState<InputOnAirDate> {
+  final TextEditingController _onAirDateController = TextEditingController();
+
+  @override
+  void dispose(){
+    _onAirDateController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width*0.9,
+      child: Row(
+        children: [
+          SizedBox( //年入力欄
+            width: MediaQuery.of(context).size.width*0.4,
+            child: TextFormField(
+              controller: _onAirDateController,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: "放送年",
+              ),
+            ),
+          ),
+
+          IconButton( //年選択画面を出すボタン
+            onPressed:() async {
+              //年選択画面を表示
+              int? selectedYear = await inputOnAirYear(context);
+              if(selectedYear!=null){
+                _onAirDateController.text=selectedYear.toString();
+              }
+            },
+            icon:Icon(
+              Icons.calendar_month_outlined,
+              size:29,
+            )
+          ),
+
+          Expanded(child: SizedBox()),
+          
+          DropdownMenu(
+            label: Text("季節"),
+            width: MediaQuery.of(context).size.width*0.3,
+            onSelected: (value) {
+              //print(value);
+              //riverpodの中身を書き換える処理を書く
+            },
+            dropdownMenuEntries: const[
+              DropdownMenuEntry(value: 0, label: "春"),
+              DropdownMenuEntry(value: 1, label: "夏"),
+              DropdownMenuEntry(value: 2, label: "秋"),
+              DropdownMenuEntry(value: 3, label: "冬"),
+            ]
+          )
+        ],
+      ),
+    );
+  }
+}
+
+//-----------------------------------放送年入力用の関数--------------------------
+//ボタンを押すと，放送年選択のスロットを表示する関数を宣言
+Future<int?> inputOnAirYear(BuildContext context) async{
+  int _pickerSelected_onAirDate=0;
+
+  return await showModalBottomSheet<int>(
+    context: context, 
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadiusGeometry.circular(0) //下から出てくるやつの角を四角くする
+    ),
+    builder: (context){
+      return Container(
+        width: MediaQuery.of(context).size.width*1.0,
+        height: 250,
+        child: Column(
+          children: [
+            SizedBox( //上部に出す「キャンセル」，「タイトル」，「決定」のボタン
+              height: 50,
+              width: MediaQuery.of(context).size.width*1.0,
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width*0.23,
+                        child: Center(
+                          child: TextButton( //話数選択画面のキャンセルボタン
+                            onPressed:(){
+                              //ボタン選択時点での入力を保持しておく
+                              Navigator.of(context).pop(); //画面を戻る
+                              FocusManager.instance.primaryFocus?.unfocus(); //テキストのフォーカスを外す
+                            },
+                            child: Text(
+                              "キャンセル",
+                              style: TextStyle(
+                                color: Colors.blue
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width*0.57,
+                        child: Center(
+                          child: Text( //話数選択画面の上部のテキスト
+                            "放送年選択",
+                            style: TextStyle(
+                              fontSize: 20
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width*0.2,
+                        child: Center(
+                          child: TextButton( //話数選択画面の保存ボタン
+                            onPressed: (){
+                              Navigator.pop(context,_pickerSelected_onAirDate); //前の画面に戻りつつ，値を返す
+                              FocusManager.instance.primaryFocus?.unfocus(); //テキストのフォーカスを外す
+                              //print("保存された");
+                            },
+                            child: Text(
+                              "保存",
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 40),
+            SizedBox(
+              height: 110,
+              width: MediaQuery.of(context).size.width*0.7,
+              child: CupertinoPicker(
+                itemExtent: 40,
+                //初期値を今の年に
+                scrollController: FixedExtentScrollController(
+                  initialItem: DateTime.now().year-1900
+                ),
+                onSelectedItemChanged: (index){
+                  _pickerSelected_onAirDate=index+1900;
+                },
+                //1900年~2100年まで
+                children: List.generate(201,(index){
+                  return Center(
+                    child: Text(
+                      "${index+1900}"
+                    ),
+                  );
+                })
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+  );
+}
 
 //-----------------------------------ジャンル入力ボタン--------------------------
 class SelectedGenreText extends ConsumerStatefulWidget {
@@ -499,7 +682,7 @@ class _SelectedGenreTextState extends ConsumerState<SelectedGenreText> {
           
         ),
 
-        SizedBox(height: 8,), //----------------------------------------
+        SizedBox(height: 6,), //----------------------------------------
 
         SizedBox( //ジャンル選択ボタン
           width: MediaQuery.of(context).size.width*0.9,
@@ -583,6 +766,8 @@ class _InputFieldEpNumState extends ConsumerState<InputFieldEpNum> {
             ),
           ),
         ),
+
+        SizedBox(height: 6,),
 
         SizedBox(
           width: MediaQuery.of(context).size.width * 0.9,
@@ -846,6 +1031,8 @@ class _InputFieldEpTimeState extends ConsumerState<InputFieldEpTime> {
             ),
           ),
         ),
+
+        SizedBox(height: 6,),
 
         SizedBox(
           width: MediaQuery.of(context).size.width * 0.9,

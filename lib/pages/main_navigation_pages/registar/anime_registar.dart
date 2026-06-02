@@ -179,6 +179,7 @@ class AnimeRegistar extends ConsumerWidget{
                     child: ElevatedButton(
                       onPressed: (){
                         Navigator.pop(context);
+                        FocusManager.instance.primaryFocus?.unfocus();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: ElevatedButtons.backgroundColor
@@ -253,6 +254,10 @@ class AnimeRegistar extends ConsumerWidget{
 
               const SizedBox(height: 20,),//-----------------------------------------------------
 
+              InputOnAirDate(),
+
+              const SizedBox(height: 20,),//-----------------------------------------------------
+
               //ジャンル選択ボタン
               SelectedGenreText(),
 
@@ -277,20 +282,20 @@ class AnimeRegistar extends ConsumerWidget{
               InputFieldMemo(),
 
               //下までスクロールできるようにするためのbox
-              const SizedBox(height: 50,)
+              const SizedBox(height: 50,),
 
-              // TextButton(
-              //   onPressed: (){
-              //     print(animeInput.genreId);
-              //   },
-              //   child: Text("テスト用")
-              // ),
-              // TextButton(
-              //   onPressed: (){
-              //     print(animeCorrectInput.date);
-              //   },
-              //   child: Text("テスト用1")
-              // ),
+              TextButton(
+                onPressed: (){
+                  print(animeInput.date);
+                },
+                child: Text("テスト用")
+              ),
+              TextButton(
+                onPressed: (){
+                  print(animeCorrectInput.date);
+                },
+                child: Text("テスト用1")
+              ),
             ],
           ),
         ),
