@@ -216,7 +216,14 @@ class _InputFieldDateState extends ConsumerState<InputFieldDate> {
                       borderRadius: BorderRadius.circular(15),
                     )
                   ),
-                  child: Text("今日の日付")
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.calendar_today_outlined),
+                      SizedBox(width: MediaQuery.of(context).size.width*0.03,),
+                      const Text("今日の日付")
+                    ],
+                  )
                   )
               ),
               SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
@@ -242,7 +249,16 @@ class _InputFieldDateState extends ConsumerState<InputFieldDate> {
                       borderRadius: BorderRadius.circular(15),
                     )
                   ),
-                  child: Text("日付選択")
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.calendar_today),
+                      SizedBox(width: MediaQuery.of(context).size.width*0.03,),
+                      const Text("日付選択"),
+                      SizedBox(width: MediaQuery.of(context).size.width*0.03,),
+                      const Icon(Icons.navigate_next_outlined)
+                    ],
+                  )
                   )
               )
             ],
@@ -329,7 +345,7 @@ class _SelectedGenreTextState extends ConsumerState<SelectedGenreText> {
 
                     SizedBox(height: 20,),
 
-                    Text(
+                    const Text(
                       "ジャンルを選択してください",
                       style: TextStyle(
                         fontSize: 20
@@ -341,7 +357,7 @@ class _SelectedGenreTextState extends ConsumerState<SelectedGenreText> {
                     Expanded(
                       child: _genres.isEmpty 
                       ? Center(
-                        child: Text(
+                        child: const Text(
                           "ジャンルが登録されていません",
                           style: TextStyle(
                             fontSize: 17,
@@ -385,7 +401,7 @@ class _SelectedGenreTextState extends ConsumerState<SelectedGenreText> {
                       )
                     ),
 
-                    SizedBox(height: 10,),
+                    const SizedBox(height: 10,),
 
                     SizedBox( //保存ボタン
                       width: MediaQuery.of(context).size.width*0.4,
@@ -447,7 +463,7 @@ class _SelectedGenreTextState extends ConsumerState<SelectedGenreText> {
                     ),
                     
 
-                    SizedBox(height: 20,)
+                    const SizedBox(height: 20,)
                   ],
                 ),
               ),
@@ -491,8 +507,15 @@ class _SelectedGenreTextState extends ConsumerState<SelectedGenreText> {
             onPressed: (){
               showSelectGenreDialog(isar);
             },
-            child: Text(
-              "ジャンル選択"
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.local_offer),
+                SizedBox(width: MediaQuery.of(context).size.width*0.03,),
+                const Text("ジャンル選択"),
+                SizedBox(width: MediaQuery.of(context).size.width*0.03,),
+                const Icon(Icons.navigate_next)
+              ],
             )
           ),
         ),
@@ -566,7 +589,7 @@ class _InputFieldEpNumState extends ConsumerState<InputFieldEpNum> {
           child: Row(
             children: [
               SizedBox(
-                width: MediaQuery.of(context).size.width * 0.2866666,
+                width: MediaQuery.of(context).size.width * 0.255,
                 child: ElevatedButton(
                   onPressed: (){
                     //TextFieldのフォーカスを外す
@@ -581,16 +604,24 @@ class _InputFieldEpNumState extends ConsumerState<InputFieldEpNum> {
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
-                    )
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 2) //余白を小さくする
                   ),
-                  child: Text("12話")
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.local_library_outlined),
+                      SizedBox(width: MediaQuery.of(context).size.width*0.02,),
+                      const Text("12話")
+                    ],
                   )
+                )
               ),
 
               SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
 
               SizedBox(
-                width: MediaQuery.of(context).size.width * 0.2866666,
+                width: MediaQuery.of(context).size.width * 0.255,
                 child: ElevatedButton(
                   onPressed: (){
                     //TextFieldのフォーカスを外す
@@ -606,16 +637,24 @@ class _InputFieldEpNumState extends ConsumerState<InputFieldEpNum> {
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
-                    )
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 2) //余白を小さくする
                   ),
-                  child: Text("24話")
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.local_library_outlined),
+                      SizedBox(width: MediaQuery.of(context).size.width*0.02,),
+                      const Text("24話")
+                    ],
                   )
+                )
               ),
 
               SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
 
               SizedBox(
-                width: MediaQuery.of(context).size.width * 0.2866666,
+                width: MediaQuery.of(context).size.width * 0.35,
                 child: ElevatedButton(
                   onPressed: () async{
                     final result = (await inputEpNum(context)).toString();
@@ -631,10 +670,20 @@ class _InputFieldEpNumState extends ConsumerState<InputFieldEpNum> {
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
-                    )
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 2) //余白を小さくする
                   ),
-                  child: Text("話数選択")
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.local_library),
+                      SizedBox(width: MediaQuery.of(context).size.width*0.02,),
+                      const Text("話数選択"),
+                      SizedBox(width: MediaQuery.of(context).size.width*0.02,),
+                      const Icon(Icons.navigate_next)
+                    ],
                   )
+                )
               ),
             ],
           ),
@@ -803,7 +852,7 @@ class _InputFieldEpTimeState extends ConsumerState<InputFieldEpTime> {
           child: Row(
             children: [
               SizedBox(
-                width: MediaQuery.of(context).size.width * 0.2866666,
+                width: MediaQuery.of(context).size.width * 0.255,
                 child: ElevatedButton(
                   onPressed: (){
                     //コントローラの値を更新
@@ -816,16 +865,24 @@ class _InputFieldEpTimeState extends ConsumerState<InputFieldEpTime> {
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
-                    )
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 2) //余白を小さくする
                   ),
-                  child: Text("12分")
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.access_time),
+                      SizedBox(width: MediaQuery.of(context).size.width*0.02,),
+                      const Text("12分")
+                    ],
                   )
+                )
               ),
 
               SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
 
               SizedBox(
-                width: MediaQuery.of(context).size.width * 0.2866666,
+                width: MediaQuery.of(context).size.width * 0.255,
                 child: ElevatedButton(
                   onPressed: (){
                     //コントローラの値を更新
@@ -838,16 +895,24 @@ class _InputFieldEpTimeState extends ConsumerState<InputFieldEpTime> {
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
-                    )
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 2) //余白を小さくする
                   ),
-                  child: Text("24分")
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.access_time),
+                      SizedBox(width: MediaQuery.of(context).size.width*0.02,),
+                      const Text("24分")
+                    ],
                   )
+                )
               ),
 
               SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
 
               SizedBox(
-                width: MediaQuery.of(context).size.width * 0.2866666,
+                width: MediaQuery.of(context).size.width * 0.35,
                 child: ElevatedButton(
                   onPressed: ()async {
                     //入力時点での入力値を保持しておく
@@ -868,10 +933,20 @@ class _InputFieldEpTimeState extends ConsumerState<InputFieldEpTime> {
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
-                    )
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 2) //余白を小さくする
                   ),
-                  child: Text("時間選択")
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.access_time_filled),
+                      SizedBox(width: MediaQuery.of(context).size.width*0.02,),
+                      const Text("時間選択"),
+                      SizedBox(width: MediaQuery.of(context).size.width*0.02,),
+                      const Icon(Icons.navigate_next)
+                    ],
                   )
+                )
               ),
             ],
           ),

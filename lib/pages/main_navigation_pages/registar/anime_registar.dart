@@ -276,6 +276,9 @@ class AnimeRegistar extends ConsumerWidget{
               //メモ
               InputFieldMemo(),
 
+              //下までスクロールできるようにするためのbox
+              const SizedBox(height: 50,)
+
               // TextButton(
               //   onPressed: (){
               //     print(animeInput.genreId);
