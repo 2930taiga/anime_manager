@@ -356,6 +356,10 @@ class _SelectedGenreTextState extends ConsumerState<SelectedGenreText> {
                             _genres.length,
                             (index){
                               return SwitchListTile( //スイッチタイル部分
+                                secondary: Icon(
+                                  IconShapeDatas[_genres[index].iconShape.index],
+                                  color: Color.fromARGB(255, _genres[index].redValue, _genres[index].redValue, _genres[index].blueValue),
+                                ),
                                 title: Text(_genres[index].name),
                                 value: select_genre_flag[index],
                                 onChanged: (bool value){ //あるジャンルが選択されたときの処理
