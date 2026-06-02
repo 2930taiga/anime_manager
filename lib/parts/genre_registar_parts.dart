@@ -1,3 +1,4 @@
+import 'package:anime_administration/models/genre.dart';
 import 'package:flutter/material.dart';
 //providerに関するものをインポート
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -607,15 +608,19 @@ class ColorPickIcons extends ConsumerWidget {
 class ShapePickIcon extends ConsumerWidget {
   //アイコンの形状
   final IconData icon;
+  final IconShape iconShape;
 
-  const ShapePickIcon({super.key,required this.icon});
+  const ShapePickIcon({super.key,required this.icon, required this.iconShape});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return IconButton(
       onPressed: (){
         //providerの中身を更新
-        ref.read(genreInputProvider.notifier).state=ref.read(genreInputProvider).copyWith(iconData: icon);
+        ref.read(genreInputProvider.notifier).state=ref.read(genreInputProvider).copyWith(
+          iconData: icon,
+          iconShape: iconShape
+        );
       },
       icon: Icon(
         icon,
@@ -637,17 +642,17 @@ class ShapePickIcons extends ConsumerWidget {
       width: MediaQuery.of(context).size.width*0.9,
         child: Row(
           children: [
-            ShapePickIcon(icon: Icons.fiber_manual_record), //〇
+            ShapePickIcon(icon: Icons.fiber_manual_record,iconShape: IconShape.circle,), //〇
             SizedBox(width: MediaQuery.of(context).size.width*0.01,),
-            ShapePickIcon(icon: Icons.stop), //■
+            ShapePickIcon(icon: Icons.stop,iconShape: IconShape.square,), //■
             SizedBox(width: MediaQuery.of(context).size.width*0.01,),
-            ShapePickIcon(icon: Icons.play_arrow_sharp), //▲
+            ShapePickIcon(icon: Icons.play_arrow_sharp,iconShape: IconShape.triangle,), //▲
             SizedBox(width: MediaQuery.of(context).size.width*0.01,),
-            ShapePickIcon(icon: Icons.star), //☆
+            ShapePickIcon(icon: Icons.star,iconShape: IconShape.star,), //☆
             SizedBox(width: MediaQuery.of(context).size.width*0.01,),
-            ShapePickIcon(icon: Icons.close), //✖
+            ShapePickIcon(icon: Icons.close,iconShape: IconShape.x,), //✖
             SizedBox(width: MediaQuery.of(context).size.width*0.01,),
-            ShapePickIcon(icon: Icons.add), //+
+            ShapePickIcon(icon: Icons.add,iconShape: IconShape.plus,), //+
           ],
         ),
     );

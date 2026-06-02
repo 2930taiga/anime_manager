@@ -1,4 +1,5 @@
 //ジャンルのクラスを定義するコード
+import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 
 part 'genre.g.dart';
@@ -32,3 +33,12 @@ enum IconShape{
   x,
   plus
 }
+
+List<IconData> IconShapeDatas =[
+  Icons.fiber_manual_record,
+  Icons.stop,
+  Icons.play_arrow_sharp,
+  Icons.star,
+  Icons.close,
+  Icons.add
+];

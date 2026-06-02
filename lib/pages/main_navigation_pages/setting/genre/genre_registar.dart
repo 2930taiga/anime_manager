@@ -16,13 +16,15 @@ class GenreInputData{
   final int greenValue;
   final int blueValue;
   final IconData iconData;
+  final IconShape iconShape;
 
   GenreInputData({
     this.title = "",
     this.redValue=0,
     this.greenValue=0,
     this.blueValue=0,
-    this.iconData = Icons.fiber_manual_record
+    this.iconData = Icons.fiber_manual_record,
+    this.iconShape = IconShape.circle
   });
 
   GenreInputData copyWith({
@@ -31,6 +33,7 @@ class GenreInputData{
     int? greenValue,
     int? blueValue,
     IconData? iconData,
+    IconShape? iconShape,
   }){
     return GenreInputData(
       title: title ?? this.title,
@@ -38,6 +41,7 @@ class GenreInputData{
       greenValue: greenValue ?? this.greenValue,
       blueValue: blueValue ?? this.blueValue,
       iconData: iconData ?? this.iconData,
+      iconShape: iconShape ?? this.iconShape,
     );
   }
 }
@@ -117,8 +121,9 @@ class GenreRegistar extends ConsumerStatefulWidget {
   final int id;
   //アイコンの初期値（ジャンルを編集する場合）
   final IconData iconData;
+  final IconShape iconShape;
 
-  const GenreRegistar({super.key,required this.initialNewAdd,required this.title,required this.rgbColors,required this.id,required this.iconData});
+  const GenreRegistar({super.key,required this.initialNewAdd,required this.title,required this.rgbColors,required this.id,required this.iconData, required this.iconShape});
 
   @override
   ConsumerState<GenreRegistar> createState() => _GenreRegistarState();
@@ -131,6 +136,7 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
   late List<int> _rgbColors;
   late int _id;
   late IconData _iconData;
+  late IconShape _iconShape;
 
   @override
   void initState(){
@@ -140,6 +146,7 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
     _rgbColors = widget.rgbColors;
     _id = widget.id;
     _iconData = widget.iconData;
+    _iconShape = widget.iconShape;
 
     //編集モードなら初期値を入力
     //build終了後に実行
@@ -152,6 +159,7 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
           greenValue: _rgbColors[1],
           blueValue: _rgbColors[2],
           iconData: _iconData,
+          iconShape: _iconShape
         );
       }
     });
@@ -244,7 +252,8 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
               ..name = genreInput.title
               ..redValue = genreInput.redValue
               ..greenValue = genreInput.greenValue
-              ..blueValue = genreInput.blueValue;
+              ..blueValue = genreInput.blueValue
+              ..iconShape = genreInput.iconShape;
 
               //データベースに保存する
               await isar.genres.put(newGenre);
@@ -272,7 +281,8 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
               ..name = genreInput.title
               ..redValue = genreInput.redValue
               ..greenValue = genreInput.greenValue
-              ..blueValue = genreInput.blueValue;
+              ..blueValue = genreInput.blueValue
+              ..iconShape = genreInput.iconShape;
 
               //データベースに保存する
               await isar.genres.put(newGenre);

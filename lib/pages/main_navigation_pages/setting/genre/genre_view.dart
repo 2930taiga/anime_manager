@@ -202,7 +202,7 @@ class _ViewGenreState extends State<ViewGenre> {
                 return ListTile( //登録されているジャンル一覧が表示される
                     title: Text(_genres[index].name), //編集中なら並び替えボタンが表示される
                     leading: Icon(
-                      Icons.circle,
+                      IconShapeDatas[_genres[index].iconShape.index],
                       color: Color.fromARGB(255, _genres[index].redValue, _genres[index].greenValue, _genres[index].blueValue),
                       size: 30,
                     ), 
@@ -222,7 +222,7 @@ class _ViewGenreState extends State<ViewGenre> {
                         await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (content) => GenreRegistar(initialNewAdd: false, title: _genres[index].name, rgbColors: [_genres[index].redValue,_genres[index].greenValue,_genres[index].blueValue],id: _genres[index].id,iconData: Icons.circle,)
+                            builder: (content) => GenreRegistar(initialNewAdd: false, title: _genres[index].name, rgbColors: [_genres[index].redValue,_genres[index].greenValue,_genres[index].blueValue],id: _genres[index].id,iconData: IconShapeDatas[_genres[index].iconShape.index],iconShape: _genres[index].iconShape,)
                           )
                         );
 
@@ -243,7 +243,7 @@ class _ViewGenreState extends State<ViewGenre> {
           await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => GenreRegistar(initialNewAdd: true,title: "",rgbColors: [0,0,0],id: 0,iconData: Icons.circle,)
+              builder: (context) => GenreRegistar(initialNewAdd: true,title: "",rgbColors: [0,0,0],id: 0,iconData: Icons.circle,iconShape: IconShape.circle,)
             )
           );
             
