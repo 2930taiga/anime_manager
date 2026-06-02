@@ -27,13 +27,19 @@ const GenreSchema = CollectionSchema(
       name: r'greenValue',
       type: IsarType.long,
     ),
-    r'name': PropertySchema(
+    r'iconShape': PropertySchema(
       id: 2,
+      name: r'iconShape',
+      type: IsarType.byte,
+      enumMap: _GenreiconShapeEnumValueMap,
+    ),
+    r'name': PropertySchema(
+      id: 3,
       name: r'name',
       type: IsarType.string,
     ),
     r'redValue': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'redValue',
       type: IsarType.long,
     )
@@ -84,8 +90,9 @@ void _genreSerialize(
 ) {
   writer.writeLong(offsets[0], object.blueValue);
   writer.writeLong(offsets[1], object.greenValue);
-  writer.writeString(offsets[2], object.name);
-  writer.writeLong(offsets[3], object.redValue);
+  writer.writeByte(offsets[2], object.iconShape.index);
+  writer.writeString(offsets[3], object.name);
+  writer.writeLong(offsets[4], object.redValue);
 }
 
 Genre _genreDeserialize(
@@ -97,9 +104,12 @@ Genre _genreDeserialize(
   final object = Genre();
   object.blueValue = reader.readLong(offsets[0]);
   object.greenValue = reader.readLong(offsets[1]);
+  object.iconShape =
+      _GenreiconShapeValueEnumMap[reader.readByteOrNull(offsets[2])] ??
+          IconShape.circle;
   object.id = id;
-  object.name = reader.readString(offsets[2]);
-  object.redValue = reader.readLong(offsets[3]);
+  object.name = reader.readString(offsets[3]);
+  object.redValue = reader.readLong(offsets[4]);
   return object;
 }
 
@@ -115,13 +125,33 @@ P _genreDeserializeProp<P>(
     case 1:
       return (reader.readLong(offset)) as P;
     case 2:
-      return (reader.readString(offset)) as P;
+      return (_GenreiconShapeValueEnumMap[reader.readByteOrNull(offset)] ??
+          IconShape.circle) as P;
     case 3:
+      return (reader.readString(offset)) as P;
+    case 4:
       return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
+
+const _GenreiconShapeEnumValueMap = {
+  'circle': 0,
+  'square': 1,
+  'triangle': 2,
+  'star': 3,
+  'x': 4,
+  'plus': 5,
+};
+const _GenreiconShapeValueEnumMap = {
+  0: IconShape.circle,
+  1: IconShape.square,
+  2: IconShape.triangle,
+  3: IconShape.star,
+  4: IconShape.x,
+  5: IconShape.plus,
+};
 
 Id _genreGetId(Genre object) {
   return object.id;
@@ -414,6 +444,59 @@ extension GenreQueryFilter on QueryBuilder<Genre, Genre, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Genre, Genre, QAfterFilterCondition> iconShapeEqualTo(
+      IconShape value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'iconShape',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterFilterCondition> iconShapeGreaterThan(
+    IconShape value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'iconShape',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterFilterCondition> iconShapeLessThan(
+    IconShape value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'iconShape',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterFilterCondition> iconShapeBetween(
+    IconShape lower,
+    IconShape upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'iconShape',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<Genre, Genre, QAfterFilterCondition> idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -676,6 +759,18 @@ extension GenreQuerySortBy on QueryBuilder<Genre, Genre, QSortBy> {
     });
   }
 
+  QueryBuilder<Genre, Genre, QAfterSortBy> sortByIconShape() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'iconShape', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterSortBy> sortByIconShapeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'iconShape', Sort.desc);
+    });
+  }
+
   QueryBuilder<Genre, Genre, QAfterSortBy> sortByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -723,6 +818,18 @@ extension GenreQuerySortThenBy on QueryBuilder<Genre, Genre, QSortThenBy> {
   QueryBuilder<Genre, Genre, QAfterSortBy> thenByGreenValueDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'greenValue', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterSortBy> thenByIconShape() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'iconShape', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterSortBy> thenByIconShapeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'iconShape', Sort.desc);
     });
   }
 
@@ -776,6 +883,12 @@ extension GenreQueryWhereDistinct on QueryBuilder<Genre, Genre, QDistinct> {
     });
   }
 
+  QueryBuilder<Genre, Genre, QDistinct> distinctByIconShape() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'iconShape');
+    });
+  }
+
   QueryBuilder<Genre, Genre, QDistinct> distinctByName(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -806,6 +919,12 @@ extension GenreQueryProperty on QueryBuilder<Genre, Genre, QQueryProperty> {
   QueryBuilder<Genre, int, QQueryOperations> greenValueProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'greenValue');
+    });
+  }
+
+  QueryBuilder<Genre, IconShape, QQueryOperations> iconShapeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'iconShape');
     });
   }
 

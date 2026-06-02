@@ -1,6 +1,4 @@
 //ジャンルのクラスを定義するコード
-
-import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 
 part 'genre.g.dart';
@@ -21,6 +19,16 @@ class Genre {
   late int greenValue;
   late int blueValue;
 
-  // //アイコンの形状
-  // late IconData iconData;
+  //アイコンの形状
+  @enumerated
+  late IconShape iconShape;
+}
+
+enum IconShape{
+  circle,
+  square,
+  triangle,
+  star,
+  x,
+  plus
 }
