@@ -216,13 +216,13 @@ class _ViewGenreState extends State<ViewGenre> {
                       ),
                       color: Colors.red[300],
                     ): null,
-                    onTap: () async { //編集中にタップするとジャンルを編集できる
+                    onTap: () async { //編集中にタップするとジャンルを編集できる，ここをデータベースから読み込む---------------------------------------------
                       if(Editting==true){
                         //edit_genre(index);
                         await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (content) => GenreRegistar(initialNewAdd: false, title: _genres[index].name, rgbColors: [_genres[index].redValue,_genres[index].greenValue,_genres[index].blueValue],id: _genres[index].id,)
+                            builder: (content) => GenreRegistar(initialNewAdd: false, title: _genres[index].name, rgbColors: [_genres[index].redValue,_genres[index].greenValue,_genres[index].blueValue],id: _genres[index].id,iconData: Icons.circle,)
                           )
                         );
 
@@ -243,7 +243,7 @@ class _ViewGenreState extends State<ViewGenre> {
           await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => GenreRegistar(initialNewAdd: true,title: "",rgbColors: [0,0,0],id: 0,)
+              builder: (context) => GenreRegistar(initialNewAdd: true,title: "",rgbColors: [0,0,0],id: 0,iconData: Icons.circle,)
             )
           );
             

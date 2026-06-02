@@ -1,5 +1,6 @@
 //ジャンルのクラスを定義するコード
 
+import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 
 part 'genre.g.dart';
@@ -19,4 +20,7 @@ class Genre {
   late int redValue;
   late int greenValue;
   late int blueValue;
+
+  // //アイコンの形状
+  // late IconData iconData;
 }

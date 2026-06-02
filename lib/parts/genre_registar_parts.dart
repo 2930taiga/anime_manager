@@ -98,8 +98,7 @@ class _PreviewColorState extends ConsumerState<PreviewColor> {
           Row(
             children: [
               Icon(
-                //onPressed: null,
-                Icons.circle,
+                ref.read(genreInputProvider.notifier).state.iconData,
                 color: Color.fromARGB(255, ref.read(genreInputProvider.notifier).state.redValue, ref.read(genreInputProvider.notifier).state.greenValue, ref.read(genreInputProvider.notifier).state.blueValue),
                 size: 30,
               ),
@@ -545,7 +544,7 @@ class ColorPickIcon extends ConsumerWidget {
         // ref.read(genreCorrectInputProvider.notifier).state=ref.read(genreCorrectInputProvider).copyWith(blueValue: true);
       },
       icon: Icon(
-        Icons.fiber_manual_record,
+        ref.read(genreInputProvider.notifier).state.iconData,
         size: 40,
         color: Color.fromARGB(255, RGBColors[0], RGBColors[1], RGBColors[2]),
         )
@@ -608,28 +607,22 @@ class ColorPickIcons extends ConsumerWidget {
 class ShapePickIcon extends ConsumerWidget {
   //アイコンの形状
   final IconData icon;
-  //向き
-  final double dig;
 
-  const ShapePickIcon({super.key,required this.icon,required this.dig});
+  const ShapePickIcon({super.key,required this.icon});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Transform.rotate(
-      angle: dig,
-      child: IconButton(
-        onPressed: (){
-          
-        },
-        icon: Icon(
-          icon,
-          size: 40,
-          
-          color: Color.fromARGB(255, ref.read(genreInputProvider.notifier).state.redValue, ref.read(genreInputProvider.notifier).state.greenValue, ref.read(genreInputProvider.notifier).state.blueValue),
-          )
-      ),
+    return IconButton(
+      onPressed: (){
+        //providerの中身を更新
+        ref.read(genreInputProvider.notifier).state=ref.read(genreInputProvider).copyWith(iconData: icon);
+      },
+      icon: Icon(
+        icon,
+        size: 40,
+        color: Color.fromARGB(255, ref.read(genreInputProvider.notifier).state.redValue, ref.read(genreInputProvider.notifier).state.greenValue, ref.read(genreInputProvider.notifier).state.blueValue),
+        )
     );
-    
   }
 }
 
@@ -644,17 +637,17 @@ class ShapePickIcons extends ConsumerWidget {
       width: MediaQuery.of(context).size.width*0.9,
         child: Row(
           children: [
-            ShapePickIcon(icon: Icons.fiber_manual_record,dig: 0,), //〇
+            ShapePickIcon(icon: Icons.fiber_manual_record), //〇
             SizedBox(width: MediaQuery.of(context).size.width*0.01,),
-            ShapePickIcon(icon: Icons.stop,dig: 0,), //■
+            ShapePickIcon(icon: Icons.stop), //■
             SizedBox(width: MediaQuery.of(context).size.width*0.01,),
-            ShapePickIcon(icon: Icons.play_arrow_sharp,dig: -1.57079632679,), //▲
+            ShapePickIcon(icon: Icons.play_arrow_sharp), //▲
             SizedBox(width: MediaQuery.of(context).size.width*0.01,),
-            ShapePickIcon(icon: Icons.star,dig: 0,), //☆
+            ShapePickIcon(icon: Icons.star), //☆
             SizedBox(width: MediaQuery.of(context).size.width*0.01,),
-            ShapePickIcon(icon: Icons.close,dig: 0,), //✖
+            ShapePickIcon(icon: Icons.close), //✖
             SizedBox(width: MediaQuery.of(context).size.width*0.01,),
-            ShapePickIcon(icon: Icons.add,dig: 0,), //+
+            ShapePickIcon(icon: Icons.add), //+
           ],
         ),
     );

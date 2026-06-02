@@ -15,12 +15,14 @@ class GenreInputData{
   final int redValue;
   final int greenValue;
   final int blueValue;
+  final IconData iconData;
 
   GenreInputData({
     this.title = "",
     this.redValue=0,
     this.greenValue=0,
     this.blueValue=0,
+    this.iconData = Icons.fiber_manual_record
   });
 
   GenreInputData copyWith({
@@ -28,12 +30,14 @@ class GenreInputData{
     int? redValue,
     int? greenValue,
     int? blueValue,
+    IconData? iconData,
   }){
     return GenreInputData(
       title: title ?? this.title,
       redValue: redValue ?? this.redValue,
       greenValue: greenValue ?? this.greenValue,
       blueValue: blueValue ?? this.blueValue,
+      iconData: iconData ?? this.iconData,
     );
   }
 }
@@ -111,8 +115,10 @@ class GenreRegistar extends ConsumerStatefulWidget {
   final List<int> rgbColors;
   //データベースのインデックス（ジャンルを編集する場合）
   final int id;
+  //アイコンの初期値（ジャンルを編集する場合）
+  final IconData iconData;
 
-  const GenreRegistar({super.key,required this.initialNewAdd,required this.title,required this.rgbColors,required this.id});
+  const GenreRegistar({super.key,required this.initialNewAdd,required this.title,required this.rgbColors,required this.id,required this.iconData});
 
   @override
   ConsumerState<GenreRegistar> createState() => _GenreRegistarState();
@@ -124,6 +130,7 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
   late String _title;
   late List<int> _rgbColors;
   late int _id;
+  late IconData _iconData;
 
   @override
   void initState(){
@@ -132,6 +139,7 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
     _title = widget.title;
     _rgbColors = widget.rgbColors;
     _id = widget.id;
+    _iconData = widget.iconData;
 
     //編集モードなら初期値を入力
     //build終了後に実行
@@ -142,7 +150,8 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
           title: _title,
           redValue: _rgbColors[0],
           greenValue: _rgbColors[1],
-          blueValue: _rgbColors[2]
+          blueValue: _rgbColors[2],
+          iconData: _iconData,
         );
       }
     });

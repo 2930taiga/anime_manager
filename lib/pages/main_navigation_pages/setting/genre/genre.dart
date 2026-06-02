@@ -69,7 +69,7 @@ class _SettingGenreState extends ConsumerState<SettingGenre> {
               onTap: (){
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context)=> GenreRegistar(initialNewAdd: true,title: "",rgbColors: [0,0,0],id: 0,),
+                    builder: (context)=> GenreRegistar(initialNewAdd: true,title: "",rgbColors: [0,0,0],id: 0,iconData: Icons.circle,),
                   )
                 );
               },
