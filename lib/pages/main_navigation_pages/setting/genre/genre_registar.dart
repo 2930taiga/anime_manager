@@ -491,10 +491,20 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
 
               SizedBox(height: 20,),
 
-
+              //カラーピッカーアイコン
               TitleText(titleText: "デフォルトカラー"),
               SizedBox(height: 10,),
-              ColorPickIcons()
+              ColorPickIcons(),
+
+              SizedBox(height: 20,),
+
+              //形選択アイコン
+              TitleText(titleText: "アイコン"),
+              SizedBox(height: 10,),
+              ShapePickIcons(),
+
+              //下までスクロールできるようにするためのbox
+              SizedBox(height: 50,)
             ],
           ),
         ),

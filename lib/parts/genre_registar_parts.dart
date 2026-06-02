@@ -102,8 +102,8 @@ class _PreviewColorState extends ConsumerState<PreviewColor> {
                 Icons.circle,
                 color: Color.fromARGB(255, ref.read(genreInputProvider.notifier).state.redValue, ref.read(genreInputProvider.notifier).state.greenValue, ref.read(genreInputProvider.notifier).state.blueValue),
                 size: 30,
-                
               ),
+              SizedBox(width: MediaQuery.of(context).size.width*0.02,),
               Expanded(
                 child: Text(
                   ref.read(genreInputProvider.notifier).state.title,
@@ -545,7 +545,7 @@ class ColorPickIcon extends ConsumerWidget {
         // ref.read(genreCorrectInputProvider.notifier).state=ref.read(genreCorrectInputProvider).copyWith(blueValue: true);
       },
       icon: Icon(
-        Icons.circle,
+        Icons.fiber_manual_record,
         size: 40,
         color: Color.fromARGB(255, RGBColors[0], RGBColors[1], RGBColors[2]),
         )
@@ -599,6 +599,64 @@ class ColorPickIcons extends ConsumerWidget {
           )
         ],
       ),
+    );
+  }
+}
+
+//形入力アイコン---------------------------------------------------------------------------------------
+//アイコン一つ
+class ShapePickIcon extends ConsumerWidget {
+  //アイコンの形状
+  final IconData icon;
+  //向き
+  final double dig;
+
+  const ShapePickIcon({super.key,required this.icon,required this.dig});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Transform.rotate(
+      angle: dig,
+      child: IconButton(
+        onPressed: (){
+          
+        },
+        icon: Icon(
+          icon,
+          size: 40,
+          
+          color: Color.fromARGB(255, ref.read(genreInputProvider.notifier).state.redValue, ref.read(genreInputProvider.notifier).state.greenValue, ref.read(genreInputProvider.notifier).state.blueValue),
+          )
+      ),
+    );
+    
+  }
+}
+
+//色入力アイコン---------------------------------------------------------------------------------------
+//まとめたやつ
+class ShapePickIcons extends ConsumerWidget {
+  const ShapePickIcons({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width*0.9,
+        child: Row(
+          children: [
+            ShapePickIcon(icon: Icons.fiber_manual_record,dig: 0,), //〇
+            SizedBox(width: MediaQuery.of(context).size.width*0.01,),
+            ShapePickIcon(icon: Icons.stop,dig: 0,), //■
+            SizedBox(width: MediaQuery.of(context).size.width*0.01,),
+            ShapePickIcon(icon: Icons.play_arrow_sharp,dig: -1.57079632679,), //▲
+            SizedBox(width: MediaQuery.of(context).size.width*0.01,),
+            ShapePickIcon(icon: Icons.star,dig: 0,), //☆
+            SizedBox(width: MediaQuery.of(context).size.width*0.01,),
+            ShapePickIcon(icon: Icons.close,dig: 0,), //✖
+            SizedBox(width: MediaQuery.of(context).size.width*0.01,),
+            ShapePickIcon(icon: Icons.add,dig: 0,), //+
+          ],
+        ),
     );
   }
 }
