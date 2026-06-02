@@ -25,6 +25,7 @@ class _TitleIputFieldState extends ConsumerState<TitleIputField> {
       width: MediaQuery.of(context).size.width*0.9,
       child: TextFormField(
         autovalidateMode: AutovalidateMode.onUserInteraction,
+        initialValue: ref.read(genreInputProvider.notifier).state.title,
         validator: (text){
           if(text==null || text ==""){
             return "ジャンル名を入力してください";

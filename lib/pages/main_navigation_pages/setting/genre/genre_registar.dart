@@ -129,7 +129,7 @@ class GenreRegistar extends ConsumerStatefulWidget {
   ConsumerState<GenreRegistar> createState() => _GenreRegistarState();
 }
 
-class _GenreRegistarState extends ConsumerState<GenreRegistar> {
+class _GenreRegistarState extends ConsumerState<GenreRegistar> {  
   //初期化でコピーする
   late bool newAdd;
   late String _title;
