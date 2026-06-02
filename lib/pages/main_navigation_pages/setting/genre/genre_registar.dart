@@ -205,27 +205,6 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
           ),
         );
       });
-    // showDialog(
-    //   context: context,
-    //   builder: (_){
-    //     return AlertDialog(
-    //       title: Text("入力エラー"),
-    //       content: Text(message),
-    //       actions: [
-    //         TextButton(onPressed: (){ //「OK」を押すと前の画面に戻る
-    //           Navigator.pop(context);
-    //         },
-    //           child: Text(
-    //             "OK",
-    //             style: TextStyle(
-    //               color: Colors.blue
-    //             ),
-    //           )
-    //         )
-    //       ],
-    //     );
-    //   }
-    // );
   }
 
   @override
@@ -483,11 +462,15 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
               SizedBox(height: 20,),
 
               //プレビュー画面
+              TitleText(titleText: "プレビュー"),
+              SizedBox(height: 10,),
               PreviewColor(),
 
               SizedBox(height: 20,),
 
               //色入力欄
+              TitleText(titleText: "カラー"),
+              SizedBox(height: 10,),
               SizedBox( 
                 width: MediaQuery.of(context).size.width*0.9,
                 child: Column(
@@ -508,6 +491,9 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
 
               SizedBox(height: 20,),
 
+
+              TitleText(titleText: "デフォルトカラー"),
+              SizedBox(height: 10,),
               ColorPickIcons()
             ],
           ),

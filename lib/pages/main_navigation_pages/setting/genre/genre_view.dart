@@ -127,18 +127,7 @@ class _ViewGenreState extends State<ViewGenre> {
         //successには削除が成功したかが入る
         final success = await widget.isar.genres.delete(deleted_id);
       });
-
-      //削除に成功したメッセージを表示 
-      // ScaffoldMessenger.of(context).showSnackBar( //スナックバーにメッセージを表示
-      //   SnackBar(
-      //     content: Row(
-      //       children: [
-      //         Icon(Icons.check),
-      //         Text("ジャンル「$deleted_genre_name」を削除しました")
-      //       ],
-      //     )
-      //   )
-      // );
+      
       showSnackBar(context,"ジャンル「$deleted_genre_name」を削除しました");
     } catch(e){
       //print("削除中にエラーが発生しました");

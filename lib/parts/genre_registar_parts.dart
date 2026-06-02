@@ -50,6 +50,35 @@ class _TitleIputFieldState extends ConsumerState<TitleIputField> {
   }
 }
 
+//題目---------------------------------------------------------------------------------------
+class TitleText extends StatelessWidget {
+  //タイトル
+  final String titleText;
+  //context
+
+  const TitleText({super.key, required this.titleText});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width*0.9,
+      child: Row(
+        children: [
+          SizedBox(width: MediaQuery.of(context).size.width*0.02,),
+
+          Text(
+            titleText,
+            style: TextStyle(
+              fontSize: 20
+            ),
+          )
+        ],
+      ),
+    );
+    
+  }
+}
+
 //プレビュー欄---------------------------------------------------------------------------------------
 class PreviewColor extends ConsumerStatefulWidget {
   const PreviewColor({super.key});
@@ -65,32 +94,15 @@ class _PreviewColorState extends ConsumerState<PreviewColor> {
       width: MediaQuery.of(context).size.width*0.9,
       child: Column(
         children: [
-          //プレビューテキスト
+          // //プレビューテキスト
           Row(
             children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width*0.02,
-              ),
-              Text(
-                "プレビュー",
-                style: TextStyle(
-                  fontSize: 20
-                ),
-              ),
-            ],
-          ),
-
-          SizedBox(height: 10,),
-
-          Row(
-            children: [
-              IconButton(
-                onPressed: null,
-                icon: Icon(
-                  Icons.circle,
-                  color: Color.fromARGB(255, ref.read(genreInputProvider.notifier).state.redValue, ref.read(genreInputProvider.notifier).state.greenValue, ref.read(genreInputProvider.notifier).state.blueValue),
-                  size: 30,
-                )
+              Icon(
+                //onPressed: null,
+                Icons.circle,
+                color: Color.fromARGB(255, ref.read(genreInputProvider.notifier).state.redValue, ref.read(genreInputProvider.notifier).state.greenValue, ref.read(genreInputProvider.notifier).state.blueValue),
+                size: 30,
+                
               ),
               Expanded(
                 child: Text(
@@ -517,12 +529,20 @@ class ColorPickIcon extends ConsumerWidget {
         //編集中を解除
         ref.read(onEditiongFlagProvider.notifier).state=false;
         //providerの値を更新
-        ref.read(genreInputProvider.notifier).state=ref.read(genreInputProvider).copyWith(redValue: RGBColors[0]);
-        ref.read(genreInputProvider.notifier).state=ref.read(genreInputProvider).copyWith(greenValue: RGBColors[1]);
-        ref.read(genreInputProvider.notifier).state=ref.read(genreInputProvider).copyWith(blueValue: RGBColors[2]);
-        ref.read(genreCorrectInputProvider.notifier).state=ref.read(genreCorrectInputProvider).copyWith(redValue: true);
-        ref.read(genreCorrectInputProvider.notifier).state=ref.read(genreCorrectInputProvider).copyWith(greenValue: true);
-        ref.read(genreCorrectInputProvider.notifier).state=ref.read(genreCorrectInputProvider).copyWith(blueValue: true);
+        ref.read(genreInputProvider.notifier).state=ref.read(genreInputProvider).copyWith(
+          redValue: RGBColors[0],
+          greenValue: RGBColors[1],
+          blueValue: RGBColors[2]
+        );
+        // ref.read(genreInputProvider.notifier).state=ref.read(genreInputProvider).copyWith(greenValue: RGBColors[1]);
+        // ref.read(genreInputProvider.notifier).state=ref.read(genreInputProvider).copyWith(blueValue: RGBColors[2]);
+        ref.read(genreCorrectInputProvider.notifier).state=ref.read(genreCorrectInputProvider).copyWith(
+          redValue: true,
+          greenValue: true,
+          blueValue: true
+        );
+        // ref.read(genreCorrectInputProvider.notifier).state=ref.read(genreCorrectInputProvider).copyWith(greenValue: true);
+        // ref.read(genreCorrectInputProvider.notifier).state=ref.read(genreCorrectInputProvider).copyWith(blueValue: true);
       },
       icon: Icon(
         Icons.circle,
@@ -544,23 +564,6 @@ class ColorPickIcons extends ConsumerWidget {
       width: MediaQuery.of(context).size.width*0.9,
       child: Column(
         children: [
-          Row(
-            children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width*0.02,
-              ),
-
-              Text(
-                "デフォルトカラー",
-                style: TextStyle(
-                  fontSize: 20
-                ),
-              )
-            ],
-          ),
-
-          SizedBox(height: 10,),
-
           Center(
             child: Row(
               children: [
