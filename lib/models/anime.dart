@@ -1,5 +1,3 @@
-//アニメのメイン情報のクラスを定義するコード
-
 //データベースを扱うために入れる
 import 'package:isar/isar.dart';
 
@@ -32,6 +30,13 @@ class Anime {
   //日付
   DateTime updateAt=DateTime.now();
 
+  //放送年
+  int onAirYear=0;
+
+  //放送季節
+  @enumerated
+  OnAirSeason season=OnAirSeason.spring;
+
   //評価（5段階）
   @Index(type: IndexType.value) //評価〇以上という検索を掛けるかもしれないので書いておく
   int evaluation=0;
@@ -46,4 +51,12 @@ enum AnimeStatus{
   complete, //視聴済み
   cancel, //視聴中止
   interruption, //中断
+}
+
+//放送季節のenum
+enum OnAirSeason{
+  spring, //春
+  summer, //夏
+  autumn, //秋
+  winter //冬
 }

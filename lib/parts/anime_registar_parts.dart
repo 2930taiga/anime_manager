@@ -7,6 +7,7 @@ import 'package:anime_administration/models/genre.dart';
 import 'package:anime_administration/providers/anime_input_provider.dart';
 import 'package:anime_administration/providers/isar_provider.dart';
 import 'package:intl/intl.dart';
+import 'package:anime_administration/models/anime.dart';
 
 //-----------------------------------ドロップダウンメニュー--------------------------
 class StatusDropDownMenu extends ConsumerWidget {

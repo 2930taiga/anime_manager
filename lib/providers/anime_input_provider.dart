@@ -1,6 +1,7 @@
 //入力中のデータを保持しておくprovider
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/widgets.dart';
+import 'package:anime_administration/models/anime.dart';
 
 //ステータスのenum
 enum Status{
@@ -9,14 +10,6 @@ enum Status{
   complete,
   cancel,
   interruption
-}
-
-//放送季節のenum
-enum OnAirSeason{
-  spring,
-  summer,
-  autumn,
-  winter
 }
 
 class AnimeInputData {

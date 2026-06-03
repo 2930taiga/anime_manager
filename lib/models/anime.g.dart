@@ -32,24 +32,35 @@ const AnimeSchema = CollectionSchema(
       name: r'evaluation',
       type: IsarType.long,
     ),
-    r'status': PropertySchema(
+    r'onAirYear': PropertySchema(
       id: 3,
+      name: r'onAirYear',
+      type: IsarType.long,
+    ),
+    r'season': PropertySchema(
+      id: 4,
+      name: r'season',
+      type: IsarType.byte,
+      enumMap: _AnimeseasonEnumValueMap,
+    ),
+    r'status': PropertySchema(
+      id: 5,
       name: r'status',
       type: IsarType.byte,
       enumMap: _AnimestatusEnumValueMap,
     ),
     r'title': PropertySchema(
-      id: 4,
+      id: 6,
       name: r'title',
       type: IsarType.string,
     ),
     r'titleKana': PropertySchema(
-      id: 5,
+      id: 7,
       name: r'titleKana',
       type: IsarType.string,
     ),
     r'updateAt': PropertySchema(
-      id: 6,
+      id: 8,
       name: r'updateAt',
       type: IsarType.dateTime,
     )
@@ -122,10 +133,12 @@ void _animeSerialize(
   writer.writeLong(offsets[0], object.durationMinutes);
   writer.writeLong(offsets[1], object.episode);
   writer.writeLong(offsets[2], object.evaluation);
-  writer.writeByte(offsets[3], object.status.index);
-  writer.writeString(offsets[4], object.title);
-  writer.writeString(offsets[5], object.titleKana);
-  writer.writeDateTime(offsets[6], object.updateAt);
+  writer.writeLong(offsets[3], object.onAirYear);
+  writer.writeByte(offsets[4], object.season.index);
+  writer.writeByte(offsets[5], object.status.index);
+  writer.writeString(offsets[6], object.title);
+  writer.writeString(offsets[7], object.titleKana);
+  writer.writeDateTime(offsets[8], object.updateAt);
 }
 
 Anime _animeDeserialize(
@@ -139,11 +152,14 @@ Anime _animeDeserialize(
   object.episode = reader.readLong(offsets[1]);
   object.evaluation = reader.readLong(offsets[2]);
   object.id = id;
-  object.status = _AnimestatusValueEnumMap[reader.readByteOrNull(offsets[3])] ??
+  object.onAirYear = reader.readLong(offsets[3]);
+  object.season = _AnimeseasonValueEnumMap[reader.readByteOrNull(offsets[4])] ??
+      OnAirSeason.spring;
+  object.status = _AnimestatusValueEnumMap[reader.readByteOrNull(offsets[5])] ??
       AnimeStatus.never;
-  object.title = reader.readString(offsets[4]);
-  object.titleKana = reader.readString(offsets[5]);
-  object.updateAt = reader.readDateTime(offsets[6]);
+  object.title = reader.readString(offsets[6]);
+  object.titleKana = reader.readString(offsets[7]);
+  object.updateAt = reader.readDateTime(offsets[8]);
   return object;
 }
 
@@ -161,19 +177,36 @@ P _animeDeserializeProp<P>(
     case 2:
       return (reader.readLong(offset)) as P;
     case 3:
+      return (reader.readLong(offset)) as P;
+    case 4:
+      return (_AnimeseasonValueEnumMap[reader.readByteOrNull(offset)] ??
+          OnAirSeason.spring) as P;
+    case 5:
       return (_AnimestatusValueEnumMap[reader.readByteOrNull(offset)] ??
           AnimeStatus.never) as P;
-    case 4:
-      return (reader.readString(offset)) as P;
-    case 5:
-      return (reader.readString(offset)) as P;
     case 6:
+      return (reader.readString(offset)) as P;
+    case 7:
+      return (reader.readString(offset)) as P;
+    case 8:
       return (reader.readDateTime(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
 
+const _AnimeseasonEnumValueMap = {
+  'spring': 0,
+  'summer': 1,
+  'autumn': 2,
+  'winter': 3,
+};
+const _AnimeseasonValueEnumMap = {
+  0: OnAirSeason.spring,
+  1: OnAirSeason.summer,
+  2: OnAirSeason.autumn,
+  3: OnAirSeason.winter,
+};
 const _AnimestatusEnumValueMap = {
   'never': 0,
   'watching': 1,
@@ -682,6 +715,112 @@ extension AnimeQueryFilter on QueryBuilder<Anime, Anime, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Anime, Anime, QAfterFilterCondition> onAirYearEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'onAirYear',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterFilterCondition> onAirYearGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'onAirYear',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterFilterCondition> onAirYearLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'onAirYear',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterFilterCondition> onAirYearBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'onAirYear',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterFilterCondition> seasonEqualTo(
+      OnAirSeason value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'season',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterFilterCondition> seasonGreaterThan(
+    OnAirSeason value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'season',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterFilterCondition> seasonLessThan(
+    OnAirSeason value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'season',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterFilterCondition> seasonBetween(
+    OnAirSeason lower,
+    OnAirSeason upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'season',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<Anime, Anime, QAfterFilterCondition> statusEqualTo(
       AnimeStatus value) {
     return QueryBuilder.apply(this, (query) {
@@ -1144,6 +1283,30 @@ extension AnimeQuerySortBy on QueryBuilder<Anime, Anime, QSortBy> {
     });
   }
 
+  QueryBuilder<Anime, Anime, QAfterSortBy> sortByOnAirYear() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'onAirYear', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterSortBy> sortByOnAirYearDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'onAirYear', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterSortBy> sortBySeason() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'season', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterSortBy> sortBySeasonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'season', Sort.desc);
+    });
+  }
+
   QueryBuilder<Anime, Anime, QAfterSortBy> sortByStatus() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'status', Sort.asc);
@@ -1242,6 +1405,30 @@ extension AnimeQuerySortThenBy on QueryBuilder<Anime, Anime, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Anime, Anime, QAfterSortBy> thenByOnAirYear() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'onAirYear', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterSortBy> thenByOnAirYearDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'onAirYear', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterSortBy> thenBySeason() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'season', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterSortBy> thenBySeasonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'season', Sort.desc);
+    });
+  }
+
   QueryBuilder<Anime, Anime, QAfterSortBy> thenByStatus() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'status', Sort.asc);
@@ -1310,6 +1497,18 @@ extension AnimeQueryWhereDistinct on QueryBuilder<Anime, Anime, QDistinct> {
     });
   }
 
+  QueryBuilder<Anime, Anime, QDistinct> distinctByOnAirYear() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'onAirYear');
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QDistinct> distinctBySeason() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'season');
+    });
+  }
+
   QueryBuilder<Anime, Anime, QDistinct> distinctByStatus() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'status');
@@ -1359,6 +1558,18 @@ extension AnimeQueryProperty on QueryBuilder<Anime, Anime, QQueryProperty> {
   QueryBuilder<Anime, int, QQueryOperations> evaluationProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'evaluation');
+    });
+  }
+
+  QueryBuilder<Anime, int, QQueryOperations> onAirYearProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'onAirYear');
+    });
+  }
+
+  QueryBuilder<Anime, OnAirSeason, QQueryOperations> seasonProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'season');
     });
   }
 
