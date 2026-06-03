@@ -55,10 +55,13 @@ class AnimeRegistar extends ConsumerWidget{
           //リンク保存
           await anime.genres.save();
 
-          print(animeInput.title);
+          // print(animeInput.title);
 
-          print("ここまで実行されました");
+          // print("ここまで実行されました");
         });
+
+        //画面を戻る
+        Navigator.pop(context);
       }
       else{ //保存できない
         //入力に不備がある箇所を取得
@@ -343,18 +346,18 @@ class AnimeRegistar extends ConsumerWidget{
               //下までスクロールできるようにするためのbox
               const SizedBox(height: 50,),
 
-              TextButton(
-                onPressed: (){
-                  print(animeInput.onAirYear);
-                },
-                child: Text("テスト用")
-              ),
-              TextButton(
-                onPressed: (){
-                  print(animeCorrectInput.onAirYear);
-                },
-                child: Text("テスト用1")
-              ),
+              // TextButton(
+              //   onPressed: (){
+              //     print(animeInput.onAirYear);
+              //   },
+              //   child: Text("テスト用")
+              // ),
+              // TextButton(
+              //   onPressed: (){
+              //     print(animeCorrectInput.onAirYear);
+              //   },
+              //   child: Text("テスト用1")
+              // ),
             ],
           ),
         ),

@@ -427,7 +427,7 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
               SizedBox(height: 10,),
               ShapePickIcons(),
 
-              ElevatedButton(onPressed: (){print(genreInput.title);}, child: Text("テスト")),
+              // ElevatedButton(onPressed: (){print(genreInput.title);}, child: Text("テスト")),
 
               //下までスクロールできるようにするためのbox
               SizedBox(height: 50,)
