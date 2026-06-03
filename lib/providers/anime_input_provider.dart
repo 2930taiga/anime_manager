@@ -2,6 +2,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/widgets.dart';
 
+//ステータスのenum
 enum Status{
   never,
   watching,
@@ -10,11 +11,21 @@ enum Status{
   interruption
 }
 
+//放送季節のenum
+enum OnAirSeason{
+  spring,
+  summer,
+  autumn,
+  winter
+}
+
 class AnimeInputData {
   final Status status;
   final String title;
   final String titleKana;
   final DateTime date;
+  final int onAirYear;
+  final OnAirSeason season;
   final Set<int> genreId;
   final int epNum;
   final int epTime;
@@ -26,6 +37,8 @@ class AnimeInputData {
     this.title="",
     this.titleKana="",
     DateTime? date ,
+    this.onAirYear=2000,
+    this.season = OnAirSeason.spring,
     this.genreId = const <int>{},
     this.epNum=0,
     this.epTime=0,
@@ -38,6 +51,8 @@ class AnimeInputData {
     String? title,
     String? titleKana,
     DateTime? date,
+    int? onAirYear,
+    OnAirSeason? season,
     Set<int>? genreId,
     int? epNum,
     int? epTime,
@@ -49,6 +64,8 @@ class AnimeInputData {
       title: title ?? this.title,
       titleKana: titleKana ?? this.titleKana,
       date: date ?? this.date,
+      onAirYear: onAirYear ?? this.onAirYear,
+      season: season ?? this.season,
       genreId: genreId ?? this.genreId,
       epNum: epNum ?? this.epNum,
       epTime: epTime ?? this.epTime,
@@ -66,6 +83,8 @@ class AnimeCorrectInputData {
   final bool title;
   final bool titleKana;
   final bool date;
+  final bool onAirYear;
+  final bool season;
   final bool genreId;
   final bool epNum;
   final bool epTime;
@@ -77,10 +96,12 @@ class AnimeCorrectInputData {
     this.title = false,
     this.titleKana= false,
     this.date = false,
+    this.onAirYear = false,
+    this.season = false,
     this.genreId = false,
     this.epNum = false,
     this.epTime = false,
-    this.evaluation = false,
+    this.evaluation = true,
     this.memo = true
   });
 
@@ -89,6 +110,8 @@ class AnimeCorrectInputData {
     bool? title,
     bool? titleKana,
     bool? date,
+    bool? onAirYear,
+    bool? season,
     bool? genreId,
     bool? epNum,
     bool? epTime,
@@ -100,6 +123,8 @@ class AnimeCorrectInputData {
       title: title ?? this.title,
       titleKana: titleKana ?? this.titleKana,
       date: date ?? this.date,
+      onAirYear: onAirYear ?? this.onAirYear,
+      season: season ?? this.season,
       genreId: genreId ?? this.genreId,
       epNum: epNum ?? this.epNum,
       epTime: epTime ?? this.epTime,
@@ -114,6 +139,8 @@ class AnimeCorrectInputData {
   title &&
   titleKana &&
   date &&
+  onAirYear &&
+  season &&
   genreId &&
   epNum &&
   epTime &&
@@ -126,6 +153,8 @@ class AnimeCorrectInputData {
     'title': title,
     'titleKana': titleKana,
     'date': date,
+    'onAirYear': onAirYear,
+    'season': season,
     'genreId': genreId,
     'epNum': epNum,
     'epTime': epTime,
