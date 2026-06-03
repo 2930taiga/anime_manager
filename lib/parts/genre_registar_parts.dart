@@ -94,28 +94,45 @@ class _PreviewColorState extends ConsumerState<PreviewColor> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width*0.9,
-      child: Column(
-        children: [
-          // //プレビューテキスト
-          Row(
-            children: [
-              Icon(
-                ref.read(genreInputProvider.notifier).state.iconData,
-                color: Color.fromARGB(255, ref.read(genreInputProvider.notifier).state.redValue, ref.read(genreInputProvider.notifier).state.greenValue, ref.read(genreInputProvider.notifier).state.blueValue),
-                size: 30,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: ListTile(
+          title: Text(ref.read(genreInputProvider.notifier).state.title),
+          leading: Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: Color.fromARGB(
+                255,
+                ref.read(genreInputProvider.notifier).state.redValue,
+                ref.read(genreInputProvider.notifier).state.greenValue,
+                ref.read(genreInputProvider.notifier).state.blueValue
+              ).withValues(alpha: 0.08),
+              border: Border.all(
+                color: Color.fromARGB(
+                  255,
+                  ref.read(genreInputProvider.notifier).state.redValue,
+                  ref.read(genreInputProvider.notifier).state.greenValue,
+                  ref.read(genreInputProvider.notifier).state.blueValue
+                ).withValues(alpha: 0.15),
               ),
-              SizedBox(width: MediaQuery.of(context).size.width*0.02,),
-              Expanded(
-                child: Text(
-                  ref.read(genreInputProvider.notifier).state.title,
-                  style: TextStyle(
-                    fontSize: 19
-                  ),
-                )
-              )
-            ],
-          )
-        ],
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(
+              ref.read(genreInputProvider.notifier).state.iconData,
+              size: 30,
+              color: Color.fromARGB(
+                255,
+                ref.read(genreInputProvider.notifier).state.redValue,
+                ref.read(genreInputProvider.notifier).state.greenValue,
+                ref.read(genreInputProvider.notifier).state.blueValue
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
