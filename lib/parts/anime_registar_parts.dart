@@ -28,7 +28,7 @@ class StatusDropDownMenu extends ConsumerWidget {
             };
 
             //数値をStatusのenumに変換
-            final selectedStatus=Status.values[value];
+            final selectedStatus=AnimeStatus.values[value];
             //providerを更新
             ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(status: selectedStatus);
             //正しい値が入力されているflagをtrueに

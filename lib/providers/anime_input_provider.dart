@@ -3,17 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/widgets.dart';
 import 'package:anime_administration/models/anime.dart';
 
-//ステータスのenum
-enum Status{
-  never,
-  watching,
-  complete,
-  cancel,
-  interruption
-}
+// //ステータスのenum
+// enum Status{
+//   never,
+//   watching,
+//   complete,
+//   cancel,
+//   interruption
+// }
 
 class AnimeInputData {
-  final Status status;
+  final AnimeStatus status;
   final String title;
   final String titleKana;
   final DateTime date;
@@ -26,7 +26,7 @@ class AnimeInputData {
   final String memo;
 
   AnimeInputData({
-    this.status = Status.never,
+    this.status = AnimeStatus.never,
     this.title="",
     this.titleKana="",
     DateTime? date ,
@@ -40,7 +40,7 @@ class AnimeInputData {
   }):date = date?? DateTime.now();
 
   AnimeInputData copyWith({
-    Status? status,
+    AnimeStatus? status,
     String? title,
     String? titleKana,
     DateTime? date,

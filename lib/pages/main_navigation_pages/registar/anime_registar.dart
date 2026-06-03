@@ -1,3 +1,4 @@
+import 'package:anime_administration/models/anime.dart';
 import 'package:flutter/material.dart';
 //providerに関するコードをインポート
 import 'package:anime_administration/providers/anime_input_provider.dart';
@@ -18,10 +19,23 @@ class AnimeRegistar extends ConsumerWidget{
     final animeCorrectInput = ref.watch(animeCorrectInputProvider);
 
     //保存に関する関数を定義
-    void Save(){
+    Future<void> Save () async {
       //保存できる状態かを確認する
       if(animeCorrectInput.isInvalid==true){ //保存できる
+        //アニメのモデルを生成
+        final anime = Anime()
+        ..status = animeInput.status
+        ..title = animeInput.title
+        ..titleKana = animeInput.titleKana
+        ..date = animeInput.date
+        ..onAirYear = animeInput.onAirYear
+        ..season = animeInput.season
+        ..epNum = animeInput.epNum
+        ..epTime = animeInput.epTime
+        ..evaluation = animeInput.evaluation
+        ..memo = animeInput.memo;
 
+        //print("アニメのモデルが作成されました");
       }
       else{ //保存できない
         //入力に不備がある箇所を取得

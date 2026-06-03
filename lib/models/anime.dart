@@ -27,7 +27,7 @@ class Anime {
 
   //日付
   @Index(type: IndexType.value)
-  DateTime updateAt=DateTime.now();
+  DateTime date=DateTime.now();
 
   //放送年
   @Index(type: IndexType.value)
@@ -43,10 +43,10 @@ class Anime {
 
   //話数
   @Index(type: IndexType.value) //〇話以上という検索を掛けるかもしれないので書いておく
-  int episode=0;
+  int epNum=0;
 
   //分数
-  int durationMinutes=0;
+  int epTime=0;
 
   //評価（5段階）
   @Index(type: IndexType.value) //評価〇以上という検索を掛けるかもしれないので書いておく
