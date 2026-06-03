@@ -227,6 +227,15 @@ class AnimeRegistar extends ConsumerWidget{
           icon: Icon(Icons.arrow_back)
         ),
         actions: [
+          // IconButton(
+          //   onPressed: (){
+
+          //   },
+          //   icon: Icon(
+          //     Icons.star,
+          //     size: 30,
+          //   )
+          // ),
           TextButton(
             onPressed: Save,
             child: Text(

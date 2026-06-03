@@ -64,7 +64,15 @@ const GenreSchema = CollectionSchema(
       ],
     )
   },
-  links: {},
+  links: {
+    r'animes': LinkSchema(
+      id: 7361645375235155789,
+      name: r'animes',
+      target: r'Anime',
+      single: false,
+      linkName: r'genres',
+    )
+  },
   embeddedSchemas: {},
   getId: _genreGetId,
   getLinks: _genreGetLinks,
@@ -158,11 +166,12 @@ Id _genreGetId(Genre object) {
 }
 
 List<IsarLinkBase<dynamic>> _genreGetLinks(Genre object) {
-  return [];
+  return [object.animes];
 }
 
 void _genreAttach(IsarCollection<dynamic> col, Id id, Genre object) {
   object.id = id;
+  object.animes.attach(col, col.isar.collection<Anime>(), r'animes', id);
 }
 
 extension GenreByIndex on IsarCollection<Genre> {
@@ -732,7 +741,63 @@ extension GenreQueryFilter on QueryBuilder<Genre, Genre, QFilterCondition> {
 
 extension GenreQueryObject on QueryBuilder<Genre, Genre, QFilterCondition> {}
 
-extension GenreQueryLinks on QueryBuilder<Genre, Genre, QFilterCondition> {}
+extension GenreQueryLinks on QueryBuilder<Genre, Genre, QFilterCondition> {
+  QueryBuilder<Genre, Genre, QAfterFilterCondition> animes(
+      FilterQuery<Anime> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.link(q, r'animes');
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterFilterCondition> animesLengthEqualTo(
+      int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'animes', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterFilterCondition> animesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'animes', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterFilterCondition> animesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'animes', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterFilterCondition> animesLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'animes', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterFilterCondition> animesLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'animes', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<Genre, Genre, QAfterFilterCondition> animesLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(
+          r'animes', lower, includeLower, upper, includeUpper);
+    });
+  }
+}
 
 extension GenreQuerySortBy on QueryBuilder<Genre, Genre, QSortBy> {
   QueryBuilder<Genre, Genre, QAfterSortBy> sortByBlueValue() {

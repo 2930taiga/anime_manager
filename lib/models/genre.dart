@@ -1,4 +1,5 @@
 //ジャンルのクラスを定義するコード
+import 'package:anime_administration/models/anime.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 
@@ -23,6 +24,10 @@ class Genre {
   //アイコンの形状
   @enumerated
   late IconShape iconShape;
+
+  //アニメデータへのリンク
+  @Backlink(to: "genres")
+  final animes=IsarLinks<Anime>();
 }
 
 enum IconShape{

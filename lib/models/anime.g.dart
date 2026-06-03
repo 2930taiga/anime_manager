@@ -32,35 +32,40 @@ const AnimeSchema = CollectionSchema(
       name: r'evaluation',
       type: IsarType.long,
     ),
-    r'onAirYear': PropertySchema(
+    r'memo': PropertySchema(
       id: 3,
+      name: r'memo',
+      type: IsarType.string,
+    ),
+    r'onAirYear': PropertySchema(
+      id: 4,
       name: r'onAirYear',
       type: IsarType.long,
     ),
     r'season': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'season',
       type: IsarType.byte,
       enumMap: _AnimeseasonEnumValueMap,
     ),
     r'status': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'status',
       type: IsarType.byte,
       enumMap: _AnimestatusEnumValueMap,
     ),
     r'title': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'title',
       type: IsarType.string,
     ),
     r'titleKana': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'titleKana',
       type: IsarType.string,
     ),
     r'updateAt': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'updateAt',
       type: IsarType.dateTime,
     )
@@ -71,6 +76,71 @@ const AnimeSchema = CollectionSchema(
   deserializeProp: _animeDeserializeProp,
   idName: r'id',
   indexes: {
+    r'status': IndexSchema(
+      id: -107785170620420283,
+      name: r'status',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'status',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    ),
+    r'title': IndexSchema(
+      id: -7636685945352118059,
+      name: r'title',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'title',
+          type: IndexType.value,
+          caseSensitive: true,
+        )
+      ],
+    ),
+    r'titleKana': IndexSchema(
+      id: -9083369571609416545,
+      name: r'titleKana',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'titleKana',
+          type: IndexType.value,
+          caseSensitive: true,
+        )
+      ],
+    ),
+    r'updateAt': IndexSchema(
+      id: 3053952138173439629,
+      name: r'updateAt',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'updateAt',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    ),
+    r'onAirYear': IndexSchema(
+      id: -7385684786951549042,
+      name: r'onAirYear',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'onAirYear',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    ),
     r'episode': IndexSchema(
       id: 5077628722353948045,
       name: r'episode',
@@ -119,6 +189,7 @@ int _animeEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.memo.length * 3;
   bytesCount += 3 + object.title.length * 3;
   bytesCount += 3 + object.titleKana.length * 3;
   return bytesCount;
@@ -133,12 +204,13 @@ void _animeSerialize(
   writer.writeLong(offsets[0], object.durationMinutes);
   writer.writeLong(offsets[1], object.episode);
   writer.writeLong(offsets[2], object.evaluation);
-  writer.writeLong(offsets[3], object.onAirYear);
-  writer.writeByte(offsets[4], object.season.index);
-  writer.writeByte(offsets[5], object.status.index);
-  writer.writeString(offsets[6], object.title);
-  writer.writeString(offsets[7], object.titleKana);
-  writer.writeDateTime(offsets[8], object.updateAt);
+  writer.writeString(offsets[3], object.memo);
+  writer.writeLong(offsets[4], object.onAirYear);
+  writer.writeByte(offsets[5], object.season.index);
+  writer.writeByte(offsets[6], object.status.index);
+  writer.writeString(offsets[7], object.title);
+  writer.writeString(offsets[8], object.titleKana);
+  writer.writeDateTime(offsets[9], object.updateAt);
 }
 
 Anime _animeDeserialize(
@@ -152,14 +224,15 @@ Anime _animeDeserialize(
   object.episode = reader.readLong(offsets[1]);
   object.evaluation = reader.readLong(offsets[2]);
   object.id = id;
-  object.onAirYear = reader.readLong(offsets[3]);
-  object.season = _AnimeseasonValueEnumMap[reader.readByteOrNull(offsets[4])] ??
+  object.memo = reader.readString(offsets[3]);
+  object.onAirYear = reader.readLong(offsets[4]);
+  object.season = _AnimeseasonValueEnumMap[reader.readByteOrNull(offsets[5])] ??
       OnAirSeason.spring;
-  object.status = _AnimestatusValueEnumMap[reader.readByteOrNull(offsets[5])] ??
+  object.status = _AnimestatusValueEnumMap[reader.readByteOrNull(offsets[6])] ??
       AnimeStatus.never;
-  object.title = reader.readString(offsets[6]);
-  object.titleKana = reader.readString(offsets[7]);
-  object.updateAt = reader.readDateTime(offsets[8]);
+  object.title = reader.readString(offsets[7]);
+  object.titleKana = reader.readString(offsets[8]);
+  object.updateAt = reader.readDateTime(offsets[9]);
   return object;
 }
 
@@ -177,18 +250,20 @@ P _animeDeserializeProp<P>(
     case 2:
       return (reader.readLong(offset)) as P;
     case 3:
-      return (reader.readLong(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 4:
+      return (reader.readLong(offset)) as P;
+    case 5:
       return (_AnimeseasonValueEnumMap[reader.readByteOrNull(offset)] ??
           OnAirSeason.spring) as P;
-    case 5:
+    case 6:
       return (_AnimestatusValueEnumMap[reader.readByteOrNull(offset)] ??
           AnimeStatus.never) as P;
-    case 6:
-      return (reader.readString(offset)) as P;
     case 7:
       return (reader.readString(offset)) as P;
     case 8:
+      return (reader.readString(offset)) as P;
+    case 9:
       return (reader.readDateTime(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -239,6 +314,46 @@ extension AnimeQueryWhereSort on QueryBuilder<Anime, Anime, QWhere> {
   QueryBuilder<Anime, Anime, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhere> anyStatus() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'status'),
+      );
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhere> anyTitle() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'title'),
+      );
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhere> anyTitleKana() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'titleKana'),
+      );
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhere> anyUpdateAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'updateAt'),
+      );
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhere> anyOnAirYear() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'onAirYear'),
+      );
     });
   }
 
@@ -320,6 +435,546 @@ extension AnimeQueryWhere on QueryBuilder<Anime, Anime, QWhereClause> {
         lower: lowerId,
         includeLower: includeLower,
         upper: upperId,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> statusEqualTo(
+      AnimeStatus status) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'status',
+        value: [status],
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> statusNotEqualTo(
+      AnimeStatus status) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'status',
+              lower: [],
+              upper: [status],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'status',
+              lower: [status],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'status',
+              lower: [status],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'status',
+              lower: [],
+              upper: [status],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> statusGreaterThan(
+    AnimeStatus status, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'status',
+        lower: [status],
+        includeLower: include,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> statusLessThan(
+    AnimeStatus status, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'status',
+        lower: [],
+        upper: [status],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> statusBetween(
+    AnimeStatus lowerStatus,
+    AnimeStatus upperStatus, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'status',
+        lower: [lowerStatus],
+        includeLower: includeLower,
+        upper: [upperStatus],
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> titleEqualTo(String title) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'title',
+        value: [title],
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> titleNotEqualTo(String title) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'title',
+              lower: [],
+              upper: [title],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'title',
+              lower: [title],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'title',
+              lower: [title],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'title',
+              lower: [],
+              upper: [title],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> titleGreaterThan(
+    String title, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'title',
+        lower: [title],
+        includeLower: include,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> titleLessThan(
+    String title, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'title',
+        lower: [],
+        upper: [title],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> titleBetween(
+    String lowerTitle,
+    String upperTitle, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'title',
+        lower: [lowerTitle],
+        includeLower: includeLower,
+        upper: [upperTitle],
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> titleStartsWith(
+      String TitlePrefix) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'title',
+        lower: [TitlePrefix],
+        upper: ['$TitlePrefix\u{FFFFF}'],
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> titleIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'title',
+        value: [''],
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> titleIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.lessThan(
+              indexName: r'title',
+              upper: [''],
+            ))
+            .addWhereClause(IndexWhereClause.greaterThan(
+              indexName: r'title',
+              lower: [''],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.greaterThan(
+              indexName: r'title',
+              lower: [''],
+            ))
+            .addWhereClause(IndexWhereClause.lessThan(
+              indexName: r'title',
+              upper: [''],
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> titleKanaEqualTo(
+      String titleKana) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'titleKana',
+        value: [titleKana],
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> titleKanaNotEqualTo(
+      String titleKana) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'titleKana',
+              lower: [],
+              upper: [titleKana],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'titleKana',
+              lower: [titleKana],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'titleKana',
+              lower: [titleKana],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'titleKana',
+              lower: [],
+              upper: [titleKana],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> titleKanaGreaterThan(
+    String titleKana, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'titleKana',
+        lower: [titleKana],
+        includeLower: include,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> titleKanaLessThan(
+    String titleKana, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'titleKana',
+        lower: [],
+        upper: [titleKana],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> titleKanaBetween(
+    String lowerTitleKana,
+    String upperTitleKana, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'titleKana',
+        lower: [lowerTitleKana],
+        includeLower: includeLower,
+        upper: [upperTitleKana],
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> titleKanaStartsWith(
+      String TitleKanaPrefix) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'titleKana',
+        lower: [TitleKanaPrefix],
+        upper: ['$TitleKanaPrefix\u{FFFFF}'],
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> titleKanaIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'titleKana',
+        value: [''],
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> titleKanaIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.lessThan(
+              indexName: r'titleKana',
+              upper: [''],
+            ))
+            .addWhereClause(IndexWhereClause.greaterThan(
+              indexName: r'titleKana',
+              lower: [''],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.greaterThan(
+              indexName: r'titleKana',
+              lower: [''],
+            ))
+            .addWhereClause(IndexWhereClause.lessThan(
+              indexName: r'titleKana',
+              upper: [''],
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> updateAtEqualTo(
+      DateTime updateAt) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'updateAt',
+        value: [updateAt],
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> updateAtNotEqualTo(
+      DateTime updateAt) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'updateAt',
+              lower: [],
+              upper: [updateAt],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'updateAt',
+              lower: [updateAt],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'updateAt',
+              lower: [updateAt],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'updateAt',
+              lower: [],
+              upper: [updateAt],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> updateAtGreaterThan(
+    DateTime updateAt, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'updateAt',
+        lower: [updateAt],
+        includeLower: include,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> updateAtLessThan(
+    DateTime updateAt, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'updateAt',
+        lower: [],
+        upper: [updateAt],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> updateAtBetween(
+    DateTime lowerUpdateAt,
+    DateTime upperUpdateAt, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'updateAt',
+        lower: [lowerUpdateAt],
+        includeLower: includeLower,
+        upper: [upperUpdateAt],
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> onAirYearEqualTo(
+      int onAirYear) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'onAirYear',
+        value: [onAirYear],
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> onAirYearNotEqualTo(
+      int onAirYear) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'onAirYear',
+              lower: [],
+              upper: [onAirYear],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'onAirYear',
+              lower: [onAirYear],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'onAirYear',
+              lower: [onAirYear],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'onAirYear',
+              lower: [],
+              upper: [onAirYear],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> onAirYearGreaterThan(
+    int onAirYear, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'onAirYear',
+        lower: [onAirYear],
+        includeLower: include,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> onAirYearLessThan(
+    int onAirYear, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'onAirYear',
+        lower: [],
+        upper: [onAirYear],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterWhereClause> onAirYearBetween(
+    int lowerOnAirYear,
+    int upperOnAirYear, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'onAirYear',
+        lower: [lowerOnAirYear],
+        includeLower: includeLower,
+        upper: [upperOnAirYear],
         includeUpper: includeUpper,
       ));
     });
@@ -711,6 +1366,134 @@ extension AnimeQueryFilter on QueryBuilder<Anime, Anime, QFilterCondition> {
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterFilterCondition> memoEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'memo',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterFilterCondition> memoGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'memo',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterFilterCondition> memoLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'memo',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterFilterCondition> memoBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'memo',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterFilterCondition> memoStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'memo',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterFilterCondition> memoEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'memo',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterFilterCondition> memoContains(String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'memo',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterFilterCondition> memoMatches(String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'memo',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterFilterCondition> memoIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'memo',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterFilterCondition> memoIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'memo',
+        value: '',
       ));
     });
   }
@@ -1283,6 +2066,18 @@ extension AnimeQuerySortBy on QueryBuilder<Anime, Anime, QSortBy> {
     });
   }
 
+  QueryBuilder<Anime, Anime, QAfterSortBy> sortByMemo() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'memo', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterSortBy> sortByMemoDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'memo', Sort.desc);
+    });
+  }
+
   QueryBuilder<Anime, Anime, QAfterSortBy> sortByOnAirYear() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'onAirYear', Sort.asc);
@@ -1405,6 +2200,18 @@ extension AnimeQuerySortThenBy on QueryBuilder<Anime, Anime, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Anime, Anime, QAfterSortBy> thenByMemo() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'memo', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Anime, Anime, QAfterSortBy> thenByMemoDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'memo', Sort.desc);
+    });
+  }
+
   QueryBuilder<Anime, Anime, QAfterSortBy> thenByOnAirYear() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'onAirYear', Sort.asc);
@@ -1497,6 +2304,13 @@ extension AnimeQueryWhereDistinct on QueryBuilder<Anime, Anime, QDistinct> {
     });
   }
 
+  QueryBuilder<Anime, Anime, QDistinct> distinctByMemo(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'memo', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Anime, Anime, QDistinct> distinctByOnAirYear() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'onAirYear');
@@ -1558,6 +2372,12 @@ extension AnimeQueryProperty on QueryBuilder<Anime, Anime, QQueryProperty> {
   QueryBuilder<Anime, int, QQueryOperations> evaluationProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'evaluation');
+    });
+  }
+
+  QueryBuilder<Anime, String, QQueryOperations> memoProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'memo');
     });
   }
 
