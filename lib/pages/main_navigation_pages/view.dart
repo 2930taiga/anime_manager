@@ -76,19 +76,41 @@ class _ViewPageState extends ConsumerState<ViewPage> {
           ),
         ),
       )
-      : ListView.builder(
-        itemCount: _animes.length,
-        itemBuilder: (context,index){
-          return ListTile(
-            leading: IconButton(onPressed: (){}, icon: Icon(Icons.abc)),
-            title: Text(_animes[index].title,
-            style: TextStyle(
-              color: Colors.black
-            ),
-            ),
-          );
-        }
+      : Column(
+        children: [
+          SizedBox(height: 20,),
+
+          Expanded(
+            child:  Scrollbar(
+              thumbVisibility: true,
+              child: ListView.builder(
+                itemCount: _animes.length,
+                itemBuilder: (context,index){
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 5
+                    ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadiusDirectional.circular(20)
+                      ),
+                      child: ListTile(
+                        title: Text(
+                          _animes[index].title
+                        ),
+                      ),
+                    ),
+                  );
+                }
+              ),
+            )
+          )
+          
+        ],
       ),
+      
       floatingActionButton: FloatingActionButton(
         onPressed: goToRegistarPage,
         child: Icon(Icons.add),
