@@ -1,4 +1,6 @@
 import 'package:anime_administration/models/anime.dart';
+import 'package:anime_administration/models/genre.dart';
+import 'package:anime_administration/providers/isar_provider.dart';
 import 'package:flutter/material.dart';
 //providerに関するコードをインポート
 import 'package:anime_administration/providers/anime_input_provider.dart';
@@ -17,6 +19,7 @@ class AnimeRegistar extends ConsumerWidget{
     //providerのインスタンスを作成
     final animeInput = ref.watch(animeInputProvider);
     final animeCorrectInput = ref.watch(animeCorrectInputProvider);
+    final isar = ref.watch(isarProvider);
 
     //保存に関する関数を定義
     Future<void> Save () async {
@@ -35,7 +38,25 @@ class AnimeRegistar extends ConsumerWidget{
         ..evaluation = animeInput.evaluation
         ..memo = animeInput.memo;
 
-        //print("アニメのモデルが作成されました");
+        await isar.writeTxn(() async {
+          //アニメ本体を保存
+          await isar.animes.put(anime);
+
+          //選択されたジャンルを取得
+          final genres = await isar.genres.getAll(
+            animeInput.genreId.toList(),
+          );
+
+          //nullを除去してリンクへ追加
+          anime.genres.addAll(
+            genres.whereType<Genre>(),
+          );
+
+          //リンク保存
+          await anime.genres.save();
+
+          print("ここまで実行されました");
+        });
       }
       else{ //保存できない
         //入力に不備がある箇所を取得
