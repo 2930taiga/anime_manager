@@ -55,6 +55,8 @@ class AnimeRegistar extends ConsumerWidget{
           //リンク保存
           await anime.genres.save();
 
+          print(animeInput.title);
+
           print("ここまで実行されました");
         });
       }

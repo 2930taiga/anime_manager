@@ -72,11 +72,11 @@ class _InputFieldTitleState extends ConsumerState<InputFieldTitle> {
         onChanged: (text){
           if(text==""){ //入力が正しくない
             //providerのflagを書き換える
-            ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(title: text);
             ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(title: false);
           }
           else{ //入力が正しい
             //providerのflagを書き換える
+            ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(title: text);
             ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(title: true);
           }
         },

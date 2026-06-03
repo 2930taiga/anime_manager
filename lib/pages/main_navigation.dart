@@ -9,16 +9,18 @@ import 'main_navigation_pages/analysys.dart';
 import 'main_navigation_pages/calendar.dart';
 //設定ページ
 import 'main_navigation_pages/setting.dart';
+//riverpod
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MainNavigation extends StatefulWidget {
+class MainNavigation extends ConsumerStatefulWidget {
 
   const MainNavigation({super.key});
 
   @override
-  State<MainNavigation> createState() => _MainNavigationState();
+  ConsumerState<MainNavigation> createState() => _MainNavigationState();
 }
 
-class _MainNavigationState extends State<MainNavigation> {
+class _MainNavigationState extends ConsumerState<MainNavigation> {
   //ページ番号
   int pageNum = 0;
 
