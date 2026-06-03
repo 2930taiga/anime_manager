@@ -207,7 +207,12 @@ class _ViewGenreState extends State<ViewGenre> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: ListTile(
-                  title: Text(_genres[index].name),
+                  title: Text(
+                    _genres[index].name,
+                    style: TextStyle(
+                      fontSize: 17
+                    ),
+                  ),
                   leading: Container(
                     width: 48,
                     height: 48,
@@ -241,15 +246,6 @@ class _ViewGenreState extends State<ViewGenre> {
                       ),
                     ),
                   ),
-                  // leading: Icon(
-                  //   IconShapeDatas[_genres[index].iconShape.index],
-                  //   color: Color.fromARGB(
-                  //     255,
-                  //     _genres[index].redValue,
-                  //     _genres[index].greenValue,
-                  //     _genres[index].blueValue
-                  //   ),
-                  // ),
                   trailing: Editting? IconButton( //編集中なら削除ボタンが表示される
                     onPressed: (){
                       delete_config_alert(_genres[index].name,index);
@@ -288,48 +284,6 @@ class _ViewGenreState extends State<ViewGenre> {
             );
           },
       ),
-      //   : ListView(
-      //     children: ListTile.divideTiles( //既にあるリストに仕切り線を入れていくイメージ
-      //       context: context,
-      //       tiles: List.generate(
-      //         _genres.length,
-      //         (index){
-      //           return ListTile( //登録されているジャンル一覧が表示される
-      //               title: Text(_genres[index].name), //編集中なら並び替えボタンが表示される
-      //               leading: Icon(
-      //                 IconShapeDatas[_genres[index].iconShape.index],
-      //                 color: Color.fromARGB(255, _genres[index].redValue, _genres[index].greenValue, _genres[index].blueValue),
-      //                 size: 30,
-      //               ), 
-      //               trailing: Editting? IconButton( //編集中なら削除ボタンが表示される
-      //                 onPressed: (){
-      //                   delete_config_alert(_genres[index].name,index);
-      //                 },
-      //                 icon: Icon(
-      //                   Icons.delete,
-      //                   size: 28,
-      //                 ),
-      //                 color: Colors.red[300],
-      //               ): null,
-      //               onTap: () async { //編集中にタップするとジャンルを編集できる，ここをデータベースから読み込む---------------------------------------------
-      //                 if(Editting==true){
-      //                   //edit_genre(index);
-      //                   await Navigator.push(
-      //                     context,
-      //                     MaterialPageRoute(
-      //                       builder: (content) => GenreRegistar(initialNewAdd: false, title: _genres[index].name, rgbColors: [_genres[index].redValue,_genres[index].greenValue,_genres[index].blueValue],id: _genres[index].id,iconData: IconShapeDatas[_genres[index].iconShape.index],iconShape: _genres[index].iconShape,)
-      //                     )
-      //                   );
-
-      //                   //画面に戻ってきたら画面を更新
-      //                   _refreshGenres();
-      //                 }
-      //               },
-      //           );
-      //         }
-      //         )
-      //       ).toList(),
-      // ),
       //登録ボタン
       floatingActionButton: Editting
       ? null

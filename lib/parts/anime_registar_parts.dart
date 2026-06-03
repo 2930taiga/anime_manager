@@ -1,3 +1,4 @@
+import 'package:anime_administration/parameter_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -567,7 +568,7 @@ class _SelectedGenreTextState extends ConsumerState<SelectedGenreText> {
             return Dialog(
               child: SizedBox(
                 width: MediaQuery.of(context).size.width*0.9,
-                height: 400,
+                height: 500,
                 child: Column(
                   children: [
 
@@ -580,7 +581,7 @@ class _SelectedGenreTextState extends ConsumerState<SelectedGenreText> {
                       ),
                     ),
 
-                    SizedBox(height: 10,),
+                    SizedBox(height: 20,),
 
                     Expanded(
                       child: _genres.isEmpty 
@@ -595,45 +596,96 @@ class _SelectedGenreTextState extends ConsumerState<SelectedGenreText> {
                       )
                       : Scrollbar( //ジャンルのリストが空でないならジャンル一覧を表示する
                         thumbVisibility: true,
-                        child: ListView(
-                          children: List.generate(
-                            _genres.length,
-                            (index){
-                              return SwitchListTile( //スイッチタイル部分
-                                secondary: Icon(
-                                  IconShapeDatas[_genres[index].iconShape.index],
-                                  color: Color.fromARGB(255, _genres[index].redValue, _genres[index].redValue, _genres[index].blueValue),
+                        child: ListView.builder(
+                          itemCount: _genres.length,
+                          itemBuilder: (context,index){
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 4
+                              ),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(14),
                                 ),
-                                title: Text(_genres[index].name),
-                                value: select_genre_flag[index],
-                                onChanged: (bool value){ //あるジャンルが選択されたときの処理
-                                  setStateDialog((){
-                                    //off→onになったとき
-                                    if(value==true){
-                                      //選択されているジャンルのidを保持しておくSet内にidを追加
-                                      //selected_genre_id.add(_genres[index].id);
-                                      select_genre_flag[index]=true;
-                                    }
-                                    //on→offになったとき
-                                    else{
-                                      //選択されているジャンルのidを保持しておくSet内からidを削除
-                                      //selected_genre_id.remove(_genres[index].id);
-                                      select_genre_flag[index]=false;
-                                    }
-                                  });
-                                },
-                              );
-                            }
-                          ),
+                                child: SwitchListTile(
+                                  activeThumbColor: Colors.white, //on時のつまみ
+                                  activeTrackColor: Color.fromARGB(255,188, 240, 121), //on時の背景
+                                  //inactiveThumbColor: Colors.white, //of時のつまみ
+                                  //inactiveTrackColor: Color.fromARGB(255, 197, 197, 197), //off時の背景
+                                  secondary: Container(
+                                    width: 35,
+                                    height: 35,
+                                    decoration: BoxDecoration(
+                                      color: Color.fromARGB(
+                                        255,
+                                        _genres[index].redValue,
+                                        _genres[index].greenValue,
+                                        _genres[index].blueValue
+                                      ).withValues(alpha: 0.08),
+                                      border: Border.all(
+                                        color: Color.fromARGB(
+                                          255,
+                                          _genres[index].redValue,
+                                          _genres[index].greenValue,
+                                          _genres[index].blueValue
+                                        ).withValues(alpha: 0.15),
+                                      ),
+                                      borderRadius: BorderRadius.circular(7),
+                                    ),
+                                    child: Icon(
+                                      IconShapeDatas[
+                                        _genres[index].iconShape.index
+                                      ],
+                                      size: 25,
+                                      color: Color.fromARGB(
+                                        255,
+                                        _genres[index].redValue,
+                                        _genres[index].greenValue,
+                                        _genres[index].blueValue
+                                      ),
+                                    ),
+                                  ),
+                                  title: Text(
+                                    _genres[index].name,
+                                    style: TextStyle(
+                                      fontSize: 16
+                                    ),
+                                  ),
+                                  value: select_genre_flag[index],
+                                  onChanged: (bool value){ //あるジャンルが選択されたときの処理
+                                    setStateDialog((){
+                                      //off→onになったとき
+                                      if(value==true){
+                                        //選択されているジャンルのidを保持しておくSet内にidを追加
+                                        //selected_genre_id.add(_genres[index].id);
+                                        select_genre_flag[index]=true;
+                                      }
+                                      //on→offになったとき
+                                      else{
+                                        //選択されているジャンルのidを保持しておくSet内からidを削除
+                                        //selected_genre_id.remove(_genres[index].id);
+                                        select_genre_flag[index]=false;
+                                      }
+                                    });
+                                  }
+                                ),
+                              ),
+                            );
+                          },
                         )
                       )
                     ),
 
-                    const SizedBox(height: 10,),
+                    const SizedBox(height: 20,),
 
                     SizedBox( //保存ボタン
                       width: MediaQuery.of(context).size.width*0.4,
                       child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ElevatedButtons.backgroundColor,
+                        ),
                         onPressed: (){
                           //登録されているジャンルのidを書き換える
                           int j=0; //ループカウント用
@@ -686,7 +738,13 @@ class _SelectedGenreTextState extends ConsumerState<SelectedGenreText> {
                           //テキストのフォーカスを外す
                           FocusScope.of(context).unfocus();
                         },
-                        child: Text("保存")
+                        child: Text(
+                          "保存",
+                          style: TextStyle(
+                            color: ElevatedButtons.fontColor,
+                            fontSize: 17
+                          ),
+                        )
                       ),
                     ),
                     
