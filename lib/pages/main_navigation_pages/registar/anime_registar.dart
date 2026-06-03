@@ -60,6 +60,9 @@ class AnimeRegistar extends ConsumerWidget{
           // print("ここまで実行されました");
         });
 
+        //スナックバーにメッセージを表示
+        showSnackBar(context, "「${animeInput.title}」を保存しました");
+
         //画面を戻る
         Navigator.pop(context);
       }
