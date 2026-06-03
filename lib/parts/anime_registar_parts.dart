@@ -5,7 +5,6 @@ import 'package:isar/isar.dart';
 import 'package:anime_administration/models/genre.dart';
 import 'package:anime_administration/providers/anime_input_provider.dart';
 import 'package:anime_administration/providers/isar_provider.dart';
-import 'package:anime_administration/models/genre.dart';
 import 'package:intl/intl.dart';
 
 //-----------------------------------ドロップダウンメニュー--------------------------
@@ -307,7 +306,7 @@ Future<DateTime> inputDate_select(BuildContext context) async {
     return DateTime.now();
   }
 
-//-----------------------------------放送年入力ボタン--------------------------
+//-----------------------------------放送年入力欄--------------------------
 class InputOnAirDate extends ConsumerStatefulWidget {
   const InputOnAirDate({super.key});
 
@@ -333,6 +332,43 @@ class _InputOnAirDateState extends ConsumerState<InputOnAirDate> {
           SizedBox( //年入力欄
             width: MediaQuery.of(context).size.width*0.4,
             child: TextFormField(
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (text){
+                //入力が数字かつ1900~2100に収まっているかを確認
+                //入力が空
+                if(text==null){
+                  return "値を入力してください";
+                }
+                //入力が数字ではない
+                if(int.tryParse(text)==null){
+                  return "数値を入力してください";
+                }
+                int inputYear=int.tryParse(text) ?? 0;
+                //1900~2100に収まっていない
+                if(inputYear>2100 || inputYear<1900){
+                  return "1900~2100で入力してください";
+                }
+              },
+              onChanged: (text){
+                //入力が空白 or 文字
+                if(text=="" || int.tryParse(text)==null){
+                  ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: false);
+                  return;
+                } 
+                
+                int inputNum = int.tryParse(text) ?? 0;
+
+                //入力が1900~2100に収まっていない
+                if(inputNum>2100 || inputNum<1900){
+                  ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: false);
+                  return;
+                }
+
+                //入力が正しい
+                ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(onAirYear: inputNum);
+                ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: true);
+
+              },
               controller: _onAirDateController,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
@@ -345,9 +381,14 @@ class _InputOnAirDateState extends ConsumerState<InputOnAirDate> {
             onPressed:() async {
               //年選択画面を表示
               int? selectedYear = await inputOnAirYear(context);
-              if(selectedYear!=null){
-                _onAirDateController.text=selectedYear.toString();
-              }
+              
+              if(selectedYear==null) return;
+
+              //テキストコントローラの値を更新
+              _onAirDateController.text=selectedYear.toString();
+              //providerの値を更新
+              ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(onAirYear: selectedYear);
+              ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: true);
             },
             icon:Icon(
               Icons.calendar_month_outlined,
@@ -361,8 +402,13 @@ class _InputOnAirDateState extends ConsumerState<InputOnAirDate> {
             label: Text("季節"),
             width: MediaQuery.of(context).size.width*0.3,
             onSelected: (value) {
-              //print(value);
-              //riverpodの中身を書き換える処理を書く
+              //選択されたステータスを変換する
+              if(value==null){
+                return;
+              }
+              //入力がされていたらproviderの値を更新
+              ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(season: OnAirSeason.values[value]);
+              ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(season: true);
             },
             dropdownMenuEntries: const[
               DropdownMenuEntry(value: 0, label: "春"),
@@ -380,7 +426,7 @@ class _InputOnAirDateState extends ConsumerState<InputOnAirDate> {
 //-----------------------------------放送年入力用の関数--------------------------
 //ボタンを押すと，放送年選択のスロットを表示する関数を宣言
 Future<int?> inputOnAirYear(BuildContext context) async{
-  int _pickerSelected_onAirDate=0;
+  int _pickerSelected_onAirDate=DateTime.now().year;
 
   return await showModalBottomSheet<int>(
     context: context, 
@@ -432,7 +478,7 @@ Future<int?> inputOnAirYear(BuildContext context) async{
                       SizedBox(
                         width: MediaQuery.of(context).size.width*0.2,
                         child: Center(
-                          child: TextButton( //話数選択画面の保存ボタン
+                          child: TextButton( //放送年選択画面の保存ボタン
                             onPressed: (){
                               Navigator.pop(context,_pickerSelected_onAirDate); //前の画面に戻りつつ，値を返す
                               FocusManager.instance.primaryFocus?.unfocus(); //テキストのフォーカスを外す

@@ -33,6 +33,8 @@ class AnimeRegistar extends ConsumerWidget{
           "title",
           "titleKana",
           "date",
+          "onAirYear",
+          "season",
           "genre",
           "epNum",
           "epTime",
@@ -46,6 +48,8 @@ class AnimeRegistar extends ConsumerWidget{
           "タイトル",
           "タイトル（かな）",
           "日付",
+          "放送年",
+          "季節",
           "ジャンル",
           "話数",
           "1話あたりの時間",
@@ -59,6 +63,8 @@ class AnimeRegistar extends ConsumerWidget{
           "title" : true,
           "titleKana" : true,
           "date" : true,
+          "onAirYear" : true,
+          "season" : true,
           "genre" : true,
           "epNum" : true,
           "epTime" : true,
@@ -81,6 +87,12 @@ class AnimeRegistar extends ConsumerWidget{
         }
         if(erroeParameters.contains("date")){ //日付に不備
           errorParametorFlags["date"]=false;
+        }
+        if(erroeParameters.contains("onAirYear")){ //放送年に不備
+          errorParametorFlags["onAirYear"]=false;
+        }
+        if(erroeParameters.contains("season")){ //放送時期に不備
+          errorParametorFlags["season"]=false;
         }
         if(erroeParameters.contains("epNum")){ //話数に不備
           errorParametorFlags["epNum"]=false;
@@ -122,13 +134,14 @@ class AnimeRegistar extends ConsumerWidget{
             );
           });
 
+        //print("ここまで実行");
         //ダイアログを表示
         showDialog(context: context,
         builder: (content){
           return Dialog(
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.9,
-              height: 450,
+              height: 490,
               child: Column(
                 children: [
 
@@ -286,13 +299,13 @@ class AnimeRegistar extends ConsumerWidget{
 
               TextButton(
                 onPressed: (){
-                  print(animeInput.date);
+                  print(animeInput.onAirYear);
                 },
                 child: Text("テスト用")
               ),
               TextButton(
                 onPressed: (){
-                  print(animeCorrectInput.date);
+                  print(animeCorrectInput.onAirYear);
                 },
                 child: Text("テスト用1")
               ),
