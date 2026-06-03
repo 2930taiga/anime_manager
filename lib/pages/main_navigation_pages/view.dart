@@ -211,86 +211,98 @@ class _ViewPageState extends ConsumerState<ViewPage> {
                                         ),
                                       ),
 
-                                      Container( //アニメの情報出すところ
-                                        padding: EdgeInsets.symmetric(
-                                          vertical: 1
-                                        ),
-                                        child: Text(
-                                          "${_animes[index].onAirYear} "
-                                          "${seasonJP[_animes[index].season.index]}"
-                                          "アニメ｜"
-                                          "${_animes[index].epNum}"
-                                          "話｜"
-                                          "${_animes[index].epTime}"
-                                          "分 / 話",
-                                          style: TextStyle(
-                                            fontSize: 13.5
-                                          ),
-                                        ),
-                                      ),
-
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                          vertical: 1
-                                        ),
-                                        child: Row( //評価アイコン
-                                          children: [
-                                            Icon(
-                                              Icons.star,
-                                              size: 17,
-                                              color: _animes[index].evaluation>=1
-                                              ? Color.fromARGB(255, 255, 192, 0)
-                                              : Colors.grey,
-                                            ),
-                                            Icon(
-                                              Icons.star,
-                                              size: 17,
-                                              color: _animes[index].evaluation>=2
-                                              ? Color.fromARGB(255, 255, 192, 0)
-                                              : Colors.grey,
-                                            ),
-                                            Icon(
-                                              Icons.star,
-                                              size: 17,
-                                              color: _animes[index].evaluation>=3
-                                              ? Color.fromARGB(255, 255, 192, 0)
-                                              : Colors.grey,
-                                            ),
-                                            Icon(
-                                              Icons.star,
-                                              size: 17,
-                                              color: _animes[index].evaluation>=4
-                                              ? Color.fromARGB(255, 255, 192, 0)
-                                              : Colors.grey,
-                                            ),
-                                            Icon(
-                                              Icons.star,
-                                              size: 17,
-                                              color: _animes[index].evaluation>=5
-                                              ? Color.fromARGB(255, 255, 192, 0)
-                                              : Colors.grey,
-                                            ),
-
-                                            Text( //評価テキスト
-                                              " ${_animes[index].evaluation.toString()}.0 / 5.0",
-                                              style: TextStyle(
-                                                fontSize: 14
+                                      Row(
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Container( //アニメの情報出すところ
+                                                padding: EdgeInsets.symmetric(
+                                                  vertical: 1
+                                                ),
+                                                child: Text(
+                                                  "${_animes[index].onAirYear} "
+                                                  "${seasonJP[_animes[index].season.index]}"
+                                                  "アニメ｜"
+                                                  "${_animes[index].epNum}"
+                                                  "話｜"
+                                                  "${_animes[index].epTime}"
+                                                  "分 / 話",
+                                                  style: TextStyle(
+                                                    fontSize: 13.5
+                                                  ),
+                                                ),
                                               ),
-                                            ),
-                                          ],
-                                        ),
+
+                                              Container(
+                                                padding: EdgeInsets.symmetric(
+                                                  vertical: 1
+                                                ),
+                                                child: Row( //評価アイコン
+                                                  children: [
+                                                    Icon(
+                                                      Icons.star,
+                                                      size: 17,
+                                                      color: _animes[index].evaluation>=1
+                                                      ? Color.fromARGB(255, 255, 192, 0)
+                                                      : Colors.grey,
+                                                    ),
+                                                    Icon(
+                                                      Icons.star,
+                                                      size: 17,
+                                                      color: _animes[index].evaluation>=2
+                                                      ? Color.fromARGB(255, 255, 192, 0)
+                                                      : Colors.grey,
+                                                    ),
+                                                    Icon(
+                                                      Icons.star,
+                                                      size: 17,
+                                                      color: _animes[index].evaluation>=3
+                                                      ? Color.fromARGB(255, 255, 192, 0)
+                                                      : Colors.grey,
+                                                    ),
+                                                    Icon(
+                                                      Icons.star,
+                                                      size: 17,
+                                                      color: _animes[index].evaluation>=4
+                                                      ? Color.fromARGB(255, 255, 192, 0)
+                                                      : Colors.grey,
+                                                    ),
+                                                    Icon(
+                                                      Icons.star,
+                                                      size: 17,
+                                                      color: _animes[index].evaluation>=5
+                                                      ? Color.fromARGB(255, 255, 192, 0)
+                                                      : Colors.grey,
+                                                    ),
+
+                                                    Text( //評価テキスト
+                                                      " ${_animes[index].evaluation.toString()}.0 / 5.0",
+                                                      style: TextStyle(
+                                                        fontSize: 14
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+
+                                              if(_animes[index].memo != "") //メモ欄（空白なら表示しない）
+                                              Text(
+                                                "メモ：${_animes[index].memo}",
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.grey
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Text("話数変更")
+                                        ],
                                       ),
 
-                                      if(_animes[index].memo != "") //メモ欄（空白なら表示しない）
-                                      Text(
-                                        "メモ：${_animes[index].memo}",
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey
-                                        ),
-                                      ),
+                                      
                                     ],
                                   ),
                                 )
