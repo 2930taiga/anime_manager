@@ -360,7 +360,20 @@ class _ViewPageState extends ConsumerState<ViewPage> {
           ],
         ),
       floatingActionButton: FloatingActionButton(
-        onPressed: goToRegistarPage,
+        //onPressed: goToRegistarPage,
+        onPressed: () async {
+          //登録画面に遷移
+          await Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context)=> RegistarNavigation(),
+              fullscreenDialog: true
+            )
+          );
+
+          //戻ってきたら画面を更新
+          _refreshAnimes();
+
+        },
         child: Icon(Icons.add),
       ),
     ); 
