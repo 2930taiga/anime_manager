@@ -38,33 +38,37 @@ class AnimeRegistar extends ConsumerWidget{
         ..evaluation = animeInput.evaluation
         ..memo = animeInput.memo;
 
-        await isar.writeTxn(() async {
-          //アニメ本体を保存
-          await isar.animes.put(anime);
+        try{
+          await isar.writeTxn(() async {
+            //アニメ本体を保存
+            await isar.animes.put(anime);
 
-          //選択されたジャンルを取得
-          final genres = await isar.genres.getAll(
-            animeInput.genreId.toList(),
-          );
+            //選択されたジャンルを取得
+            final genres = await isar.genres.getAll(
+              animeInput.genreId.toList(),
+            );
 
-          //nullを除去してリンクへ追加
-          anime.genres.addAll(
-            genres.whereType<Genre>(),
-          );
+            //nullを除去してリンクへ追加
+            anime.genres.addAll(
+              genres.whereType<Genre>(),
+            );
 
-          //リンク保存
-          await anime.genres.save();
+            //リンク保存
+            await anime.genres.save();
+          });
 
-          // print(animeInput.title);
+          //スナックバーにメッセージを表示
+          showSnackBar(context, "「${animeInput.title}」を保存しました");
 
-          // print("ここまで実行されました");
-        });
+          //画面を戻る
+          Navigator.pop(context);
+        }
+        catch(e){
+          //保存に失敗したらメッセージを出す
+          showSnackBar(context, "保存に失敗しました．デバッグモードで確認してください");
+        }
 
-        //スナックバーにメッセージを表示
-        showSnackBar(context, "「${animeInput.title}」を保存しました");
-
-        //画面を戻る
-        Navigator.pop(context);
+        
       }
       else{ //保存できない
         //入力に不備がある箇所を取得
@@ -270,15 +274,6 @@ class AnimeRegistar extends ConsumerWidget{
           icon: Icon(Icons.arrow_back)
         ),
         actions: [
-          // IconButton(
-          //   onPressed: (){
-
-          //   },
-          //   icon: Icon(
-          //     Icons.star,
-          //     size: 30,
-          //   )
-          // ),
           TextButton(
             onPressed: Save,
             child: Text(
