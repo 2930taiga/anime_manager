@@ -21,6 +21,25 @@ class Texts{
   static Color subMessageColor = Color.fromARGB(255, 109, 109, 109);
 }
 
+//ステータスカラー
+class StatusColors{
+  static List<Color> boxColors = [
+    Color.fromARGB(255, 245, 245, 245), //未視聴
+    Color.fromARGB(255, 232, 245, 233), //視聴中
+    Color.fromARGB(255, 227, 242, 253), //視聴済み
+    Color.fromARGB(255, 255, 235, 238), //視聴中止
+    Color.fromARGB(255, 255, 248, 225), //視聴中断
+  ];
+
+  static List<Color> textColors = [
+    Color.fromARGB(255, 97, 97, 97), //未視聴
+    Color.fromARGB(255, 46, 125, 50), //視聴中
+    Color.fromARGB(255, 21, 101, 192), //視聴済み
+    Color.fromARGB(255, 198, 40, 40), //視聴中止
+    Color.fromARGB(255, 183, 129, 3), //視聴中断
+  ];
+}
+
 //スナックバー表示関数
 void showSnackBar(BuildContext context,String text){
   ScaffoldMessenger.of(context).showSnackBar( //スナックバーにメッセージを表示

@@ -1,5 +1,6 @@
 import 'package:anime_administration/models/anime.dart';
 import 'package:anime_administration/models/genre.dart';
+import 'package:anime_administration/parameter_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 //登録ページ
@@ -124,25 +125,9 @@ class _ViewPageState extends ConsumerState<ViewPage> {
                           horizontal: 3
                         ),
                           decoration: BoxDecoration(
-                            color: _animes[index].status==AnimeStatus.never //未視聴
-                            ? Color.fromARGB(255, 245, 245, 245).withValues(alpha: 0.25)
-                            : _animes[index].status==AnimeStatus.watching //視聴中
-                            ? Color.fromARGB(255, 232, 245, 233).withValues(alpha: 0.25)
-                            : _animes[index].status == AnimeStatus.complete //視聴済み
-                            ? Color.fromARGB(255, 227, 242, 253).withValues(alpha: 0.25)
-                            : _animes[index].status==AnimeStatus.cancel //視聴中止
-                            ? Color.fromARGB(255, 255, 235, 238).withValues(alpha: 0.25)
-                            : Color.fromARGB(255, 255, 248, 225).withValues(alpha: 0.25), //視聴中断
+                            color: StatusColors.boxColors[_animes[index].status.index].withValues(alpha: 0.25),
                             border: Border.all(
-                              color: _animes[index].status==AnimeStatus.never //未視聴
-                              ? Color.fromARGB(255, 245, 245, 245)
-                              : _animes[index].status==AnimeStatus.watching //視聴中
-                              ? Color.fromARGB(255, 232, 245, 233)
-                              : _animes[index].status == AnimeStatus.complete //視聴済み
-                              ? Color.fromARGB(255, 227, 242, 253)
-                              : _animes[index].status==AnimeStatus.cancel //視聴中止
-                              ? Color.fromARGB(255, 255, 235, 238)
-                              : Color.fromARGB(255, 255, 248, 225), //視聴中断
+                              color: StatusColors.boxColors[_animes[index].status.index],
                             ),
                             borderRadius: BorderRadiusDirectional.circular(20)
                           ),
@@ -309,30 +294,13 @@ class _ViewPageState extends ConsumerState<ViewPage> {
                                       vertical: 5
                                     ),
                                     decoration: BoxDecoration(
-                                      color: _animes[index].status==AnimeStatus.never //未視聴
-                                      ? Color.fromARGB(255, 245, 245, 245)
-                                      : _animes[index].status==AnimeStatus.watching //視聴中
-                                      ? Color.fromARGB(255, 232, 245, 233)
-                                      : _animes[index].status == AnimeStatus.complete //視聴済み
-                                      ? Color.fromARGB(255, 227, 242, 253)
-                                      : _animes[index].status==AnimeStatus.cancel //視聴中止
-                                      ? Color.fromARGB(255, 255, 235, 238)
-                                      : Color.fromARGB(255, 255, 248, 225), //視聴中断
+                                      color: StatusColors.boxColors[_animes[index].status.index],
                                       borderRadius: BorderRadiusDirectional.circular(20)
                                     ),
                                     child: Text(
                                       statusJp[_animes[index].status.index],
                                       style: TextStyle(
-                                        color: _animes[index].status==AnimeStatus.never //未視聴
-                                        ? Color.fromARGB(255, 97, 97, 97)
-                                        : _animes[index].status==AnimeStatus.watching //視聴中
-                                        ? Color.fromARGB(255, 46, 125, 50)
-                                        : _animes[index].status == AnimeStatus.complete //視聴済み
-                                        ? Color.fromARGB(255, 21, 101, 192)
-                                        : _animes[index].status==AnimeStatus.cancel //視聴中止
-                                        ? Color.fromARGB(255, 198, 40, 40)
-                                        : Color.fromARGB(255, 183, 129, 3), //視聴中断
-
+                                        color: StatusColors.textColors[_animes[index].status.index],
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold
                                       ),
