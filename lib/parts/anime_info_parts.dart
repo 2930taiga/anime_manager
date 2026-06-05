@@ -44,10 +44,10 @@ class AnimeInfoTitleKana extends StatelessWidget {
   }
 }
 
-//ジャンル
-class AnimeInfoGenre extends StatelessWidget {
+//ジャンル（簡易）
+class AnimeInfoSimpleGenre extends StatelessWidget {
   final Anime anime;
-  const AnimeInfoGenre({super.key,required this.anime});
+  const AnimeInfoSimpleGenre({super.key,required this.anime});
 
   @override
   Widget build(BuildContext context) {
@@ -209,9 +209,9 @@ class AnimeInfoEvaluation extends StatelessWidget {
 }
 
 //メモ欄（簡易ver）
-class AnimeInfoMemo extends StatelessWidget {
+class AnimeInfoSimpleMemo extends StatelessWidget {
   final Anime anime;
-  const AnimeInfoMemo({super.key, required this.anime});
+  const AnimeInfoSimpleMemo({super.key, required this.anime});
 
   @override
   Widget build(BuildContext context) {

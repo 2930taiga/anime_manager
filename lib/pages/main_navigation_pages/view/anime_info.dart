@@ -115,7 +115,7 @@ class _AnimeInfoState extends ConsumerState<AnimeInfo> {
 
                                     //メモ欄（簡易ver）
                                     if(detailInfo==false && widget.anime.memo!="")
-                                    AnimeInfoMemo(anime: widget.anime)
+                                    AnimeInfoSimpleMemo(anime: widget.anime)
                                   ],
                                 )
                               ),

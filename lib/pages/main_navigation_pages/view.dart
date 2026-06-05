@@ -270,7 +270,7 @@ class _ViewPageState extends ConsumerState<ViewPage> {
                                       AnimeInfoTitle(anime: _animes[index],onLine: true,),
                                       
                                       //ジャンル
-                                      AnimeInfoGenre(anime: _animes[index]),
+                                      AnimeInfoSimpleGenre(anime: _animes[index]),
 
                                       Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -282,7 +282,7 @@ class _ViewPageState extends ConsumerState<ViewPage> {
                                           AnimeInfoEvaluation(anime: _animes[index]),
 
                                           if(_animes[index].memo != "") //メモ欄（空白なら表示しない）
-                                          AnimeInfoMemo(anime: _animes[index])
+                                          AnimeInfoSimpleMemo(anime: _animes[index])
                                         ],
                                       ),
                                     ],
