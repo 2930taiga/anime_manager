@@ -33,6 +33,8 @@ class _AnimeInfoState extends ConsumerState<AnimeInfo> {
   bool detailInfo = true;
   //ジャンルの詳細を表示するかどうか
   bool showGenreInfo = true;
+  //時間の詳細を表示するかどうか
+  bool showTimeInfo = true;
 
   //ステータスの日本語
   List<String> statusJp =[
@@ -445,6 +447,73 @@ class _AnimeInfoState extends ConsumerState<AnimeInfo> {
                       ),
                     ),
                   ),
+
+                  Padding( //アニメを見た時間
+                    padding: EdgeInsetsGeometry.symmetric(
+                      horizontal: cardPaddingHorizontal,
+                      vertical: cardPaddingVertical
+                    ),
+                    child: Container(
+                      width: double.infinity,
+                      //height: 500,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: containerPaddingHorizontal,
+                        vertical: containerPaddingVertical
+                      ),
+                      decoration: BoxDecoration(
+                        color: StatusColors.boxColors[widget.anime.status.index].withValues(alpha: 0.4),
+                        border: Border.all(
+                          color: StatusColors.boxColors[widget.anime.status.index],),
+                        borderRadius: BorderRadius.circular(20)
+                      ),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(
+                              right: 5,
+                              left: 5,
+                              bottom: 13,
+                              top: 8
+                            ),
+                            child: GestureDetector(
+                              onTap: (){
+                                setState(() {
+                                  if(showTimeInfo==true){showTimeInfo=false;}
+                                  else{showTimeInfo=true;}
+                                });
+                              },
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text( //「基本情報」
+                                      "このアニメを見た時間",
+                                      style: TextStyle(
+                                        color: StatusColors.textColors[widget.anime.status.index],
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20
+                                      ),
+                                    ),
+                                  ),
+                                  Icon(
+                                    detailInfo
+                                    ? Icons.expand_less
+                                    : Icons.expand_more
+                                  )
+                                ],
+                              ),
+                            )
+                          ),
+
+                          //分析画面欄
+                          if(showTimeInfo==true)
+                          AnimeInfoAnalysis(anime: widget.anime),
+                        ],
+                      ),
+                    ),
+                  ),
+                  
+                  //一番したまでスクロールできるようにするためのbox
+                    const SizedBox(height: 60,)
                 ],
               )
             )

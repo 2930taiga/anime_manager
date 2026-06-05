@@ -705,10 +705,9 @@ class AnimeInfoGenres extends StatelessWidget {
 
 //各アニメに表示する簡単な分析画面
 class AnimeInfoAnalysis extends StatelessWidget {
-  const AnimeInfoAnalysis({super.key});
+  final Anime anime;
+  const AnimeInfoAnalysis({super.key, required this.anime});
 
-  //paddingに関するパラメータ
-  static double paddingVerticalSize =10;
 
   @override
   Widget build(BuildContext context) {
@@ -718,70 +717,63 @@ class AnimeInfoAnalysis extends StatelessWidget {
       ),
       child: Container(
         width: double.infinity,
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Color.fromARGB(255, 191, 191, 191)
-          ),
-          borderRadius: BorderRadiusDirectional.circular(10)
+        // decoration: BoxDecoration(
+        //   border: Border.all(
+        //     color: Color.fromARGB(255, 191, 191, 191)
+        //   ),
+        //   borderRadius: BorderRadiusDirectional.circular(10)
+        // ),
+        padding: EdgeInsets.symmetric(
+          horizontal: 10,
+          vertical: 5,
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
-            Container( //日付
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: Color.fromARGB(255, 191, 191, 191)
-                  )
-                )
-              ),
-              padding: EdgeInsets.symmetric(
-                vertical: paddingVerticalSize
-              ),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: EdgeInsetsGeometry.symmetric(
-                      horizontal: 10,
-                    ),
-                    child: Icon(
-                      Icons.calendar_today_outlined,
-                      size: 40,
-                      color: StatusColors.textColors[2],
-                    ),
-                  ),
-                  
-                  Padding(
-                    padding: EdgeInsetsGeometry.symmetric(
-                      //horizontal: 5
-                    ),
-                    child: Text(
-                      "日付",
-                      style: TextStyle(
-                        fontSize: 20
-                      ),
-                    ),
-                  ),
-
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsetsGeometry.symmetric(
-                        horizontal: 20
-                      ),
-                      child: Text(
-                        "test",
-                        textAlign: TextAlign.end,
-                        style: TextStyle(
-                          fontSize: 20
-                        ),
-                      ),
-                    )
-                  )
-                ],
+            Text(
+              "${anime.epNum} 話 × ${anime.epTime} 分/話",
+              style: TextStyle(
+                fontSize: 18
               ),
             ),
+            Padding(
+              padding: EdgeInsetsGeometry.symmetric(
+                vertical: 5
+              ),
+              child:  Text(
+                "= ${anime.epNum*anime.epTime} minute",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsetsGeometry.symmetric(
+                //vertical: 5
+              ),
+              child:  Text(
+                "= ${((anime.epNum*anime.epTime).toDouble()/60.0).toStringAsFixed(2)} hour",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsetsGeometry.symmetric(
+                vertical: 5
+              ),
+              child:  Text(
+                "= ${((anime.epNum*anime.epTime).toDouble()/1440).toStringAsFixed(2)} day",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold
+                ),
+              ),
+            )
           ],
-        ),
+        )
       ),
     );
   }
