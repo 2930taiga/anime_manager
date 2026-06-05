@@ -269,7 +269,7 @@ class _ViewPageState extends ConsumerState<ViewPage> {
                           horizontal: 3
                         ),
                           decoration: BoxDecoration(
-                            color: StatusColors.boxColors[_animes[index].status.index].withValues(alpha: 0.25),
+                            color: StatusColors.boxColors[_animes[index].status.index].withValues(alpha: 0.4),
                             border: Border.all(
                               color: StatusColors.boxColors[_animes[index].status.index],
                             ),

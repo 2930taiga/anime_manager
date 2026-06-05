@@ -90,7 +90,7 @@ class _AnimeInfoState extends ConsumerState<AnimeInfo> {
                         vertical: containerPaddingVertical
                       ),
                       decoration: BoxDecoration(
-                        color: StatusColors.boxColors[widget.anime.status.index].withValues(alpha: 0.25),
+                        color: StatusColors.boxColors[widget.anime.status.index].withValues(alpha: 0.4),
                         border: Border.all(
                           color: StatusColors.boxColors[widget.anime.status.index],),
                         borderRadius: BorderRadius.circular(20)
@@ -331,7 +331,7 @@ class _AnimeInfoState extends ConsumerState<AnimeInfo> {
                         vertical: containerPaddingVertical
                       ),
                       decoration: BoxDecoration(
-                        color: StatusColors.boxColors[widget.anime.status.index].withValues(alpha: 0.25),
+                        color: StatusColors.boxColors[widget.anime.status.index].withValues(alpha: 0.5),
                         border: Border.all(
                           color: StatusColors.boxColors[widget.anime.status.index],),
                         borderRadius: BorderRadius.circular(20)
@@ -395,7 +395,7 @@ class _AnimeInfoState extends ConsumerState<AnimeInfo> {
                         vertical: containerPaddingVertical
                       ),
                       decoration: BoxDecoration(
-                        color: StatusColors.boxColors[widget.anime.status.index].withValues(alpha: 0.25),
+                        color: StatusColors.boxColors[widget.anime.status.index].withValues(alpha: 0.4),
                         border: Border.all(
                           color: StatusColors.boxColors[widget.anime.status.index],),
                         borderRadius: BorderRadius.circular(20)
