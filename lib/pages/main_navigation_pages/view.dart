@@ -59,6 +59,7 @@ class _ViewPageState extends ConsumerState<ViewPage> {
   }
 
   //画面が表示されたら一度だけ画面をリフレッシュする
+  @override
   void initState(){
     //親に準備を促す
     super.initState();
@@ -210,7 +211,7 @@ class _ViewPageState extends ConsumerState<ViewPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("一覧"),
-        backgroundColor: Colors.lightBlue[100],
+        //backgroundColor: Colors.lightBlue[100],
         actions: [
           IconButton( //ソートボタン
             onPressed: (){
@@ -235,7 +236,7 @@ class _ViewPageState extends ConsumerState<ViewPage> {
       )
       : Column(
           children: [
-            SizedBox(height: 20,),
+            //SizedBox(height: 20,),
 
             Expanded(
               child:  Scrollbar(
