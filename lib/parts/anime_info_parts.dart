@@ -241,6 +241,13 @@ class AnimeInfoDetailInfo extends StatefulWidget {
 }
 
 class _AnimeInfoDetailInfoState extends State<AnimeInfoDetailInfo> {
+  //文字のパラメータ
+  double textSize = 15;
+  //アイコンのパラメータ
+  double iconSize = 35;
+  //垂直方向のpaddingサイズ
+  double paddingVerticalSize = 10;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -257,17 +264,354 @@ class _AnimeInfoDetailInfoState extends State<AnimeInfoDetailInfo> {
         ),
         child: Column(
           children: [
-            Row(
-              children: [
-                Icon(Icons.abc),
-                Expanded(
-                  child: Text(
-                    "title",
-                    textAlign: TextAlign.end,
+
+            Container( //日付
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: Color.fromARGB(255, 191, 191, 191)
                   )
                 )
-              ],
+              ),
+              padding: EdgeInsets.symmetric(
+                vertical: paddingVerticalSize
+              ),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsetsGeometry.symmetric(
+                      horizontal: 10,
+                    ),
+                    child: Icon(
+                      Icons.calendar_today_outlined,
+                      size: iconSize,
+                      color: StatusColors.textColors[widget.anime.status.index],
+                    ),
+                  ),
+                  
+                  Padding(
+                    padding: EdgeInsetsGeometry.symmetric(
+                      //horizontal: 5
+                    ),
+                    child: Text(
+                      "日付",
+                      style: TextStyle(
+                        fontSize: textSize
+                      ),
+                    ),
+                  ),
+
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsetsGeometry.symmetric(
+                        horizontal: 20
+                      ),
+                      child: Text(
+                        "${widget.anime.date.year}/"
+                        "${widget.anime.date.month.toString().padLeft(2,"0")}/"
+                        "${widget.anime.date.day.toString().padLeft(2,"0")}",
+                        textAlign: TextAlign.end,
+                        style: TextStyle(
+                          fontSize: textSize
+                        ),
+                      ),
+                    )
+                  )
+                ],
+              ),
             ),
+
+            Container( //話数
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: Color.fromARGB(255, 191, 191, 191)
+                  )
+                )
+              ),
+              padding: EdgeInsets.symmetric(
+                vertical: paddingVerticalSize
+              ),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsetsGeometry.symmetric(
+                      horizontal: 10,
+                    ),
+                    child: Icon(
+                      Icons.local_library_outlined,
+                      size: iconSize,
+                      color: StatusColors.textColors[widget.anime.status.index],
+                    ),
+                  ),
+                  
+                  Padding(
+                    padding: EdgeInsetsGeometry.symmetric(
+                      //horizontal: 5
+                    ),
+                    child: Text(
+                      "話数",
+                      style: TextStyle(
+                        fontSize: textSize
+                      ),
+                    ),
+                  ),
+
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsetsGeometry.symmetric(
+                        horizontal: 20
+                      ),
+                      child: Text(
+                        "${widget.anime.epNum.toString()} 話",
+                        textAlign: TextAlign.end,
+                        style: TextStyle(
+                          fontSize: textSize
+                        ),
+                      ),
+                    )
+                  )
+                ],
+              ),
+            ),
+
+            Container( //1話あたりの時間
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: Color.fromARGB(255, 191, 191, 191)
+                  )
+                )
+              ),
+              padding: EdgeInsets.symmetric(
+                vertical: paddingVerticalSize
+              ),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsetsGeometry.symmetric(
+                      horizontal: 10,
+                    ),
+                    child: Icon(
+                      Icons.access_time,
+                      size: iconSize,
+                      color: StatusColors.textColors[widget.anime.status.index],
+                    ),
+                  ),
+                  
+                  Padding(
+                    padding: EdgeInsetsGeometry.symmetric(
+                      //horizontal: 5
+                    ),
+                    child: Text(
+                      "1話あたりの時間",
+                      style: TextStyle(
+                        fontSize: textSize
+                      ),
+                    ),
+                  ),
+
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsetsGeometry.symmetric(
+                        horizontal: 20
+                      ),
+                      child: Text(
+                        "${widget.anime.epTime.toString()} 分",
+                        textAlign: TextAlign.end,
+                        style: TextStyle(
+                          fontSize: textSize
+                        ),
+                      ),
+                    )
+                  )
+                ],
+              ),
+            ),
+
+            Container( //評価
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: Color.fromARGB(255, 191, 191, 191)
+                  )
+                )
+              ),
+              padding: EdgeInsets.symmetric(
+                vertical: paddingVerticalSize
+              ),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsetsGeometry.symmetric(
+                      horizontal: 10,
+                    ),
+                    child: Icon(
+                      Icons.star_border_outlined,
+                      size: iconSize,
+                      color: StatusColors.textColors[widget.anime.status.index],
+                    ),
+                  ),
+                  
+                  Padding(
+                    padding: EdgeInsetsGeometry.symmetric(
+                      //horizontal: 5
+                    ),
+                    child: Text(
+                      "評価",
+                      style: TextStyle(
+                        fontSize: textSize
+                      ),
+                    ),
+                  ),
+
+                  Expanded(child: SizedBox()),
+
+                  Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsetsGeometry.symmetric(
+                          horizontal: 1
+                        ),
+                        child: Icon(
+                          Icons.star,
+                          size: 24,
+                          color: widget.anime.evaluation>=1
+                          ? StatusColors.textColors[widget.anime.status.index]
+                          : Colors.grey,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsetsGeometry.symmetric(
+                          horizontal: 1
+                        ),
+                        child: Icon(
+                          Icons.star,
+                          size: 24,
+                          color: widget.anime.evaluation>=2
+                          ? StatusColors.textColors[widget.anime.status.index]
+                          : Colors.grey,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsetsGeometry.symmetric(
+                          horizontal: 1
+                        ),
+                        child: Icon(
+                          Icons.star,
+                          size: 24,
+                          color: widget.anime.evaluation>=3
+                          ? StatusColors.textColors[widget.anime.status.index]
+                          : Colors.grey,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsetsGeometry.symmetric(
+                          horizontal: 1
+                        ),
+                        child: Icon(
+                          Icons.star,
+                          size: 24,
+                          color: widget.anime.evaluation>=4
+                          ? StatusColors.textColors[widget.anime.status.index]
+                          : Colors.grey,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsetsGeometry.symmetric(
+                          horizontal: 1
+                        ),
+                        child: Icon(
+                          Icons.star,
+                          size: 24,
+                          color: widget.anime.evaluation>=5
+                          ? StatusColors.textColors[widget.anime.status.index]
+                          : Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                  
+                  Padding(
+                    padding: EdgeInsetsGeometry.symmetric(
+                      horizontal: 20
+                    ),
+                    //child: Placeholder(),
+                    child: Text(
+                      "${widget.anime.evaluation}.0 / 5.0",
+                      textAlign: TextAlign.end,
+                      style: TextStyle(
+                        fontSize: textSize
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+
+            Container( //メモ
+              padding: EdgeInsets.symmetric(
+                vertical: paddingVerticalSize
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsetsGeometry.symmetric(
+                          horizontal: 10,
+                        ),
+                        child: Icon(
+                          Icons.edit_document,
+                          size: iconSize,
+                          color: StatusColors.textColors[widget.anime.status.index],
+                        ),
+                      ),
+                      
+                      Padding(
+                        padding: EdgeInsetsGeometry.symmetric(
+                          //horizontal: 5
+                        ),
+                        child: Text(
+                          "メモ",
+                          style: TextStyle(
+                            fontSize: textSize
+                          ),
+                        ),
+                      ),
+
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsetsGeometry.symmetric(
+                      horizontal: 20,
+                      vertical: 7
+                    ),
+                    child: widget.anime.memo == ""
+                    ? SizedBox(
+                      height: 22,
+                      child: Center(
+                        child: Text(
+                          "メモがありません",
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 17
+                          ),
+                        ),
+                      ),
+                    )
+                    : Text(
+                      widget.anime.memo,
+                      style: TextStyle(
+                        fontSize: 16
+                      ),
+                    ),
+                  )
+                ],
+              )
+            ),
+            
           ],
         ),
       ),

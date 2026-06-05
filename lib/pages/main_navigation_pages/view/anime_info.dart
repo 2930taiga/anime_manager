@@ -29,6 +29,8 @@ class _AnimeInfoState extends ConsumerState<AnimeInfo> {
 
   //詳細情報を表示するかどうか
   bool detailInfo = true;
+  //タイトル（かな）を表示するかどうか
+  bool showTitleKana = false;
 
   //ステータスの日本語
   List<String> statusJp =[
@@ -66,11 +68,13 @@ class _AnimeInfoState extends ConsumerState<AnimeInfo> {
       ),
       body: Column(
         children: [
-          SizedBox(height: 20,),
           Expanded(
             child: Scrollbar(
               child: ListView(
                 children: [
+
+                  SizedBox(height: 20,),
+
                   Padding(
                     padding: EdgeInsetsGeometry.symmetric(
                       horizontal: cardPaddingHorizontal,
@@ -100,10 +104,20 @@ class _AnimeInfoState extends ConsumerState<AnimeInfo> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     //タイトル表示欄
-                                    AnimeInfoTitle(anime: widget.anime,onLine: false,),
+                                    GestureDetector(
+                                      child: AnimeInfoTitle(anime: widget.anime,onLine: false,),
+                                      //タップするとタイトルかなを表示する
+                                      onTap: (){
+                                        setState(() {
+                                          if(showTitleKana==true){showTitleKana=false;}
+                                          else{showTitleKana=true;}
+                                        });
+                                      },
+                                    ),
+                                    
 
-                                    //if(detailInfo==true) //タイトルかな表示欄
-                                    //AnimeInfoTitleKana(anime: widget.anime),
+                                    if(showTitleKana==true) //タイトルかな表示欄
+                                    AnimeInfoTitleKana(anime: widget.anime),
 
                                     //info欄（簡易ver）
                                     //if(detailInfo==false)
@@ -114,7 +128,7 @@ class _AnimeInfoState extends ConsumerState<AnimeInfo> {
                                     AnimeInfoEvaluation(anime: widget.anime),
 
                                     //メモ欄（簡易ver）
-                                    //if(detailInfo==false && widget.anime.memo!="")
+                                    if(widget.anime.memo!="")
                                     AnimeInfoSimpleMemo(anime: widget.anime)
                                   ],
                                 )
@@ -301,59 +315,72 @@ class _AnimeInfoState extends ConsumerState<AnimeInfo> {
                       ),
                     ),
                   ),
-                  Padding( //基本情報
-                    padding: EdgeInsetsGeometry.symmetric(
-                      horizontal: cardPaddingHorizontal,
-                      vertical: cardPaddingVertical
-                    ),
-                    child: Container(
-                      width: double.infinity,
-                      //height: 500,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: containerPaddingHorizontal,
-                        vertical: containerPaddingVertical
-                      ),
-                      decoration: BoxDecoration(
-                        color: StatusColors.boxColors[widget.anime.status.index].withValues(alpha: 0.25),
-                        border: Border.all(
-                          color: StatusColors.boxColors[widget.anime.status.index],),
-                        borderRadius: BorderRadius.circular(20)
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text( //「基本情報」
-                                  "基本情報",
-                                  style: TextStyle(
-                                    color: StatusColors.textColors[widget.anime.status.index],
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20
-                                  ),
-                                ),
-                              ),
-                              IconButton(
-                                onPressed: (){
-                                  setState(() {
-                                    if(detailInfo==true){detailInfo=false;}
-                                    else{detailInfo=true;}
-                                  });
-                                },
-                                icon: detailInfo
-                                ? Icon(Icons.expand_less)
-                                : Icon(Icons.expand_more), 
-                              )
-                            ],
-                          ),
 
-                          //詳細情報欄
-                          if(detailInfo==true)
-                          AnimeInfoDetailInfo(anime: widget.anime)
-                        ],
+                  GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        if(detailInfo==true){detailInfo=false;}
+                        else{detailInfo=true;}
+                      });
+                    },
+                    child: Padding( //基本情報
+                      padding: EdgeInsetsGeometry.symmetric(
+                        horizontal: cardPaddingHorizontal,
+                        vertical: cardPaddingVertical
+                      ),
+                      child: Container(
+                        width: double.infinity,
+                        //height: 500,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: containerPaddingHorizontal,
+                          vertical: containerPaddingVertical
+                        ),
+                        decoration: BoxDecoration(
+                          color: StatusColors.boxColors[widget.anime.status.index].withValues(alpha: 0.25),
+                          border: Border.all(
+                            color: StatusColors.boxColors[widget.anime.status.index],),
+                          borderRadius: BorderRadius.circular(20)
+                        ),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(
+                                right: 5,
+                                left: 5,
+                                bottom: 13,
+                                top: 8
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text( //「基本情報」
+                                      "基本情報",
+                                      style: TextStyle(
+                                        color: StatusColors.textColors[widget.anime.status.index],
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20
+                                      ),
+                                    ),
+                                  ),
+                                  Icon(
+                                    detailInfo
+                                    ? Icons.expand_less
+                                    : Icons.expand_more
+                                  )
+                                ],
+                              ),
+                            ),
+                            
+
+                            //詳細情報欄
+                            if(detailInfo==true)
+                            AnimeInfoDetailInfo(anime: widget.anime)
+                          ],
+                        ),
                       ),
                     ),
                   ),
+                  
                 ],
               )
             )
