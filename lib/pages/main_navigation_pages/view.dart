@@ -1,5 +1,5 @@
 import 'package:anime_administration/models/anime.dart';
-import 'package:anime_administration/models/genre.dart';
+//import 'package:anime_administration/models/genre.dart';
 import 'package:anime_administration/parameter_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
@@ -7,7 +7,10 @@ import 'package:isar/isar.dart';
 import 'registar_navigation.dart';
 //isarのprovider
 import 'package:anime_administration/providers/isar_provider.dart';
+//riverpod
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+//アニメ情報ページ
+import 'package:anime_administration/pages/main_navigation_pages/view/anime_info.dart';
 
 class ViewPage extends ConsumerStatefulWidget {
   const ViewPage({super.key,});
@@ -20,7 +23,7 @@ class _ViewPageState extends ConsumerState<ViewPage> {
   //アニメのリストを保持する変数
   List<Anime> _animes=[];
   //ジャンルのリストを保持する変数
-  List<Genre> _genres=[];
+  //List<Genre> _genres=[];
 
   //ステータスの日本語
   List<String> statusJp =[
@@ -222,6 +225,15 @@ class _ViewPageState extends ConsumerState<ViewPage> {
                     return GestureDetector(
                       onTap: (){
                         print("たっぷされた${_animes[index].title}");
+                        //アニメ情報ページに遷移
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AnimeInfo(
+                              anime: _animes[index],
+                            )
+                          )
+                        );
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(

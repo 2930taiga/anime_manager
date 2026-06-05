@@ -292,7 +292,13 @@ class _ViewGenreState extends State<ViewGenre> {
           await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => GenreRegistar(initialNewAdd: true,title: "",rgbColors: [0,0,0],id: 0,iconData: Icons.circle,iconShape: IconShape.circle,)
+              builder: (context) => GenreRegistar(
+                initialNewAdd: true,title: "",
+                rgbColors: [0,0,0],
+                id: 0,
+                iconData: Icons.circle,
+                iconShape: IconShape.circle,
+              )
             )
           );
             
