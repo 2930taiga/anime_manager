@@ -290,24 +290,108 @@ class _ViewPageState extends ConsumerState<ViewPage> {
                               
                               Column(
                                 children: [
-                                  Container( //ステータス
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 5
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: StatusColors.boxColors[_animes[index].status.index],
-                                      borderRadius: BorderRadiusDirectional.circular(20)
-                                    ),
-                                    child: Text(
-                                      statusJp[_animes[index].status.index],
-                                      style: TextStyle(
-                                        color: StatusColors.textColors[_animes[index].status.index],
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold
+                                  PopupMenuButton(
+                                    padding: EdgeInsetsGeometry.zero,
+                                    onSelected: (value) async {
+                                      //選ばれたステータスにデータを更新し，画面をリフレッシュ
+                                      //話数を増やす
+                                      try{
+                                        await isar.writeTxn(() async {
+                                          //現在の情報をコピー
+                                          final newAnime = _animes[index];
+                                          // ステータスを更新
+                                          newAnime.status = AnimeStatus.values[value];
+                                          //データベースに保存する
+                                          await isar.animes.put(newAnime);
+                                          //スナックバーにメッセージを表示
+                                          showSnackBar(
+                                            context,
+                                            "${_animes[index].title}のステータスを更新しました"
+                                          );
+                                        });
+                                        //画面を更新
+                                        _refreshAnimes();
+                                      }
+                                      catch(e){
+                                        //失敗したメッセージを表示
+                                        showSnackBar(
+                                          context,
+                                          "ステータスの更新に失敗しました．デバッグモードで確認してください"
+                                        );
+                                      }
+                                    },
+                                    itemBuilder: (context) => [
+                                      PopupMenuItem(
+                                        padding: EdgeInsets.zero,
+                                        value: 0,
+                                        child: StatusMenuItem(
+                                          backgroundColor: StatusColors.boxColors[0],
+                                          textColor: StatusColors.textColors[0],
+                                          text: "未視聴",
+                                          icon: Icons.circle_outlined
+                                        )
+                                      ),
+                                      PopupMenuItem(
+                                        padding: EdgeInsets.zero,
+                                        value: 1,
+                                        child: StatusMenuItem(
+                                          backgroundColor: StatusColors.boxColors[1],
+                                          textColor: StatusColors.textColors[1],
+                                          text: "視聴中",
+                                          icon: Icons.circle
+                                        )
+                                      ),
+                                      PopupMenuItem(
+                                        padding: EdgeInsets.zero,
+                                        value: 2,
+                                        child: StatusMenuItem(
+                                          backgroundColor: StatusColors.boxColors[2],
+                                          textColor: StatusColors.textColors[2],
+                                          text: "視聴済み",
+                                          icon: Icons.check
+                                        )
+                                      ),
+                                      PopupMenuItem(
+                                        padding: EdgeInsets.zero,
+                                        value: 3,
+                                        child: StatusMenuItem(
+                                          backgroundColor: StatusColors.boxColors[3],
+                                          textColor: StatusColors.textColors[3],
+                                          text: "視聴中止",
+                                          icon: Icons.close
+                                        )
+                                      ),
+                                      PopupMenuItem(
+                                        padding: EdgeInsets.zero,
+                                        value: 4,
+                                        child: StatusMenuItem(
+                                          backgroundColor: StatusColors.boxColors[4],
+                                          textColor: StatusColors.textColors[4],
+                                          text: "視聴中断",
+                                          icon: Icons.stop
+                                        )
+                                      ),
+                                    ],
+                                    child: Container( //ステータス
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 5
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: StatusColors.boxColors[_animes[index].status.index],
+                                        borderRadius: BorderRadiusDirectional.circular(20)
+                                      ),
+                                      child: Text(
+                                        statusJp[_animes[index].status.index],
+                                        style: TextStyle(
+                                          color: StatusColors.textColors[_animes[index].status.index],
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold
+                                        ),
                                       ),
                                     ),
                                   ),
+                                  
 
                                   //視聴中なら話数変更ボタン
                                   if(_animes[index].status==AnimeStatus.watching)
@@ -341,7 +425,7 @@ class _ViewPageState extends ConsumerState<ViewPage> {
                                               //失敗したメッセージを表示
                                               showSnackBar(
                                                 context,
-                                                "話数の更新に失敗しました"
+                                                "話数の更新に失敗しました．デバッグモードで確認してください"
                                               );
                                             }
                                           },
@@ -371,7 +455,7 @@ class _ViewPageState extends ConsumerState<ViewPage> {
                                               //失敗したメッセージを表示
                                               showSnackBar(
                                                 context,
-                                                "話数の更新に失敗しました"
+                                                "話数の更新に失敗しました．デバッグモードで確認してください"
                                               );
                                             }
                                           },
@@ -403,7 +487,6 @@ class _ViewPageState extends ConsumerState<ViewPage> {
                 ),
               )
             )
-            
           ],
         ),
       floatingActionButton: FloatingActionButton(
@@ -424,5 +507,61 @@ class _ViewPageState extends ConsumerState<ViewPage> {
         child: Icon(Icons.add),
       ),
     ); 
+  }
+}
+
+//ステータスメニューの項目を定義
+class StatusMenuItem extends StatelessWidget {
+  //色
+  final Color backgroundColor;
+  final Color textColor;
+  //テキスト
+  final String text;
+  final IconData icon;
+  const StatusMenuItem({super.key,required this.backgroundColor,required this.textColor ,required this.text,required this.icon});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding:EdgeInsetsGeometry.symmetric(
+        vertical: 0
+      ),
+      child: Container(
+        //width: double.infinity,
+        padding: EdgeInsets.symmetric(
+          vertical: 13,
+          //horizontal: 10
+        ),
+        decoration: BoxDecoration(
+          color: backgroundColor
+        ),
+        child: Row(
+          children: [
+            Padding(
+              padding: EdgeInsetsGeometry.symmetric(
+                horizontal: 0
+              ),
+              child: Icon(
+                icon,
+                size: 16,
+                color: textColor,
+              ),
+            ),
+            Padding(
+              padding:EdgeInsetsGeometry.symmetric(
+                horizontal: 3
+              ),
+              child: Text(
+                text,
+                style: TextStyle(
+                  color: textColor,
+                  fontSize: 16
+                ),
+              )
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
