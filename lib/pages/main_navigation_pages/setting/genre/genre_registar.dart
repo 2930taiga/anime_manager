@@ -26,7 +26,15 @@ class GenreRegistar extends ConsumerStatefulWidget {
   final IconData iconData;
   final IconShape iconShape;
 
-  const GenreRegistar({super.key,required this.initialNewAdd,required this.title,required this.rgbColors,required this.id,required this.iconData, required this.iconShape});
+  const GenreRegistar({
+    super.key,
+    required this.initialNewAdd,
+    required this.title,
+    required this.rgbColors,
+    required this.id,
+    required this.iconData,
+    required this.iconShape
+  });
 
   @override
   ConsumerState<GenreRegistar> createState() => _GenreRegistarState();

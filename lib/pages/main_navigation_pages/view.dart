@@ -74,6 +74,8 @@ class _ViewPageState extends ConsumerState<ViewPage> {
 
   @override
   Widget build(BuildContext content){
+    //providerのインスタンスを作成
+    final isar = ref.read(isarProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text("一覧"),
@@ -307,10 +309,77 @@ class _ViewPageState extends ConsumerState<ViewPage> {
                                     ),
                                   ),
 
+                                  //視聴中なら話数変更ボタン
+                                  if(_animes[index].status==AnimeStatus.watching)
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        onPressed: () async {
+                                          //話数を増やす
+                                          try{
+                                            await isar.writeTxn(() async {
+                                              //現在の情報をコピー
+                                              final newAnime = _animes[index];
+                                              //話数だけ増やす
+                                              newAnime.epNum = _animes[index].epNum+1;
+                                              //データベースに保存する
+                                              await isar.animes.put(newAnime);
+                                              //スナックバーにメッセージを表示
+                                              showSnackBar(
+                                                context,
+                                                "${_animes[index].title}の話数を増やしました"
+                                              );
+                                            });
+                                            //画面を更新
+                                            _refreshAnimes();
+                                          }
+                                          catch(e){
+                                            //失敗したメッセージを表示
+                                            showSnackBar(
+                                              context,
+                                              "話数の更新に失敗しました"
+                                            );
+                                          }
+                                        },
+                                        icon: Icon(Icons.add)
+                                      ),
+                                      IconButton(
+                                        onPressed: () async {
+                                          //話数を減らす
+                                          try{
+                                            await isar.writeTxn(() async {
+                                              //現在の情報をコピー
+                                              final newAnime = _animes[index];
+                                              //話数だけ増やす
+                                              newAnime.epNum = _animes[index].epNum-1;
+                                              //データベースに保存する
+                                              await isar.animes.put(newAnime);
+                                              //スナックバーにメッセージを表示
+                                              showSnackBar(
+                                                context,
+                                                "${_animes[index].title}の話数を減らしました"
+                                              );
+                                            });
+                                            //画面を更新
+                                            _refreshAnimes();
+                                          }
+                                          catch(e){
+                                            //失敗したメッセージを表示
+                                            showSnackBar(
+                                              context,
+                                              "話数の更新に失敗しました"
+                                            );
+                                          }
+                                        },
+                                        icon: Icon(Icons.remove)
+                                      )
+                                    ],
+                                  ),
+
+                                  //視聴中でなければハンバーガーアイコン
+                                  if(_animes[index].status!=AnimeStatus.watching)
                                   IconButton(
-                                    onPressed: (){
-                                      _refreshAnimes();
-                                    },
+                                    onPressed: (){},
                                     icon: Icon(Icons.more_horiz)
                                   )
                                 ],
