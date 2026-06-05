@@ -44,6 +44,55 @@ class AnimeInfoTitleKana extends StatelessWidget {
   }
 }
 
+//ジャンル
+class AnimeInfoGenre extends StatelessWidget {
+  final Anime anime;
+  const AnimeInfoGenre({super.key,required this.anime});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        vertical: 1
+        ),
+        child: Wrap(
+        spacing: 5,
+        runSpacing: 3,
+        children: anime.genres.map((genre) {
+          return Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 5,
+              vertical: 1
+            ),
+            decoration: BoxDecoration(
+              color: Color.fromARGB(
+                255,
+                genre.redValue,
+                genre.greenValue,
+                genre.blueValue
+              ).withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(8)
+            ),
+            child: Text(
+              genre.name,
+              style: TextStyle(
+                fontSize: 10.5,
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(
+                  255,
+                  genre.redValue,
+                  genre.greenValue,
+                  genre.blueValue
+                )
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
 //アニメ情報欄（簡易ver）
 class AnimeInfoSimpleInfo extends StatelessWidget {
   final Anime anime;
@@ -179,4 +228,7 @@ class AnimeInfoMemo extends StatelessWidget {
 }
 
 //詳細アニメ情報
+
+
+//話数更新ボタン
 
