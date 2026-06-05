@@ -73,7 +73,7 @@ class _ViewPageState extends ConsumerState<ViewPage> {
         return Dialog(
           child: SizedBox(
             width: MediaQuery.of(context).size.width*0.9,
-            height: 205,
+            height: 250,
             child: Column(
               children: [
                 SizedBox(height: 20,),
@@ -87,67 +87,87 @@ class _ViewPageState extends ConsumerState<ViewPage> {
                   ),
                 ),
 
-                SizedBox(height: 20,),
-
-                Text( //サブメッセージ
-                  "「${_animes[deleteAnimeIndex].title}」を削除しますか？",
-                  style: TextStyle(
-                    color: Texts.subMessageColor,
-                    fontSize: 17
+                Padding(
+                  padding: EdgeInsetsGeometry.symmetric(
+                    horizontal: 30,
+                    vertical: 30
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        _animes[deleteAnimeIndex].title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Texts.subMessageColor,
+                          fontSize: 17
+                        ),
+                      ),
+                      Text(
+                        "を削除しますか？",
+                        style: TextStyle(
+                          color: Texts.subMessageColor,
+                          fontSize: 17
+                        ),
+                      )
+                    ],
                   ),
                 ),
 
-                SizedBox(height: 30,),
-
-                Row( //OK．キャンセルボタン
-                mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width*0.30,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: (){
-                          Navigator.pop(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: ElevatedButtons.cancelButtonBackgroundColor,
-                          padding: EdgeInsets.symmetric(horizontal: 2) //余白を小さくする
+                Padding(
+                  padding: EdgeInsetsGeometry.symmetric(
+                    vertical: 5
+                  ),
+                  child: Row( //OK．キャンセルボタン
+                    mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width*0.30,
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: (){
+                              Navigator.pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: ElevatedButtons.cancelButtonBackgroundColor,
+                              padding: EdgeInsets.symmetric(horizontal: 2) //余白を小さくする
+                            ),
+                            child: Text(
+                              "キャンセル",
+                              style: TextStyle(
+                                color: ElevatedButtons.cancelFontColor,
+                                fontSize: 15
+                              ),
+                            )
+                          ),
                         ),
-                        child: Text(
-                          "キャンセル",
-                          style: TextStyle(
-                            color: ElevatedButtons.cancelFontColor,
-                            fontSize: 15
+
+                        SizedBox(width: MediaQuery.of(context).size.width*0.03,),
+                        
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width*0.30,
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              Navigator.pop(context);
+                              await deleteAnime(deleteAnimeIndex); //データを消す関数を呼ぶ（時間がかかる処理なので，awaitを付ける）
+                              _refreshAnimes(); //画面をリフレッシュする
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: ElevatedButtons.backgroundColor
+                            ),
+                            child: Text(
+                              "OK",
+                              style: TextStyle(
+                                color: ElevatedButtons.fontColor,
+                                fontSize: 18
+                              ),
+                            )
                           ),
                         )
-                      ),
+                      ],
                     ),
-
-                    SizedBox(width: MediaQuery.of(context).size.width*0.03,),
-                    
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width*0.30,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          Navigator.pop(context);
-                          await deleteAnime(deleteAnimeIndex); //データを消す関数を呼ぶ（時間がかかる処理なので，awaitを付ける）
-                          _refreshAnimes(); //画面をリフレッシュする
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: ElevatedButtons.backgroundColor
-                        ),
-                        child: Text(
-                          "OK",
-                          style: TextStyle(
-                            color: ElevatedButtons.fontColor,
-                            fontSize: 18
-                          ),
-                        )
-                      ),
-                    )
-                  ],
-                ),
+                )
               ],
             ),
           ),
