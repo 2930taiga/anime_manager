@@ -28,7 +28,7 @@ class _AnimeInfoState extends ConsumerState<AnimeInfo> {
   double containerPaddingVertical = 8;
 
   //詳細情報を表示するかどうか
-  bool detailInfo = false;
+  bool detailInfo = true;
 
   //ステータスの日本語
   List<String> statusJp =[
@@ -102,19 +102,19 @@ class _AnimeInfoState extends ConsumerState<AnimeInfo> {
                                     //タイトル表示欄
                                     AnimeInfoTitle(anime: widget.anime,onLine: false,),
 
-                                    if(detailInfo==true) //タイトルかな表示欄
-                                    AnimeInfoTitleKana(anime: widget.anime),
+                                    //if(detailInfo==true) //タイトルかな表示欄
+                                    //AnimeInfoTitleKana(anime: widget.anime),
 
                                     //info欄（簡易ver）
-                                    if(detailInfo==false)
+                                    //if(detailInfo==false)
                                     AnimeInfoSimpleInfo(anime: widget.anime),
                                     
                                     //評価欄（簡易ver）
-                                    if(detailInfo==false)
+                                    //if(detailInfo==false)
                                     AnimeInfoEvaluation(anime: widget.anime),
 
                                     //メモ欄（簡易ver）
-                                    if(detailInfo==false && widget.anime.memo!="")
+                                    //if(detailInfo==false && widget.anime.memo!="")
                                     AnimeInfoSimpleMemo(anime: widget.anime)
                                   ],
                                 )
@@ -293,21 +293,6 @@ class _AnimeInfoState extends ConsumerState<AnimeInfo> {
                                     ],
                                   ),
 
-                                  IconButton( //詳細表示/非表示ボタン
-                                    onPressed: (){
-                                      setState(() {
-                                        if(detailInfo==true){
-                                          detailInfo=false;
-                                        }
-                                        else{
-                                          detailInfo=true;
-                                        }
-                                      });
-                                    },
-                                    icon: detailInfo
-                                    ? Icon(Icons.expand_less)
-                                    : Icon(Icons.expand_more)
-                                  )
                                 ],
                               ),
                             ],
@@ -316,7 +301,7 @@ class _AnimeInfoState extends ConsumerState<AnimeInfo> {
                       ),
                     ),
                   ),
-                  Padding( //ジャンル
+                  Padding( //基本情報
                     padding: EdgeInsetsGeometry.symmetric(
                       horizontal: cardPaddingHorizontal,
                       vertical: cardPaddingVertical
@@ -336,12 +321,35 @@ class _AnimeInfoState extends ConsumerState<AnimeInfo> {
                       ),
                       child: Column(
                         children: [
-                          Text(
-                            "data",
-                            style: TextStyle(
-                              fontSize: 20
-                            ),
-                          )
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text( //「基本情報」
+                                  "基本情報",
+                                  style: TextStyle(
+                                    color: StatusColors.textColors[widget.anime.status.index],
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: (){
+                                  setState(() {
+                                    if(detailInfo==true){detailInfo=false;}
+                                    else{detailInfo=true;}
+                                  });
+                                },
+                                icon: detailInfo
+                                ? Icon(Icons.expand_less)
+                                : Icon(Icons.expand_more), 
+                              )
+                            ],
+                          ),
+
+                          //詳細情報欄
+                          if(detailInfo==true)
+                          AnimeInfoDetailInfo(anime: widget.anime)
                         ],
                       ),
                     ),

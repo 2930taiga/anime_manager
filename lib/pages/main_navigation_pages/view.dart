@@ -225,7 +225,6 @@ class _ViewPageState extends ConsumerState<ViewPage> {
                   itemBuilder: (context,index){
                     return GestureDetector(
                       onTap: () async {
-                        print("たっぷされた${_animes[index].title}");
                         //アニメ情報ページに遷移
                         await Navigator.push(
                           context,

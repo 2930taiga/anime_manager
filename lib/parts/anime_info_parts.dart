@@ -120,7 +120,7 @@ class AnimeInfoSimpleInfo extends StatelessWidget {
             vertical: 1
           ),
           child: Text(
-            "${anime.onAirYear} "
+            "${anime.onAirYear}年 "
             "${seasonJP[anime.season.index]}"
             "アニメ｜"
             "${anime.date.year}"
@@ -232,7 +232,48 @@ class AnimeInfoSimpleMemo extends StatelessWidget {
 }
 
 //詳細アニメ情報
+class AnimeInfoDetailInfo extends StatefulWidget {
+  final Anime anime;
+  const AnimeInfoDetailInfo({super.key,required this.anime});
 
+  @override
+  State<AnimeInfoDetailInfo> createState() => _AnimeInfoDetailInfoState();
+}
+
+class _AnimeInfoDetailInfoState extends State<AnimeInfoDetailInfo> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsetsGeometry.symmetric(
+        horizontal: 5
+      ),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Color.fromARGB(255, 191, 191, 191)
+          ),
+          borderRadius: BorderRadiusDirectional.circular(10)
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Icon(Icons.abc),
+                Expanded(
+                  child: Text(
+                    "title",
+                    textAlign: TextAlign.end,
+                  )
+                )
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 //話数更新ボタン
 class AnimeInfoChangeEpNumButton extends ConsumerStatefulWidget {
