@@ -46,6 +46,8 @@ class _AnimeInfoState extends ConsumerState<AnimeInfo> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: StatusColors.boxColors[widget.anime.status.index],
+
         leading: IconButton( //戻るボタン
           onPressed:(){
             Navigator.pop(context);
