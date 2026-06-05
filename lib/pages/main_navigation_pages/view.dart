@@ -291,6 +291,9 @@ class _ViewPageState extends ConsumerState<ViewPage> {
                               Column(
                                 children: [
                                   PopupMenuButton(
+                                    color: Color.fromARGB(255, 255, 255, 255).withValues(alpha: 0),
+                                    elevation: 1,
+                                    shadowColor: Color.fromARGB(255, 0, 0, 0).withValues(alpha: 0.5),
                                     padding: EdgeInsetsGeometry.zero,
                                     onSelected: (value) async {
                                       //選ばれたステータスにデータを更新し，画面をリフレッシュ
@@ -467,15 +470,34 @@ class _ViewPageState extends ConsumerState<ViewPage> {
 
                                   //視聴中でなければハンバーガーアイコン
                                   if(_animes[index].status!=AnimeStatus.watching)
-                                  Padding(
-                                    padding: EdgeInsetsGeometry.symmetric(
-                                      vertical: 1
-                                    ),
-                                    child: IconButton(
-                                      onPressed: (){},
-                                      icon: Icon(Icons.more_horiz)
+                                  PopupMenuButton(
+                                    padding: EdgeInsets.zero,
+                                    itemBuilder: (context) =>[
+                                      PopupMenuItem(
+                                        child: MoreMenuItem(
+                                          icon: Icons.edit,
+                                          text: "編集",
+                                          textColor: StatusColors.textColors[0] //未視聴の色がちょうどよさそう
+                                        )
+                                      ),
+                                      PopupMenuItem(
+                                        child: MoreMenuItem(
+                                          icon: Icons.delete,
+                                          text: "削除",
+                                          textColor: Colors.red
+                                        )
+                                      )
+                                    ],
+                                    child: Padding(
+                                      padding: EdgeInsetsGeometry.symmetric(
+                                        vertical: 8
+                                      ),
+                                      child: Icon(
+                                        Icons.more_horiz,
+                                        size: 27,
+                                      )
                                     )
-                                  )
+                                  ),
                                 ],
                               ),
                             ],
@@ -529,11 +551,12 @@ class StatusMenuItem extends StatelessWidget {
       child: Container(
         //width: double.infinity,
         padding: EdgeInsets.symmetric(
-          vertical: 13,
+          vertical: 11,
           //horizontal: 10
         ),
         decoration: BoxDecoration(
-          color: backgroundColor
+          color: backgroundColor,
+          borderRadius: BorderRadiusDirectional.circular(6)
         ),
         child: Row(
           children: [
@@ -561,6 +584,54 @@ class StatusMenuItem extends StatelessWidget {
             )
           ],
         ),
+      ),
+    );
+  }
+}
+
+class MoreMenuItem extends StatelessWidget {
+  final IconData icon;
+  final String text;
+  final Color textColor; 
+  const MoreMenuItem({
+    super.key,
+    required this.icon,
+    required this.text,
+    required this.textColor
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        
+      ),
+      child: Row(
+        children: [
+          Padding(
+            padding: EdgeInsetsGeometry.symmetric(
+              horizontal: 4
+            ),
+            child: Icon(
+              icon,
+              size: 16,
+              color: textColor,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsetsGeometry.symmetric(
+              horizontal: 3
+            ),
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: 16,
+                color: textColor,
+                fontWeight: FontWeight.bold
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
