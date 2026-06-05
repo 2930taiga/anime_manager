@@ -564,7 +564,7 @@ class _AnimeInfoDetailInfoState extends State<AnimeInfoDetailInfo> {
                           horizontal: 10,
                         ),
                         child: Icon(
-                          Icons.edit_document,
+                          Icons.note_outlined,
                           size: iconSize,
                           color: StatusColors.textColors[widget.anime.status.index],
                         ),
@@ -581,7 +581,6 @@ class _AnimeInfoDetailInfoState extends State<AnimeInfoDetailInfo> {
                           ),
                         ),
                       ),
-
                     ],
                   ),
                   Padding(
