@@ -71,3 +71,35 @@ void showSnackBar(BuildContext context,String text){
     )
   );
 }
+
+//スナックバーエラー 表示関数
+void showErrorSnackBar(BuildContext context,String text){
+  ScaffoldMessenger.of(context).showSnackBar( //スナックバーにメッセージを表示
+    SnackBar(
+      duration: const Duration(milliseconds: 1500), //表示時間を設定
+      shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(10)), //角丸
+      behavior: SnackBarBehavior.floating, //浮いた感じに
+      backgroundColor: Colors.white, //背景を白に
+      content: Row(
+        children: [
+          Icon( //×
+            Icons.clear,
+            color: Colors.red,
+          ),
+
+          SizedBox(width: MediaQuery.of(context).size.width*0.02,),
+
+          Expanded(
+            child: Text( //テキスト
+              text,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 14
+              ),
+            )
+          )
+        ],
+      )
+    )
+  );
+}
