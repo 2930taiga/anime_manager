@@ -1,3 +1,4 @@
+import 'package:anime_administration/pages/main_navigation_pages/setting/backup/backup_navigation.dart';
 import 'package:flutter/material.dart'; // これがないとWidgetが使えない
 
 //ジャンルに関する設定ページ
@@ -39,60 +40,77 @@ class _SettingPageState extends State<SettingPage>{
 
           Divider(),
 
-          Center(
-            child: ListTile(
-              leading: Icon(Icons.view_week_outlined),
-              trailing: Icon(Icons.chevron_right),
-              title: Text(
-                "ジャンル",
-                style: TextStyle(
-                  fontSize: 18
-                ),
+          ListTile(
+            leading: Icon(Icons.view_week_outlined),
+            trailing: Icon(Icons.chevron_right),
+            title: Text(
+              "ジャンル",
+              style: TextStyle(
+                fontSize: 18
               ),
-              onTap: (){ //ジャンルに関する設定を表示
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (content) => SettingGenre()
-                  )
-                );
-              },
-              minTileHeight: 50,
             ),
+            onTap: (){ //ジャンルに関する設定を表示
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (content) => SettingGenre()
+                )
+              );
+            },
+            minTileHeight: 50,
           ),
 
           Divider(),
 
-          Center(
-            child: ListTile(
-              leading: Icon(Icons.palette_outlined),
-              trailing: Icon(Icons.chevron_right),
-              title: Text(
-                "テーマカラー",
-                style: TextStyle(
-                  fontSize: 18
-                ),
+          ListTile(
+            leading: Icon(Icons.palette_outlined),
+            trailing: Icon(Icons.chevron_right),
+            title: Text(
+              "テーマカラー",
+              style: TextStyle(
+                fontSize: 18
               ),
-              onTap: (){},
-              minTileHeight: 50,
             ),
+            onTap: (){},
+            minTileHeight: 50,
           ),
 
           Divider(),
 
-          Center(
-            child: ListTile(
-              leading: Icon(Icons.abc),
-              trailing: Icon(Icons.chevron_right),
-              title: Text(
-                "文字サイズ",
-                style: TextStyle(
-                  fontSize: 18
-                ),
+          ListTile(
+            leading: Icon(Icons.abc),
+            trailing: Icon(Icons.chevron_right),
+            title: Text(
+              "文字サイズ",
+              style: TextStyle(
+                fontSize: 18
               ),
-              onTap: (){},
-              minTileHeight: 50,
             ),
+            onTap: (){},
+            minTileHeight: 50,
+          ),
+          
+
+          Divider(),
+
+          ListTile(
+            leading: Icon(Icons.backup_outlined),
+            trailing: Icon(Icons.chevron_right),
+            title: Text(
+              "データのバックアップ・復元",
+              style: TextStyle(
+                fontSize: 18
+              ),
+            ),
+            onTap: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (content) => BackupNavigationPage()
+                )
+              );
+            },
+            minTileHeight: 50,
           ),
 
           Divider(),
