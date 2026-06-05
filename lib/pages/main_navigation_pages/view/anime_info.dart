@@ -431,7 +431,7 @@ class _AnimeInfoState extends ConsumerState<AnimeInfo> {
                                     ),
                                   ),
                                   Icon(
-                                    detailInfo
+                                    showGenreInfo
                                     ? Icons.expand_less
                                     : Icons.expand_more
                                   )
@@ -461,7 +461,7 @@ class _AnimeInfoState extends ConsumerState<AnimeInfo> {
                         vertical: containerPaddingVertical
                       ),
                       decoration: BoxDecoration(
-                        color: StatusColors.boxColors[widget.anime.status.index].withValues(alpha: 0.4),
+                        color: StatusColors.boxColors[widget.anime.status.index].withValues(alpha: 1),
                         border: Border.all(
                           color: StatusColors.boxColors[widget.anime.status.index],),
                         borderRadius: BorderRadius.circular(20)
@@ -495,7 +495,7 @@ class _AnimeInfoState extends ConsumerState<AnimeInfo> {
                                     ),
                                   ),
                                   Icon(
-                                    detailInfo
+                                    showTimeInfo
                                     ? Icons.expand_less
                                     : Icons.expand_more
                                   )
@@ -511,7 +511,7 @@ class _AnimeInfoState extends ConsumerState<AnimeInfo> {
                       ),
                     ),
                   ),
-                  
+
                   //一番したまでスクロールできるようにするためのbox
                     const SizedBox(height: 60,)
                 ],

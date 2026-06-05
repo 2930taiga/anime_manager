@@ -717,12 +717,6 @@ class AnimeInfoAnalysis extends StatelessWidget {
       ),
       child: Container(
         width: double.infinity,
-        // decoration: BoxDecoration(
-        //   border: Border.all(
-        //     color: Color.fromARGB(255, 191, 191, 191)
-        //   ),
-        //   borderRadius: BorderRadiusDirectional.circular(10)
-        // ),
         padding: EdgeInsets.symmetric(
           horizontal: 10,
           vertical: 5,
@@ -730,48 +724,264 @@ class AnimeInfoAnalysis extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "${anime.epNum} 話 × ${anime.epTime} 分/話",
-              style: TextStyle(
-                fontSize: 18
-              ),
-            ),
-            Padding(
+            // Container( //〇〇話×〇〇分/話
+            //   padding: EdgeInsets.only(
+            //     bottom: 5,
+            //     right: 5,
+            //     left: 5
+            //   ),
+            //   decoration: BoxDecoration(
+            //     border: Border(
+            //       bottom: BorderSide(
+            //         color: Colors.grey,
+            //         width: 1.0
+            //       )
+            //     )
+            //   ),
+            //   child: Text(
+            //     "${anime.epNum} 話 × ${anime.epTime} 分/話",
+            //     style: TextStyle(
+            //       fontSize: 19
+            //     ),
+            //   ),
+            // ),
+
+            Padding( //分
               padding: EdgeInsetsGeometry.symmetric(
-                vertical: 5
+                vertical: 8
               ),
-              child:  Text(
-                "= ${anime.epNum*anime.epTime} minute",
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.white
+                ),
+                padding: EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 7
+                ),
+                child: Row(
+                  children: [
+                    Padding( //アイコン
+                      padding: EdgeInsetsGeometry.symmetric(
+                        vertical: 10,
+                        horizontal: 10
+                      ),
+                      child: Icon(
+                        Icons.access_alarm_sharp,
+                        size: 55,
+                        color: StatusColors.textColors[anime.status.index],
+                      ),
+                    ),
+
+                    Padding( //右側の情報
+                      padding: EdgeInsetsGeometry.symmetric(
+                        horizontal: 10
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            //crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                "${anime.epNum*anime.epTime}",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold
+                                ),
+                              ),
+                              const Padding(
+                                padding: EdgeInsetsGeometry.symmetric(
+                                  horizontal: 10
+                                ),
+                                child: Text(
+                                  "minute",
+                                  style: TextStyle(
+                                    color: Color.fromARGB(255, 116, 116, 116),
+                                    fontSize: 17
+                                  ),
+                                )
+                              )
+                            ],
+                          ),
+                          const Padding(
+                            padding: EdgeInsetsGeometry.only(
+                              bottom: 5
+                            ),
+                            child: Text(
+                              "合計視聴時間（分）",
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Color.fromARGB(255, 116, 116, 116),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
                 ),
               ),
             ),
-            Padding(
+
+            Padding( //時間
               padding: EdgeInsetsGeometry.symmetric(
-                //vertical: 5
+                vertical: 8
               ),
-              child:  Text(
-                "= ${((anime.epNum*anime.epTime).toDouble()/60.0).toStringAsFixed(2)} hour",
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.white
+                ),
+                padding: EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 7
+                ),
+                child: Row(
+                  children: [
+                    Padding( //アイコン
+                      padding: EdgeInsetsGeometry.symmetric(
+                        vertical: 10,
+                        horizontal: 10
+                      ),
+                      child: Icon(
+                        Icons.hourglass_empty,
+                        size: 55,
+                        color: StatusColors.textColors[anime.status.index],
+                      ),
+                    ),
+
+                    Padding( //右側の情報
+                      padding: EdgeInsetsGeometry.symmetric(
+                        horizontal: 10
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            //crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                ((anime.epNum*anime.epTime).toDouble()/60.0).toStringAsFixed(2),
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold
+                                ),
+                              ),
+                              const Padding(
+                                padding: EdgeInsetsGeometry.symmetric(
+                                  horizontal: 10
+                                ),
+                                child: Text(
+                                  "hour",
+                                  style: TextStyle(
+                                    color: Color.fromARGB(255, 116, 116, 116),
+                                    fontSize: 17
+                                  ),
+                                )
+                              )
+                            ],
+                          ),
+                          const Padding(
+                            padding: EdgeInsetsGeometry.only(
+                              bottom: 5
+                            ),
+                            child: Text(
+                              "合計視聴時間（時間）",
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Color.fromARGB(255, 116, 116, 116),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
                 ),
               ),
             ),
-            Padding(
+
+            Padding( //日
               padding: EdgeInsetsGeometry.symmetric(
-                vertical: 5
+                vertical: 8
               ),
-              child:  Text(
-                "= ${((anime.epNum*anime.epTime).toDouble()/1440).toStringAsFixed(2)} day",
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.white
+                ),
+                padding: EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 7
+                ),
+                child: Row(
+                  children: [
+                    Padding( //アイコン
+                      padding: EdgeInsetsGeometry.symmetric(
+                        vertical: 10,
+                        horizontal: 10
+                      ),
+                      child: Icon(
+                        Icons.calendar_month_outlined,
+                        size: 55,
+                        color: StatusColors.textColors[anime.status.index],
+                      ),
+                    ),
+
+                    Padding( //右側の情報
+                      padding: EdgeInsetsGeometry.symmetric(
+                        horizontal: 10
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            //crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                ((anime.epNum*anime.epTime).toDouble()/1440.0).toStringAsFixed(2),
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold
+                                ),
+                              ),
+                              const Padding(
+                                padding: EdgeInsetsGeometry.symmetric(
+                                  horizontal: 10
+                                ),
+                                child: Text(
+                                  "days",
+                                  style: TextStyle(
+                                    color: Color.fromARGB(255, 116, 116, 116),
+                                    fontSize: 17
+                                  ),
+                                )
+                              )
+                            ],
+                          ),
+                          const Padding(
+                            padding: EdgeInsetsGeometry.only(
+                              bottom: 5
+                            ),
+                            child: Text(
+                              "合計視聴時間（日）",
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Color.fromARGB(255, 116, 116, 116),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
                 ),
               ),
-            )
+            ),
           ],
         )
       ),
