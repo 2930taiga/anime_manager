@@ -270,7 +270,7 @@ class _ViewPageState extends ConsumerState<ViewPage> {
                           horizontal: 3
                         ),
                           decoration: BoxDecoration(
-                            color: StatusColors.boxColors[_animes[index].status.index].withValues(alpha: 0.4),
+                            color: StatusColors.boxColors[_animes[index].status.index].withValues(alpha: 0.8),
                             border: Border.all(
                               color: StatusColors.boxColors[_animes[index].status.index],
                             ),
@@ -410,7 +410,7 @@ class _ViewPageState extends ConsumerState<ViewPage> {
                                         statusJp[_animes[index].status.index],
                                         style: TextStyle(
                                           color: StatusColors.textColors[_animes[index].status.index],
-                                          fontSize: 15,
+                                          fontSize: 17,
                                           fontWeight: FontWeight.bold
                                         ),
                                       ),

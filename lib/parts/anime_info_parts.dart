@@ -261,6 +261,7 @@ class _AnimeInfoDetailInfoState extends State<AnimeInfoDetailInfo> {
           border: Border.all(
             color: Color.fromARGB(255, 191, 191, 191)
           ),
+          //color: Colors.white, //情報欄の背景色めっちゃ迷う
           borderRadius: BorderRadiusDirectional.circular(10)
         ),
         child: Column(
