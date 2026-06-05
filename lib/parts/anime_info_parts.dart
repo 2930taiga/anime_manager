@@ -1,5 +1,9 @@
 import 'package:anime_administration/models/anime.dart';
+import 'package:anime_administration/providers/isar_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:isar/isar.dart';
+import 'package:anime_administration/parameter_settings.dart';
 
 //アニメinfoのパーツを置いておくスクリプト
 
@@ -231,4 +235,85 @@ class AnimeInfoSimpleMemo extends StatelessWidget {
 
 
 //話数更新ボタン
+class AnimeInfoChangeEpNumButton extends ConsumerStatefulWidget {
+  final Anime anime;
+  const AnimeInfoChangeEpNumButton({super.key, required this.anime});
 
+  @override
+  ConsumerState<AnimeInfoChangeEpNumButton> createState() => _AnimeInfoChangeEpNumButtonState();
+}
+
+class _AnimeInfoChangeEpNumButtonState extends ConsumerState<AnimeInfoChangeEpNumButton> {
+  @override
+  Widget build(BuildContext context) {
+    //データベースを取得
+    final Isar isar = ref.read(isarProvider);
+    return Padding(
+      padding: EdgeInsetsGeometry.symmetric(
+        vertical: 3
+      ),
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: () async {
+              //話数を増やす
+              try{
+                await isar.writeTxn(() async {
+                  //現在の情報をコピー
+                  final newAnime = widget.anime;
+                  //話数だけ増やす
+                  newAnime.epNum = widget.anime.epNum+1;
+                  //データベースに保存する
+                  await isar.animes.put(newAnime);
+                  //スナックバーにメッセージを表示
+                  showSnackBar(
+                    context,
+                    "${widget.anime.title}の話数を増やしました"
+                  );
+                });
+              }
+              catch(e){
+                //失敗したメッセージを表示
+                showSnackBar(
+                  context,
+                  "話数の更新に失敗しました．デバッグモードで確認してください"
+                );
+              }
+            },
+            icon: Icon(Icons.add)
+          ),
+          IconButton(
+            onPressed: () async {
+              //話数を減らす
+              try{
+                await isar.writeTxn(() async {
+                  //現在の情報をコピー
+                  final newAnime = widget.anime;
+                  //話数だけ増やす
+                  newAnime.epNum = widget.anime.epNum-1;
+                  //データベースに保存する
+                  await isar.animes.put(newAnime);
+                  //スナックバーにメッセージを表示
+                  showSnackBar(
+                    context,
+                    "${widget.anime.title}の話数を減らしました"
+                  );
+                });
+                //画面を更新
+                setState(() {});
+              }
+              catch(e){
+                //失敗したメッセージを表示
+                showSnackBar(
+                  context,
+                  "話数の更新に失敗しました．デバッグモードで確認してください"
+                );
+              }
+            },
+            icon: Icon(Icons.remove)
+          )
+        ],
+      ),
+    );
+  }
+}

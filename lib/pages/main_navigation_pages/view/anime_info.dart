@@ -225,6 +225,74 @@ class _AnimeInfoState extends ConsumerState<AnimeInfo> {
                                       ),
                                     ),
                                   ),
+
+                                  //視聴中なら話数変更ボタンを表示
+                                  if(widget.anime.status==AnimeStatus.watching)
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        onPressed: () async {
+                                          //話数を増やす
+                                          try{
+                                            await isar.writeTxn(() async {
+                                              //現在の情報をコピー
+                                              final newAnime = widget.anime;
+                                              //話数だけ増やす
+                                              newAnime.epNum = widget.anime.epNum+1;
+                                              //データベースに保存する
+                                              await isar.animes.put(newAnime);
+                                              //スナックバーにメッセージを表示
+                                              showSnackBar(
+                                                context,
+                                                "${widget.anime.title}の話数を増やしました"
+                                              );
+                                            });
+
+                                            setState(() {});
+                                          }
+                                          catch(e){
+                                            //失敗したメッセージを表示
+                                            showSnackBar(
+                                              context,
+                                              "話数の更新に失敗しました．デバッグモードで確認してください"
+                                            );
+                                          }
+                                        },
+                                        icon: Icon(Icons.add)
+                                      ),
+                                      IconButton(
+                                        onPressed: () async {
+                                          //話数を減らす
+                                          try{
+                                            await isar.writeTxn(() async {
+                                              //現在の情報をコピー
+                                              final newAnime = widget.anime;
+                                              //話数だけ増やす
+                                              newAnime.epNum = widget.anime.epNum-1;
+                                              //データベースに保存する
+                                              await isar.animes.put(newAnime);
+                                              //スナックバーにメッセージを表示
+                                              showSnackBar(
+                                                context,
+                                                "${widget.anime.title}の話数を減らしました"
+                                              );
+                                            });
+                                            //画面を更新
+                                            setState(() {});
+                                          }
+                                          catch(e){
+                                            //失敗したメッセージを表示
+                                            showSnackBar(
+                                              context,
+                                              "話数の更新に失敗しました．デバッグモードで確認してください"
+                                            );
+                                          }
+                                        },
+                                        icon: Icon(Icons.remove)
+                                      )
+                                    ],
+                                  ),
+
                                   IconButton( //詳細表示/非表示ボタン
                                     onPressed: (){
                                       setState(() {
