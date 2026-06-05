@@ -62,14 +62,121 @@ class _ViewPageState extends ConsumerState<ViewPage> {
     _refreshAnimes();
   }
 
-  //登録ページに遷移する関数
-  void goToRegistarPage(){
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context)=> RegistarNavigation(),
-        fullscreenDialog: true
-      )
+  //削除するときに，本当に消していいか確認するアラートを表示する関数を定義
+  void deleteConfigAlert(int deleteAnimeIndex){
+    showDialog(context: context,
+      builder: (_){
+        return Dialog(
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width*0.9,
+            height: 205,
+            child: Column(
+              children: [
+                SizedBox(height: 20,),
+
+                Text( //タイトル
+                  "確認",
+                  style: TextStyle(
+                    fontSize: 27,
+                    color: Texts.errorMessageColor,
+                    fontWeight: FontWeight.bold
+                  ),
+                ),
+
+                SizedBox(height: 20,),
+
+                Text( //サブメッセージ
+                  "「${_animes[deleteAnimeIndex].title}」を削除しますか？",
+                  style: TextStyle(
+                    color: Texts.subMessageColor,
+                    fontSize: 17
+                  ),
+                ),
+
+                SizedBox(height: 30,),
+
+                Row( //OK．キャンセルボタン
+                mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width*0.30,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: (){
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ElevatedButtons.cancelButtonBackgroundColor,
+                          padding: EdgeInsets.symmetric(horizontal: 2) //余白を小さくする
+                        ),
+                        child: Text(
+                          "キャンセル",
+                          style: TextStyle(
+                            color: ElevatedButtons.cancelFontColor,
+                            fontSize: 15
+                          ),
+                        )
+                      ),
+                    ),
+
+                    SizedBox(width: MediaQuery.of(context).size.width*0.03,),
+                    
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width*0.30,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          await deleteAnime(deleteAnimeIndex); //データを消す関数を呼ぶ（時間がかかる処理なので，awaitを付ける）
+                          _refreshAnimes(); //画面をリフレッシュする
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ElevatedButtons.backgroundColor
+                        ),
+                        child: Text(
+                          "OK",
+                          style: TextStyle(
+                            color: ElevatedButtons.fontColor,
+                            fontSize: 18
+                          ),
+                        )
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      }
     );
+  }
+
+  //アニメを削除する関数
+  Future<void> deleteAnime(int deleteIndex) async{
+    //削除するアニメのタイトル
+    String deleteTitle = _animes[deleteIndex].title;
+    //削除するアニメのid
+    int deleteId = _animes[deleteIndex].id;
+    //isarを取得
+    Isar isar = ref.read(isarProvider);
+
+    //削除する
+    await isar.writeTxn(() async{
+      try{
+        //削除
+        await isar.animes.delete(deleteId);
+
+        //スナックバーにメッセージを表示
+        showSnackBar(context, "「$deleteTitle」を削除しました");
+
+        //画面をリフレッシュ
+        _refreshAnimes();
+      }
+      catch(e){
+        showSnackBar(context, "削除に失敗しました．デバッグモードで確認してください");
+      }
+    });
   }
 
   @override
@@ -472,8 +579,17 @@ class _ViewPageState extends ConsumerState<ViewPage> {
                                   if(_animes[index].status!=AnimeStatus.watching)
                                   PopupMenuButton(
                                     padding: EdgeInsets.zero,
+                                    onSelected: (value){
+                                      if(value==0){ //編集画面へ
+
+                                      }
+                                      if(value==1){ //削除する
+                                        deleteConfigAlert(index);
+                                      }
+                                    },
                                     itemBuilder: (context) =>[
                                       PopupMenuItem(
+                                        value: 0,
                                         child: MoreMenuItem(
                                           icon: Icons.edit,
                                           text: "編集",
@@ -481,6 +597,7 @@ class _ViewPageState extends ConsumerState<ViewPage> {
                                         )
                                       ),
                                       PopupMenuItem(
+                                        value: 1,
                                         child: MoreMenuItem(
                                           icon: Icons.delete,
                                           text: "削除",

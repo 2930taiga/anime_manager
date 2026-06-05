@@ -44,7 +44,7 @@ class StatusColors{
 void showSnackBar(BuildContext context,String text){
   ScaffoldMessenger.of(context).showSnackBar( //スナックバーにメッセージを表示
     SnackBar(
-      duration: const Duration(milliseconds: 1000), //表示時間を設定
+      duration: const Duration(milliseconds: 1500), //表示時間を設定
       shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(10)), //角丸
       behavior: SnackBarBehavior.floating, //浮いた感じに
       backgroundColor: Colors.white, //背景を白に
