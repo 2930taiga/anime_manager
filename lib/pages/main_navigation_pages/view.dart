@@ -1,6 +1,7 @@
 import 'package:anime_administration/models/anime.dart';
 //import 'package:anime_administration/models/genre.dart';
 import 'package:anime_administration/parameter_settings.dart';
+import 'package:anime_administration/parts/anime_info_parts.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 //登録ページ
@@ -223,10 +224,10 @@ class _ViewPageState extends ConsumerState<ViewPage> {
                   itemCount: _animes.length,
                   itemBuilder: (context,index){
                     return GestureDetector(
-                      onTap: (){
+                      onTap: () async {
                         print("たっぷされた${_animes[index].title}");
                         //アニメ情報ページに遷移
-                        Navigator.push(
+                        await Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => AnimeInfo(
@@ -234,6 +235,9 @@ class _ViewPageState extends ConsumerState<ViewPage> {
                             )
                           )
                         );
+
+                        //戻ってきたら画面を更新
+                        _refreshAnimes();
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -262,26 +266,15 @@ class _ViewPageState extends ConsumerState<ViewPage> {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Container( //タイトル
-                                        padding: EdgeInsets.symmetric(
-                                          vertical: 1,
-                                        ),
-                                        child: Text(
-                                          _animes[index].title,
-                                          overflow: TextOverflow.ellipsis, //長すぎるときは...で終わらせる
-                                          maxLines: 1, //最大1行
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold
-                                          ),
-                                        ),
-                                      ),
+                                      //タイトル
+                                      AnimeInfoTitle(anime: _animes[index],onLine: true,),
                                       
+                                      //ジャンル
                                       Container(
                                         padding: EdgeInsets.symmetric(
                                           vertical: 1
                                           ),
-                                          child: Wrap( //ジャンル表示欄
+                                          child: Wrap(
                                           spacing: 5,
                                           runSpacing: 3,
                                           children: _animes[index].genres.map((genre) {
@@ -320,86 +313,14 @@ class _ViewPageState extends ConsumerState<ViewPage> {
                                       Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Container( //アニメの情報出すところ
-                                            padding: EdgeInsets.symmetric(
-                                              vertical: 1
-                                            ),
-                                            child: Text(
-                                              "${_animes[index].onAirYear} "
-                                              "${seasonJP[_animes[index].season.index]}"
-                                              "アニメ｜"
-                                              "${_animes[index].epNum}"
-                                              "話｜"
-                                              "${_animes[index].epTime}"
-                                              "分 / 話",
-                                              style: TextStyle(
-                                                fontSize: 13.5
-                                              ),
-                                            ),
-                                          ),
+                                          //簡易版info
+                                          AnimeInfoSimpleInfo(anime: _animes[index]),
 
-                                          Container(
-                                            padding: EdgeInsets.symmetric(
-                                              vertical: 1
-                                            ),
-                                            child: Row( //評価アイコン
-                                              children: [
-                                                Icon(
-                                                  Icons.star,
-                                                  size: 17,
-                                                  color: _animes[index].evaluation>=1
-                                                  ? Color.fromARGB(255, 255, 192, 0)
-                                                  : Colors.grey,
-                                                ),
-                                                Icon(
-                                                  Icons.star,
-                                                  size: 17,
-                                                  color: _animes[index].evaluation>=2
-                                                  ? Color.fromARGB(255, 255, 192, 0)
-                                                  : Colors.grey,
-                                                ),
-                                                Icon(
-                                                  Icons.star,
-                                                  size: 17,
-                                                  color: _animes[index].evaluation>=3
-                                                  ? Color.fromARGB(255, 255, 192, 0)
-                                                  : Colors.grey,
-                                                ),
-                                                Icon(
-                                                  Icons.star,
-                                                  size: 17,
-                                                  color: _animes[index].evaluation>=4
-                                                  ? Color.fromARGB(255, 255, 192, 0)
-                                                  : Colors.grey,
-                                                ),
-                                                Icon(
-                                                  Icons.star,
-                                                  size: 17,
-                                                  color: _animes[index].evaluation>=5
-                                                  ? Color.fromARGB(255, 255, 192, 0)
-                                                  : Colors.grey,
-                                                ),
-
-                                                Text( //評価テキスト
-                                                  " ${_animes[index].evaluation.toString()}.0 / 5.0",
-                                                  style: TextStyle(
-                                                    fontSize: 14
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
+                                          //評価
+                                          AnimeInfoEvaluation(anime: _animes[index]),
 
                                           if(_animes[index].memo != "") //メモ欄（空白なら表示しない）
-                                          Text(
-                                            "メモ：${_animes[index].memo}",
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.grey
-                                            ),
-                                          ),
+                                          AnimeInfoMemo(anime: _animes[index])
                                         ],
                                       ),
                                     ],
@@ -587,7 +508,7 @@ class _ViewPageState extends ConsumerState<ViewPage> {
                                     ),
                                   ),
 
-                                  //視聴中でなければハンバーガーアイコン
+                                  //視聴中でなければミートボールアイコン
                                   if(_animes[index].status!=AnimeStatus.watching)
                                   PopupMenuButton(
                                     padding: EdgeInsets.zero,

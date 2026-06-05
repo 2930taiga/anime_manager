@@ -1,10 +1,15 @@
 import 'package:anime_administration/models/anime.dart';
 import 'package:anime_administration/parameter_settings.dart';
+import 'package:anime_administration/parts/anime_info_parts.dart';
+import 'package:anime_administration/providers/isar_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+//ステータスのItemをここでも使うために入れる
+import 'package:anime_administration/pages/main_navigation_pages/view.dart';
 
 //アニメ情報を表示する画面
-class AnimeInfo extends StatefulWidget {
+class AnimeInfo extends ConsumerStatefulWidget {
   final Anime anime;
   const AnimeInfo({
     super.key,
@@ -12,21 +17,33 @@ class AnimeInfo extends StatefulWidget {
   });
 
   @override
-  State<AnimeInfo> createState() => _AnimeInfoState();
+  ConsumerState<AnimeInfo> createState() => _AnimeInfoState();
 }
 
-class _AnimeInfoState extends State<AnimeInfo> {
+class _AnimeInfoState extends ConsumerState<AnimeInfo> {
   //paddingのパラメータ
-  double cardPaddingHorizontal = 5;
+  double cardPaddingHorizontal = 10;
   double cardPaddingVertical = 5;
-  double containerPaddingHorizontal = 5;
-  double containerPaddingVertical = 5;
+  double containerPaddingHorizontal = 8;
+  double containerPaddingVertical = 8;
 
   //詳細情報を表示するかどうか
   bool detailInfo = false;
 
+  //ステータスの日本語
+  List<String> statusJp =[
+    "未視聴",
+    "視聴中",
+    "視聴済み",
+    "視聴中止",
+    "中断"
+  ];
+
   @override
   Widget build(BuildContext context) {
+    //データベースを取得
+    final Isar isar = ref.read(isarProvider);
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton( //戻るボタン
@@ -52,12 +69,12 @@ class _AnimeInfoState extends State<AnimeInfo> {
             child: Scrollbar(
               child: ListView(
                 children: [
-                  Padding( //タイトルその他
+                  Padding(
                     padding: EdgeInsetsGeometry.symmetric(
                       horizontal: cardPaddingHorizontal,
                       vertical: cardPaddingVertical
                     ),
-                    child: Container(
+                    child: Container( //タイトルその他のカード
                       width: double.infinity,
                       //height: 500,
                       padding: EdgeInsets.symmetric(
@@ -65,57 +82,171 @@ class _AnimeInfoState extends State<AnimeInfo> {
                         vertical: containerPaddingVertical
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10)
+                        color: StatusColors.boxColors[widget.anime.status.index].withValues(alpha: 0.25),
+                        border: Border.all(
+                          color: StatusColors.boxColors[widget.anime.status.index],),
+                        borderRadius: BorderRadius.circular(20)
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text( //タイトル
-                                      widget.anime.title,
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold
-                                      ),
-                                    ),
-                                    if(detailInfo==true)
-                                    Text(
-                                      widget.anime.titleKana,
-                                      style: TextStyle(
-                                        fontSize: 15
-                                      ),
-                                    )
+                                    //タイトル表示欄
+                                    AnimeInfoTitle(anime: widget.anime,onLine: false,),
+
+                                    if(detailInfo==true) //タイトルかな表示欄
+                                    AnimeInfoTitleKana(anime: widget.anime),
+
+                                    //info欄（簡易ver）
+                                    if(detailInfo==false)
+                                    AnimeInfoSimpleInfo(anime: widget.anime),
+                                    
+                                    //評価欄（簡易ver）
+                                    if(detailInfo==false)
+                                    AnimeInfoEvaluation(anime: widget.anime),
+
+                                    //メモ欄（簡易ver）
+                                    if(detailInfo==false && widget.anime.memo!="")
+                                    AnimeInfoMemo(anime: widget.anime)
                                   ],
                                 )
                               ),
-                              IconButton( //詳細表示/非表示ボタン
-                                onPressed: (){
-                                  setState(() {
-                                    if(detailInfo==true){
-                                      detailInfo=false;
-                                    }
-                                    else{
-                                      detailInfo=true;
-                                    }
-                                  });
-                                },
-                                icon: detailInfo
-                                ? Icon(Icons.expand_less)
-                                : Icon(Icons.expand_more)
-                              )
+                              Column(
+                                children: [
+                                  PopupMenuButton(
+                                    color: Color.fromARGB(255, 255, 255, 255).withValues(alpha: 0),
+                                    elevation: 1,
+                                    shadowColor: Color.fromARGB(255, 0, 0, 0).withValues(alpha: 0.5),
+                                    padding: EdgeInsetsGeometry.zero,
+                                    onSelected: (value) async {
+                                      //選ばれたステータスにデータを更新し，画面をリフレッシュ
+                                      //話数を増やす
+                                      try{
+                                        await isar.writeTxn(() async {
+                                          //現在の情報をコピー
+                                          final newAnime = widget.anime;
+                                          // ステータスを更新
+                                          newAnime.status = AnimeStatus.values[value];
+                                          //データベースに保存する
+                                          await isar.animes.put(newAnime);
+                                          //スナックバーにメッセージを表示
+                                          showSnackBar(
+                                            context,
+                                            "${widget.anime.title}のステータスを更新しました"
+                                          );
+                                          //カードの色を変えるために実行する
+                                          setState(() {});
+                                        });
+                                      }
+                                      catch(e){
+                                        //失敗したメッセージを表示
+                                        showSnackBar(
+                                          context,
+                                          "ステータスの更新に失敗しました．デバッグモードで確認してください"
+                                        );
+                                      }
+                                    },
+                                    itemBuilder: (context) => [
+                                      PopupMenuItem(
+                                        padding: EdgeInsets.zero,
+                                        value: 0,
+                                        child: StatusMenuItem(
+                                          backgroundColor: StatusColors.boxColors[0],
+                                          textColor: StatusColors.textColors[0],
+                                          text: "未視聴",
+                                          icon: Icons.circle_outlined
+                                        )
+                                      ),
+                                      PopupMenuItem(
+                                        padding: EdgeInsets.zero,
+                                        value: 1,
+                                        child: StatusMenuItem(
+                                          backgroundColor: StatusColors.boxColors[1],
+                                          textColor: StatusColors.textColors[1],
+                                          text: "視聴中",
+                                          icon: Icons.circle
+                                        )
+                                      ),
+                                      PopupMenuItem(
+                                        padding: EdgeInsets.zero,
+                                        value: 2,
+                                        child: StatusMenuItem(
+                                          backgroundColor: StatusColors.boxColors[2],
+                                          textColor: StatusColors.textColors[2],
+                                          text: "視聴済み",
+                                          icon: Icons.check
+                                        )
+                                      ),
+                                      PopupMenuItem(
+                                        padding: EdgeInsets.zero,
+                                        value: 3,
+                                        child: StatusMenuItem(
+                                          backgroundColor: StatusColors.boxColors[3],
+                                          textColor: StatusColors.textColors[3],
+                                          text: "視聴中止",
+                                          icon: Icons.close
+                                        )
+                                      ),
+                                      PopupMenuItem(
+                                        padding: EdgeInsets.zero,
+                                        value: 4,
+                                        child: StatusMenuItem(
+                                          backgroundColor: StatusColors.boxColors[4],
+                                          textColor: StatusColors.textColors[4],
+                                          text: "視聴中断",
+                                          icon: Icons.stop
+                                        )
+                                      ),
+                                    ],
+                                    child: Container( //ステータス
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 5
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: StatusColors.boxColors[widget.anime.status.index],
+                                        borderRadius: BorderRadiusDirectional.circular(20)
+                                      ),
+                                      child: Text(
+                                        statusJp[widget.anime.status.index],
+                                        style: TextStyle(
+                                          color: StatusColors.textColors[widget.anime.status.index],
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  IconButton( //詳細表示/非表示ボタン
+                                    onPressed: (){
+                                      setState(() {
+                                        if(detailInfo==true){
+                                          detailInfo=false;
+                                        }
+                                        else{
+                                          detailInfo=true;
+                                        }
+                                      });
+                                    },
+                                    icon: detailInfo
+                                    ? Icon(Icons.expand_less)
+                                    : Icon(Icons.expand_more)
+                                  )
+                                ],
+                              ),
                             ],
                           ),
                         ],
                       ),
                     ),
                   ),
-                  Padding( //タイトルその他
+                  Padding( //ジャンル
                     padding: EdgeInsetsGeometry.symmetric(
                       horizontal: cardPaddingHorizontal,
                       vertical: cardPaddingVertical
@@ -128,8 +259,10 @@ class _AnimeInfoState extends State<AnimeInfo> {
                         vertical: containerPaddingVertical
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10)
+                        color: StatusColors.boxColors[widget.anime.status.index].withValues(alpha: 0.25),
+                        border: Border.all(
+                          color: StatusColors.boxColors[widget.anime.status.index],),
+                        borderRadius: BorderRadius.circular(20)
                       ),
                       child: Column(
                         children: [
@@ -147,7 +280,6 @@ class _AnimeInfoState extends State<AnimeInfo> {
               )
             )
           ),
-          
         ],
       ),
     );
