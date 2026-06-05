@@ -1,4 +1,5 @@
 import 'package:anime_administration/models/anime.dart';
+import 'package:anime_administration/models/genre.dart';
 import 'package:anime_administration/providers/isar_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -612,6 +613,173 @@ class _AnimeInfoDetailInfoState extends State<AnimeInfoDetailInfo> {
               )
             ),
             
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+//各アニメに表示するジャンル画面
+class AnimeInfoGenres extends StatelessWidget {
+  final Anime anime;
+  const AnimeInfoGenres({super.key, required this.anime});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsetsGeometry.symmetric(
+        horizontal: 5
+      ),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          //horizontal: 10,
+          //vertical: 5
+        ),
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            // border: Border.all(
+            //   color: Color.fromARGB(255, 191, 191, 191)
+            // ),
+            // borderRadius: BorderRadiusDirectional.circular(10)
+          ),
+          padding: EdgeInsets.symmetric(
+            //horizontal: 7,
+            vertical: 7
+          ),
+          child: Wrap(
+            spacing: 5,
+            runSpacing: 5,
+            children: anime.genres.map((genre) {
+              return Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5
+                ),
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(
+                    255,
+                    genre.redValue,
+                    genre.greenValue,
+                    genre.blueValue
+                  ).withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8)
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min, //横いっぱいに広がらないようにする
+                  children: [
+                    Icon(
+                      IconShapeDatas[genre.iconShape.index],
+                      size: 20,
+                      color: Color.fromARGB(
+                        255,
+                        genre.redValue,
+                        genre.greenValue,
+                        genre.blueValue
+                      ),
+                    ),
+                    Text(
+                      genre.name,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(
+                          255,
+                          genre.redValue,
+                          genre.greenValue,
+                          genre.blueValue
+                        )
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      )
+    );
+  }
+}
+
+//各アニメに表示する簡単な分析画面
+class AnimeInfoAnalysis extends StatelessWidget {
+  const AnimeInfoAnalysis({super.key});
+
+  //paddingに関するパラメータ
+  static double paddingVerticalSize =10;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsetsGeometry.symmetric(
+        horizontal: 5
+      ),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Color.fromARGB(255, 191, 191, 191)
+          ),
+          borderRadius: BorderRadiusDirectional.circular(10)
+        ),
+        child: Column(
+          children: [
+
+            Container( //日付
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: Color.fromARGB(255, 191, 191, 191)
+                  )
+                )
+              ),
+              padding: EdgeInsets.symmetric(
+                vertical: paddingVerticalSize
+              ),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsetsGeometry.symmetric(
+                      horizontal: 10,
+                    ),
+                    child: Icon(
+                      Icons.calendar_today_outlined,
+                      size: 40,
+                      color: StatusColors.textColors[2],
+                    ),
+                  ),
+                  
+                  Padding(
+                    padding: EdgeInsetsGeometry.symmetric(
+                      //horizontal: 5
+                    ),
+                    child: Text(
+                      "日付",
+                      style: TextStyle(
+                        fontSize: 20
+                      ),
+                    ),
+                  ),
+
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsetsGeometry.symmetric(
+                        horizontal: 20
+                      ),
+                      child: Text(
+                        "test",
+                        textAlign: TextAlign.end,
+                        style: TextStyle(
+                          fontSize: 20
+                        ),
+                      ),
+                    )
+                  )
+                ],
+              ),
+            ),
           ],
         ),
       ),
