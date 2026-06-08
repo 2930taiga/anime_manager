@@ -72,6 +72,7 @@ class UploadNavigationPage extends StatelessWidget {
                       builder: (content) => UploadJsonPage()
                     )
                   );
+                  showErrorSnackBar(context, "未実装機能です");
                 },
                 child: SettingCard(
                   icon: Icons.copy,
