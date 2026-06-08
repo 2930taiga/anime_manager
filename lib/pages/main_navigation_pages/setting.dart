@@ -1,4 +1,5 @@
 import 'package:anime_administration/pages/main_navigation_pages/setting/backup/backup_navigation.dart';
+import 'package:anime_administration/pages/main_navigation_pages/setting/delete_all.dart';
 import 'package:anime_administration/parameter_settings.dart';
 import 'package:anime_administration/parts/setting_parts.dart';
 import 'package:flutter/material.dart'; // これがないとWidgetが使えない
@@ -27,22 +28,22 @@ class _SettingPageState extends State<SettingPage>{
         children: [
 
           Padding(
-                padding: EdgeInsetsGeometry.symmetric(
-                  horizontal: 15,
-                  vertical: 8
-                ),
-                child: GestureDetector(
-                  onTap: (){
-                    
-                  },
-                  child: SettingCard(
-                    icon: Icons.settings_outlined,
-                    iconColor: SettingCardColors.cardColors[0],
-                    titleText: "一般",
-                    subText: "アプリ全般の設定"
-                  ),
-                ),
+            padding: EdgeInsetsGeometry.symmetric(
+              horizontal: 15,
+              vertical: 8
+            ),
+            child: GestureDetector(
+              onTap: (){
+                showErrorSnackBar(context, "未実装機能です");
+              },
+              child: SettingCard(
+                icon: Icons.settings_outlined,
+                iconColor: SettingCardColors.cardColors[0],
+                titleText: "一般",
+                subText: "アプリ全般の設定"
               ),
+            ),
+          ),
 
 
           Padding(
@@ -76,7 +77,7 @@ class _SettingPageState extends State<SettingPage>{
             ),
             child: GestureDetector(
               onTap: (){
-
+                showErrorSnackBar(context, "未実装機能です");
               },
               child: SettingCard(
                 icon: Icons.palette_outlined,
@@ -95,7 +96,7 @@ class _SettingPageState extends State<SettingPage>{
             ),
             child: GestureDetector(
               onTap: (){
-
+                showErrorSnackBar(context, "未実装機能です");
               },
               child: SettingCard(
                 icon: Icons.abc_outlined,
@@ -128,29 +129,30 @@ class _SettingPageState extends State<SettingPage>{
               ),
             ),
           ),
+
+          Padding(
+            padding: EdgeInsetsGeometry.symmetric(
+              horizontal: 15,
+              vertical: 8
+            ),
+            child: GestureDetector(
+              onTap: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (content) => DeleteNavigationPage(context: content)
+                )
+              );
+            },
+              child: SettingDeleteCard(
+                icon: Icons.delete_forever_outlined,
+                iconColor: Colors.red,
+                titleText: "データ消去",
+                subText: "全てのデータを消去する"
+              ),
+            ),
+          ),
           
-
-          // ListTile(
-          //   leading: Icon(Icons.backup_outlined),
-          //   trailing: Icon(Icons.chevron_right),
-          //   title: Text(
-          //     "データのバックアップ・復元",
-          //     style: TextStyle(
-          //       fontSize: 18
-          //     ),
-          //   ),
-          //   onTap: (){
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //         builder: (content) => BackupNavigationPage()
-          //       )
-          //     );
-          //   },
-          //   minTileHeight: 50,
-          // ),
-
-          // Divider(),
         ],
       ),
     );
