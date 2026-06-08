@@ -465,7 +465,6 @@ class _RecoveryCsvPageState extends ConsumerState<RecoveryCsvPage> {
                     "復元に失敗しました．デバッグモードで確認してください．\n${e}"
                   );
                 }
-                
               }
             },
             child: Text("ジャンルデータ復元")
@@ -482,7 +481,7 @@ class _RecoveryCsvPageState extends ConsumerState<RecoveryCsvPage> {
                 return;
               }
 
-              //ジャンルデータを復元するか確認
+              //アニメデータを復元するか確認
               final deleteFlag = await confirmRunDialog("アニメ") ;
               
               print("ここまでは上手くいった");
@@ -492,7 +491,7 @@ class _RecoveryCsvPageState extends ConsumerState<RecoveryCsvPage> {
                 return;
               }
 
-              //trueならジャンルのデータを復元する
+              //trueならアニメのデータを復元する
               if(deleteFlag==true){
                 try{
                   await isar.writeTxn(() async {
@@ -527,7 +526,7 @@ class _RecoveryCsvPageState extends ConsumerState<RecoveryCsvPage> {
                       //評価
                       anime.evaluation = int.parse(row[9].toString());
                       //メモ
-                      anime.memo = row[10].toString();
+                      anime.memo = row[10].toString().trim();
 
                       await isar.animes.put(anime);
                     }
@@ -544,6 +543,68 @@ class _RecoveryCsvPageState extends ConsumerState<RecoveryCsvPage> {
               }
             },
             child: Text("アニメデータ復元")
+          ),
+
+
+          ElevatedButton( //リンク復元ボタン
+            onPressed: () async {
+              //ファイルを選択し，配列に変換
+              final selectedFile = await importCsv();
+
+              //何も選ばれなかったらreturn
+              if(selectedFile==null){
+                return;
+              }
+
+              //リンクデータを復元するか確認
+              final deleteFlag = await confirmRunDialog("リンク") ;
+              
+              print("ここまでは上手くいった");
+
+              //falseなら何もしない
+              if(deleteFlag==false){
+                return;
+              }
+
+              //trueならリンクのデータを復元する
+              if(deleteFlag==true){
+                try{
+                  await isar.writeTxn(() async {
+
+                    for(int i = 1; i < selectedFile.length; i++){
+
+                      final row = selectedFile[i];
+                      
+                      //アニメid
+                      final animeId = int.parse(row[0].toString());
+                      //ジャンルid
+                      final genreId = int.parse(row[1].toString());
+                      //アニメ情報を取得
+                      final anime = await isar.animes.get(animeId);
+                      //ジャンル情報を取得
+                      final genre = await isar.genres.get(genreId);
+
+                      if(anime==null || genre==null){
+                        continue;
+                      }
+
+                      await anime.genres.load();
+                      anime.genres.add(genre);
+                      await anime.genres.save();
+                    }
+                  });
+
+                  showSnackBar(context, "リンクのデータをインポートしました");
+                }
+                catch(e){
+                  showErrorSnackBar(
+                    context, 
+                    "復元に失敗しました．デバッグモードで確認してください．\n${e}"
+                  );
+                }
+              }
+            },
+            child: Text("リンクデータ復元")
           ),
         ],
       ),
