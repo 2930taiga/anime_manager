@@ -1,4 +1,6 @@
 import 'package:anime_administration/pages/main_navigation_pages/setting/backup/backup.dart';
+import 'package:anime_administration/parameter_settings.dart';
+import 'package:anime_administration/parts/setting_parts.dart';
 import 'package:flutter/material.dart';
 
 class BackupNavigationPage extends StatelessWidget {
@@ -24,32 +26,48 @@ class BackupNavigationPage extends StatelessWidget {
         child: Scrollbar(
           child: ListView(
             children: [
-              ListTile(
-                leading: Icon(Icons.backup_outlined),
-                title: Text("データをバックアップする"),
-                trailing: Icon(Icons.chevron_right),
-                onTap: (){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (content) => UploadNavigationPage()
-                    )
-                  );
-                },
+
+              Padding(
+                padding: EdgeInsetsGeometry.symmetric(
+                  horizontal: 15,
+                  vertical: 8
+                ),
+                child: GestureDetector(
+                  onTap: (){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (content) => UploadNavigationPage()
+                      )
+                    );
+                  },
+                  child: SettingCard(
+                    icon: Icons.backup_outlined,
+                    iconColor: SettingCardColors.cardColors[0],
+                    titleText: "バックアップ",
+                    subText: "データをバックアップする"
+                  ),
+                ),
               ),
 
-              Divider(),
-
-              ListTile(
-                leading: Icon(Icons.cloud_download_outlined),
-                title: Text("バックアップファイルから復元する"),
-                trailing: Icon(Icons.chevron_right),
-                onTap: (){
-                  
-                },
+              Padding(
+                padding: EdgeInsetsGeometry.symmetric(
+                  horizontal: 15,
+                  vertical: 8
+                ),
+                child: GestureDetector(
+                  onTap: (){
+                    
+                  },
+                  child: SettingCard(
+                    icon: Icons.cloud_download_outlined,
+                    iconColor: SettingCardColors.cardColors[1],
+                    titleText: "復元",
+                    subText: "バックアップファイルから復元する"
+                  ),
+                ),
               ),
 
-              Divider()
             ],
           )
         )

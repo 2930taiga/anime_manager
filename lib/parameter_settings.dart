@@ -40,6 +40,21 @@ class StatusColors{
   ];
 }
 
+class SettingCardColors{
+  static List<Color> cardColors = [
+    Color.fromARGB(255, 255, 138, 101), //オレンジ
+    Color.fromARGB(255, 66, 165, 245), //ブルー
+    Color.fromARGB(255, 102, 187, 106), //グリーン
+    Color.fromARGB(255, 171, 71, 188), //パープル
+    Color.fromARGB(255, 255, 167, 38), //アンバー
+    Color.fromARGB(255, 236, 64, 122), //ピンク
+    Color.fromARGB(255, 38, 166, 154), //ティール
+    Color.fromARGB(255, 92, 107, 192), //インディゴ
+    Color.fromARGB(255, 156, 204, 101), //ライム
+    Color.fromARGB(255, 38, 198, 218), //シアン
+  ];
+}
+
 //スナックバー表示関数
 void showSnackBar(BuildContext context,String text){
   ScaffoldMessenger.of(context).showSnackBar( //スナックバーにメッセージを表示

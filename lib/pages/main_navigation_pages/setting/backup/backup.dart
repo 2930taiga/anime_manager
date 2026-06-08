@@ -52,28 +52,12 @@ class UploadNavigationPage extends StatelessWidget {
                 },
                 child: SettingCard(
                   icon: Icons.document_scanner_outlined,
-                  iconColor: Colors.deepOrange,
+                  iconColor: SettingCardColors.cardColors[0],
                   titleText: "CSV",
                   subText: "CSVファイルでバックアップする"
                 ),
               ),
             ),
-
-            // ListTile(
-            //   leading: Icon(Icons.backup_outlined),
-            //   title: Text("CSVファイルでバックアップする"),
-            //   trailing: Icon(Icons.chevron_right),
-            //   onTap: (){
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //         builder: (content) => UploadCsvPage()
-            //       )
-            //     );
-            //   },
-            // ),
-
-            //Divider(),
 
             Padding(
               padding: EdgeInsetsGeometry.symmetric(
@@ -90,29 +74,13 @@ class UploadNavigationPage extends StatelessWidget {
                   );
                 },
                 child: SettingCard(
-                  icon: Icons.dock_outlined,
-                  iconColor: Colors.lightBlue,
+                  icon: Icons.copy,
+                  iconColor: SettingCardColors.cardColors[1],
                   titleText: "JSON",
                   subText: "JSONファイルでバックアップする"
                 ),
               ),
             ),
-
-            // ListTile(
-            //   leading: Icon(Icons.cloud_download_outlined),
-            //   title: Text("JSONファイルでバックアップする"),
-            //   trailing: Icon(Icons.chevron_right),
-            //   onTap: (){
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //         builder: (content) => UploadJsonPage()
-            //       )
-            //     );
-            //   },
-            // ),
-
-            //Divider()
           ],
         )
       )

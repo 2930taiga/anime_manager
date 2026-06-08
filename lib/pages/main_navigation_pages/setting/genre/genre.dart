@@ -1,7 +1,9 @@
 import 'package:anime_administration/pages/main_navigation_pages/setting/genre/genre_registar.dart';
 import 'package:anime_administration/pages/main_navigation_pages/setting/genre/genre_view.dart';
+import 'package:anime_administration/parameter_settings.dart';
+import 'package:anime_administration/parts/setting_parts.dart';
 import 'package:flutter/material.dart';
-import 'package:isar/isar.dart';
+//import 'package:isar/isar.dart';
 import 'package:anime_administration/models/genre.dart';
 import 'package:anime_administration/providers/isar_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -57,38 +59,43 @@ class _SettingGenreState extends ConsumerState<SettingGenre> {
       ),
       body: ListView(
         children: [
-          Center(
-            child: ListTile(
-              leading: Icon(Icons.add),
-              title: Text(
-                "ジャンルを登録する",
-                style: TextStyle(
-                  fontSize: 18
-                ),
-              ),
+
+          Padding(
+            padding: EdgeInsetsGeometry.symmetric(
+              horizontal: 15,
+              vertical: 8
+            ),
+            child: GestureDetector(
               onTap: (){
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context)=> GenreRegistar(initialNewAdd: true,title: "",rgbColors: [0,0,0],id: 0,iconData: Icons.circle,iconShape: IconShape.circle,),
+                    builder: (context)=> GenreRegistar(
+                      initialNewAdd: true,
+                      title: "",
+                      rgbColors: [0,0,0],
+                      id: 0
+                      ,iconData: Icons.circle
+                      ,iconShape: IconShape.circle,
+                    ),
                   )
                 );
               },
-              minTileHeight: 50,
+              child: SettingCard(
+                icon: Icons.add,
+                iconColor: SettingCardColors.cardColors[0],
+                titleText: "登録",
+                subText: "ジャンルを登録する"
+              ),
             ),
           ),
 
-          Divider(),
-
-          Center(
-            child: ListTile(
-              leading: Icon(Icons.storage),
-              title: Text(
-                "ジャンル一覧を表示する",
-                style: TextStyle(
-                  fontSize: 18
-                ),
-              ),
-              onTap: (){ //ボタンが押されたら登録されているジャンル一覧を表示する
+          Padding(
+            padding: EdgeInsetsGeometry.symmetric(
+              horizontal: 15,
+              vertical: 8
+            ),
+            child: GestureDetector(
+              onTap: (){
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -96,11 +103,15 @@ class _SettingGenreState extends ConsumerState<SettingGenre> {
                   )
                 );
               },
-              minTileHeight: 50,
+              child: SettingCard(
+                icon: Icons.storage,
+                iconColor: SettingCardColors.cardColors[1],
+                titleText: "一覧",
+                subText: "ジャンル一覧を表示する"
+              ),
             ),
           ),
 
-          Divider(),
         ],
       ),
     );

@@ -1,4 +1,6 @@
 import 'package:anime_administration/pages/main_navigation_pages/setting/backup/backup_navigation.dart';
+import 'package:anime_administration/parameter_settings.dart';
+import 'package:anime_administration/parts/setting_parts.dart';
 import 'package:flutter/material.dart'; // これがないとWidgetが使えない
 
 //ジャンルに関する設定ページ
@@ -23,86 +25,94 @@ class _SettingPageState extends State<SettingPage>{
       ),
       body: ListView(
         children: [
-          SizedBox(height: 7,),
 
-          ListTile(
-            leading: Icon(Icons.settings),
-            trailing: Icon(Icons.chevron_right),
-            title: Text(
-              "一般",
-              style: TextStyle(
-                fontSize: 18
+          Padding(
+                padding: EdgeInsetsGeometry.symmetric(
+                  horizontal: 15,
+                  vertical: 8
+                ),
+                child: GestureDetector(
+                  onTap: (){
+                    
+                  },
+                  child: SettingCard(
+                    icon: Icons.settings_outlined,
+                    iconColor: SettingCardColors.cardColors[0],
+                    titleText: "一般",
+                    subText: "アプリ全般の設定"
+                  ),
+                ),
+              ),
+
+
+          Padding(
+            padding: EdgeInsetsGeometry.symmetric(
+              horizontal: 15,
+              vertical: 8
+            ),
+            child: GestureDetector(
+              onTap: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (content) => SettingGenre()
+                  )
+                );
+              },
+              child: SettingCard(
+                icon: Icons.view_week_outlined,
+                iconColor: SettingCardColors.cardColors[1],
+                titleText: "ジャンル",
+                subText: "ジャンル関連の設定"
               ),
             ),
-            onTap: (){},
-            minTileHeight: 50,
           ),
 
-          Divider(),
-
-          ListTile(
-            leading: Icon(Icons.view_week_outlined),
-            trailing: Icon(Icons.chevron_right),
-            title: Text(
-              "ジャンル",
-              style: TextStyle(
-                fontSize: 18
-              ),
-            ),
-            onTap: (){ //ジャンルに関する設定を表示
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (content) => SettingGenre()
-                )
-              );
-            },
-            minTileHeight: 50,
-          ),
-
-          Divider(),
-
-          ListTile(
-            leading: Icon(Icons.palette_outlined),
-            trailing: Icon(Icons.chevron_right),
-            title: Text(
-              "テーマカラー",
-              style: TextStyle(
-                fontSize: 18
-              ),
-            ),
-            onTap: (){},
-            minTileHeight: 50,
-          ),
-
-          Divider(),
-
-          ListTile(
-            leading: Icon(Icons.abc),
-            trailing: Icon(Icons.chevron_right),
-            title: Text(
-              "文字サイズ",
-              style: TextStyle(
-                fontSize: 18
-              ),
-            ),
-            onTap: (){},
-            minTileHeight: 50,
-          ),
           
+          Padding(
+            padding: EdgeInsetsGeometry.symmetric(
+              horizontal: 15,
+              vertical: 8
+            ),
+            child: GestureDetector(
+              onTap: (){
 
-          Divider(),
-
-          ListTile(
-            leading: Icon(Icons.backup_outlined),
-            trailing: Icon(Icons.chevron_right),
-            title: Text(
-              "データのバックアップ・復元",
-              style: TextStyle(
-                fontSize: 18
+              },
+              child: SettingCard(
+                icon: Icons.palette_outlined,
+                iconColor: SettingCardColors.cardColors[2],
+                titleText: "テーマカラー",
+                subText: "テーマカラーを設定"
               ),
             ),
-            onTap: (){
+          ),
+
+
+          Padding(
+            padding: EdgeInsetsGeometry.symmetric(
+              horizontal: 15,
+              vertical: 8
+            ),
+            child: GestureDetector(
+              onTap: (){
+
+              },
+              child: SettingCard(
+                icon: Icons.abc_outlined,
+                iconColor: SettingCardColors.cardColors[3],
+                titleText: "文字サイズ",
+                subText: "文字サイズを設定"
+              ),
+            ),
+          ),
+
+          Padding(
+            padding: EdgeInsetsGeometry.symmetric(
+              horizontal: 15,
+              vertical: 8
+            ),
+            child: GestureDetector(
+              onTap: (){
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -110,10 +120,37 @@ class _SettingPageState extends State<SettingPage>{
                 )
               );
             },
-            minTileHeight: 50,
+              child: SettingCard(
+                icon: Icons.cloud_upload_outlined,
+                iconColor: SettingCardColors.cardColors[4],
+                titleText: "バックアップ",
+                subText: "データのバックアップ・復元"
+              ),
+            ),
           ),
+          
 
-          Divider(),
+          // ListTile(
+          //   leading: Icon(Icons.backup_outlined),
+          //   trailing: Icon(Icons.chevron_right),
+          //   title: Text(
+          //     "データのバックアップ・復元",
+          //     style: TextStyle(
+          //       fontSize: 18
+          //     ),
+          //   ),
+          //   onTap: (){
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (content) => BackupNavigationPage()
+          //       )
+          //     );
+          //   },
+          //   minTileHeight: 50,
+          // ),
+
+          // Divider(),
         ],
       ),
     );

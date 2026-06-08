@@ -88,6 +88,7 @@ class _AnalysisPageState extends ConsumerState<AnalysisPage> {
         child: Text(
           "データが登録されていません",
           style: TextStyle(
+            fontSize: 20,
             color: Colors.grey
           ),
         ),
