@@ -5,6 +5,8 @@ import 'package:anime_administration/providers/isar_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
+//設定のパーツ
+import 'package:anime_administration/parts/setting_parts.dart';
 //csv出力に必要なパッケージ
 import 'dart:io';
 import 'package:csv/csv.dart';
@@ -34,37 +36,83 @@ class UploadNavigationPage extends StatelessWidget {
       body: Scrollbar(
         child: ListView(
           children: [
-            ListTile(
-              leading: Icon(Icons.backup_outlined),
-              title: Text("CSVファイルでバックアップする"),
-              trailing: Icon(Icons.chevron_right),
-              onTap: (){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (content) => UploadCsvPage()
-                  )
-                );
-              },
+            Padding(
+              padding: EdgeInsetsGeometry.symmetric(
+                horizontal: 15,
+                vertical: 8
+              ),
+              child: GestureDetector(
+                onTap: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (content) => UploadCsvPage()
+                    )
+                  );
+                },
+                child: SettingCard(
+                  icon: Icons.document_scanner_outlined,
+                  iconColor: Colors.deepOrange,
+                  titleText: "CSV",
+                  subText: "CSVファイルでバックアップする"
+                ),
+              ),
             ),
 
-            Divider(),
+            // ListTile(
+            //   leading: Icon(Icons.backup_outlined),
+            //   title: Text("CSVファイルでバックアップする"),
+            //   trailing: Icon(Icons.chevron_right),
+            //   onTap: (){
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (content) => UploadCsvPage()
+            //       )
+            //     );
+            //   },
+            // ),
 
-            ListTile(
-              leading: Icon(Icons.cloud_download_outlined),
-              title: Text("JSONファイルでバックアップする"),
-              trailing: Icon(Icons.chevron_right),
-              onTap: (){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (content) => UploadJsonPage()
-                  )
-                );
-              },
+            //Divider(),
+
+            Padding(
+              padding: EdgeInsetsGeometry.symmetric(
+                horizontal: 15,
+                vertical: 8
+              ),
+              child: GestureDetector(
+                onTap: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (content) => UploadJsonPage()
+                    )
+                  );
+                },
+                child: SettingCard(
+                  icon: Icons.dock_outlined,
+                  iconColor: Colors.lightBlue,
+                  titleText: "JSON",
+                  subText: "JSONファイルでバックアップする"
+                ),
+              ),
             ),
 
-            Divider()
+            // ListTile(
+            //   leading: Icon(Icons.cloud_download_outlined),
+            //   title: Text("JSONファイルでバックアップする"),
+            //   trailing: Icon(Icons.chevron_right),
+            //   onTap: (){
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (content) => UploadJsonPage()
+            //       )
+            //     );
+            //   },
+            // ),
+
+            //Divider()
           ],
         )
       )
