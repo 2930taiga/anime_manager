@@ -233,7 +233,7 @@ class _RecoveryCsvPageState extends ConsumerState<RecoveryCsvPage> {
     //csvデータを文字列に変換
     final rows = const CsvToListConverter().convert(
       csvString,
-      eol: "\n"
+      eol: "\n"  //改行でセルが分かれるので消す
     );
 
     return rows;
