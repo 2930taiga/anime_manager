@@ -62,7 +62,7 @@ class _MainNavigationState extends ConsumerState<MainNavigation> {
         bottomNavigationBar:BottomNavigationBar(
           currentIndex: pageNum,
           items: const[ //ページ一覧
-            BottomNavigationBarItem(icon: Icon(Icons.notes),label: "一覧"), //一覧
+            BottomNavigationBarItem(icon: Icon(Icons.notes),label: "ライブラリ"), //一覧
             BottomNavigationBarItem(icon: Icon(Icons.pie_chart),label: "分析"), //分析
             BottomNavigationBarItem(icon: Icon(Icons.calendar_month),label: "カレンダー"), //カレンダー
             BottomNavigationBarItem(icon: Icon(Icons.settings),label: "設定") //設定

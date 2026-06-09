@@ -233,7 +233,7 @@ class _RecoveryCsvPageState extends ConsumerState<RecoveryCsvPage> {
     //csvデータを文字列に変換
     final rows = const CsvToListConverter().convert(
       csvString,
-      eol: "\n"  //改行でセルが分かれるので消す
+      //eol: "\n"  //改行でセルが分かれるので消す
     );
 
     return rows;
@@ -478,6 +478,8 @@ class _RecoveryCsvPageState extends ConsumerState<RecoveryCsvPage> {
                           row[5].toString().trim(),
                         );
 
+                        print("$iデータ目");
+
                         await isar.genres.put(genre);
                       }
                     });
@@ -531,6 +533,8 @@ class _RecoveryCsvPageState extends ConsumerState<RecoveryCsvPage> {
                 if(deleteFlag==true){
                   try{
                     await isar.writeTxn(() async {
+
+                      print("行数:${selectedFile.length}");
 
                       for(int i = 1; i < selectedFile.length; i++){
 
@@ -653,203 +657,6 @@ class _RecoveryCsvPageState extends ConsumerState<RecoveryCsvPage> {
               },
             ),
           ),
-
-          // ElevatedButton( //ジャンル復元ボタン
-          //   onPressed: () async {
-          //     //ファイルを選択し，配列に変換
-          //     final selectedFile = await importCsv();
-
-          //     //何も選ばれなかったらreturn
-          //     if(selectedFile==null){
-          //       return;
-          //     }
-
-          //     //ジャンルデータを復元するか確認
-          //     final deleteFlag = await confirmRunDialog("ジャンル") ;
-
-          //     //falseなら何もしない
-          //     if(deleteFlag==false){
-          //       return;
-          //     }
-
-          //     //trueならジャンルのデータを復元する
-          //     if(deleteFlag==true){
-          //       try{
-          //         await isar.writeTxn(() async {
-
-          //           for(int i = 1; i < selectedFile.length; i++){
-
-          //             final row = selectedFile[i];
-          //             final genre = Genre();
-                      
-          //             //id
-          //             genre.id = int.parse(row[0].toString());
-          //             //ジャンル名
-          //             genre.name = row[1].toString();
-          //             //赤
-          //             genre.redValue = int.parse(row[2].toString());
-          //             //緑
-          //             genre.greenValue = int.parse(row[3].toString());
-          //             //青
-          //             genre.blueValue = int.parse(row[4].toString());
-          //             //アイコンの形状
-          //             genre.iconShape = IconShape.values.byName(
-          //               row[5].toString().trim(),
-          //             );
-
-          //             await isar.genres.put(genre);
-          //           }
-          //         });
-
-          //         showSnackBar(context, "ジャンルのデータをインポートしました");
-          //       }
-          //       catch(e){
-          //         showErrorSnackBar(
-          //           context, 
-          //           "復元に失敗しました．デバッグモードで確認してください．\n${e}"
-          //         );
-          //       }
-          //     }
-          //   },
-          //   child: Text("ジャンルデータ復元")
-          // ),
-
-
-          // ElevatedButton( //アニメ復元ボタン
-          //   onPressed: () async {
-          //     //ファイルを選択し，配列に変換
-          //     final selectedFile = await importCsv();
-
-          //     //何も選ばれなかったらreturn
-          //     if(selectedFile==null){
-          //       return;
-          //     }
-
-          //     //アニメデータを復元するか確認
-          //     final deleteFlag = await confirmRunDialog("アニメ") ;
-              
-          //     print("ここまでは上手くいった");
-
-          //     //falseなら何もしない
-          //     if(deleteFlag==false){
-          //       return;
-          //     }
-
-          //     //trueならアニメのデータを復元する
-          //     if(deleteFlag==true){
-          //       try{
-          //         await isar.writeTxn(() async {
-
-          //           for(int i = 1; i < selectedFile.length; i++){
-
-          //             final row = selectedFile[i];
-          //             final anime = Anime();
-
-          //             //id
-          //             anime.id = int.parse(row[0].toString());
-          //             //ステータス
-          //             anime.status = AnimeStatus.values.byName(
-          //               row[1].toString().trim()
-          //             );
-          //             //タイトル
-          //             anime.title = row[2].toString();
-          //             //タイトルかな
-          //             anime.titleKana = row[3].toString();
-          //             //日付
-          //             anime.date = DateTime.parse(row[4].toString());
-          //             //放送年
-          //             anime.onAirYear = int.parse(row[5].toString());
-          //             //放送季節
-          //             anime.season = OnAirSeason.values.byName(
-          //               row[6].toString().trim()
-          //             );
-          //             //話数
-          //             anime.epNum = int.parse(row[7].toString());
-          //             //1話あたりの時間
-          //             anime.epTime = int.parse(row[8].toString());
-          //             //評価
-          //             anime.evaluation = int.parse(row[9].toString());
-          //             //メモ
-          //             anime.memo = row[10].toString().trim();
-
-          //             await isar.animes.put(anime);
-          //           }
-          //         });
-
-          //         showSnackBar(context, "アニメのデータをインポートしました");
-          //       }
-          //       catch(e){
-          //         showErrorSnackBar(
-          //           context, 
-          //           "復元に失敗しました．デバッグモードで確認してください．\n${e}"
-          //         );
-          //       }
-          //     }
-          //   },
-          //   child: Text("アニメデータ復元")
-          // ),
-
-
-          // ElevatedButton( //リンク復元ボタン
-          //   onPressed: () async {
-          //     //ファイルを選択し，配列に変換
-          //     final selectedFile = await importCsv();
-
-          //     //何も選ばれなかったらreturn
-          //     if(selectedFile==null){
-          //       return;
-          //     }
-
-          //     //リンクデータを復元するか確認
-          //     final deleteFlag = await confirmRunDialog("リンク") ;
-              
-          //     print("ここまでは上手くいった");
-
-          //     //falseなら何もしない
-          //     if(deleteFlag==false){
-          //       return;
-          //     }
-
-          //     //trueならリンクのデータを復元する
-          //     if(deleteFlag==true){
-          //       try{
-          //         await isar.writeTxn(() async {
-
-          //           for(int i = 1; i < selectedFile.length; i++){
-
-          //             final row = selectedFile[i];
-                      
-          //             //アニメid
-          //             final animeId = int.parse(row[0].toString());
-          //             //ジャンルid
-          //             final genreId = int.parse(row[1].toString());
-          //             //アニメ情報を取得
-          //             final anime = await isar.animes.get(animeId);
-          //             //ジャンル情報を取得
-          //             final genre = await isar.genres.get(genreId);
-
-          //             if(anime==null || genre==null){
-          //               continue;
-          //             }
-
-          //             await anime.genres.load();
-          //             anime.genres.add(genre);
-          //             await anime.genres.save();
-          //           }
-          //         });
-
-          //         showSnackBar(context, "リンクのデータをインポートしました");
-          //       }
-          //       catch(e){
-          //         showErrorSnackBar(
-          //           context, 
-          //           "復元に失敗しました．デバッグモードで確認してください．\n${e}"
-          //         );
-          //       }
-          //     }
-          //   },
-          //   child: Text("リンクデータ復元")
-          // ),
         ],
       ),
     );
