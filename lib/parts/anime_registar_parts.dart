@@ -100,6 +100,9 @@ class _InputFieldTitleState extends ConsumerState<InputFieldTitle> {
           },
           decoration: InputDecoration(
             hintText: "タイトル",
+            hintStyle: TextStyle(
+              color: Colors.grey
+            ),
             icon: Icon(
               Icons.title,
               color: titleColor
@@ -155,6 +158,9 @@ class _InputFieldTitleKanaState extends ConsumerState<InputFieldTitleKana> {
           },
           decoration: InputDecoration(
             hintText: "タイトル（かな）",
+            hintStyle: TextStyle(
+              color: Colors.grey
+            ),
             icon: Icon(
               Icons.title,
               color: titleColor
@@ -246,6 +252,9 @@ class _InputFieldDateState extends ConsumerState<InputFieldDate> {
                 },
                 decoration: InputDecoration(
                   hintText: "日付",
+                  hintStyle: TextStyle(
+                    color: Colors.grey
+                  ),
                   icon: Icon(
                     Icons.calendar_today,
                     color: titleColor,
@@ -573,59 +582,80 @@ class _InputOnAirDateState extends ConsumerState<InputOnAirDate> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width*0.9,
+    return Padding(
+      padding: EdgeInsetsGeometry.symmetric(
+        vertical: 5
+      ),
       child: Row(
         children: [
-          SizedBox( //年入力欄
-            width: MediaQuery.of(context).size.width*0.4,
-            child: TextFormField(
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (text){
-                //入力が数字かつ1900~2100に収まっているかを確認
-                //入力が空
-                if(text==null){
-                  return "値を入力してください";
-                }
-                //入力が数字ではない
-                if(int.tryParse(text)==null){
-                  return "数値を入力してください";
-                }
-                int inputYear=int.tryParse(text) ?? 0;
-                //1900~2100に収まっていない
-                if(inputYear>2100 || inputYear<1900){
-                  return "1900~2100で入力してください";
-                }
-              },
-              onChanged: (text){
-                //入力が空白 or 文字
-                if(text=="" || int.tryParse(text)==null){
-                  ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: false);
-                  return;
-                } 
-                
-                int inputNum = int.tryParse(text) ?? 0;
 
-                //入力が1900~2100に収まっていない
-                if(inputNum>2100 || inputNum<1900){
-                  ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: false);
-                  return;
-                }
+          Expanded(
+            child:Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: 15
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: Colors.grey
+                ),
+              ),
+              child: TextFormField(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (text){
+                  //入力が数字かつ1900~2100に収まっているかを確認
+                  //入力が空
+                  if(text==null){
+                    return "値を入力してください";
+                  }
+                  //入力が数字ではない
+                  if(int.tryParse(text)==null){
+                    return "数値を入力してください";
+                  }
+                  int inputYear=int.tryParse(text) ?? 0;
+                  //1900~2100に収まっていない
+                  if(inputYear>2100 || inputYear<1900){
+                    return "1900~2100で入力してください";
+                  }
+                },
+                onChanged: (text){
+                  //入力が空白 or 文字
+                  if(text=="" || int.tryParse(text)==null){
+                    ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: false);
+                    return;
+                  } 
+                  
+                  int inputNum = int.tryParse(text) ?? 0;
 
-                //入力が正しい
-                ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(onAirYear: inputNum);
-                ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: true);
+                  //入力が1900~2100に収まっていない
+                  if(inputNum>2100 || inputNum<1900){
+                    ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: false);
+                    return;
+                  }
 
-              },
-              controller: _onAirDateController,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: "放送年",
+                  //入力が正しい
+                  ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(onAirYear: inputNum);
+                  ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: true);
+
+                },
+                controller: _onAirDateController,
+                decoration: InputDecoration(
+                  hintText: "放送年",
+                  hintStyle: TextStyle(
+                    color: Colors.grey
+                  ),
+                  icon: Icon(
+                    Icons.monitor,
+                    color: titleColor
+                  ),
+                  border: InputBorder.none
+                ),
               ),
             ),
           ),
 
-          IconButton( //年選択画面を出すボタン
+          
+          IconButton(
             onPressed:() async {
               //年選択画面を表示
               int? selectedYear = await inputOnAirYear(context);
@@ -638,36 +668,308 @@ class _InputOnAirDateState extends ConsumerState<InputOnAirDate> {
               ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(onAirYear: selectedYear);
               ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: true);
             },
-            icon:Icon(
-              Icons.calendar_month_outlined,
-              size:29,
+            icon: Icon(
+              Icons.calendar_month,
+              color: titleColor,
             )
           ),
 
-          Expanded(child: SizedBox()),
-          
-          DropdownMenu(
-            label: Text("季節"),
-            width: MediaQuery.of(context).size.width*0.3,
-            onSelected: (value) {
-              //選択されたステータスを変換する
-              if(value==null){
-                return;
-              }
-              //入力がされていたらproviderの値を更新
-              ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(season: OnAirSeason.values[value]);
-              ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(season: true);
-            },
-            dropdownMenuEntries: const[
-              DropdownMenuEntry(value: 0, label: "春"),
-              DropdownMenuEntry(value: 1, label: "夏"),
-              DropdownMenuEntry(value: 2, label: "秋"),
-              DropdownMenuEntry(value: 3, label: "冬"),
-            ]
-          )
+
+          Expanded(
+            child: Container(
+              height: 50,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: Colors.grey
+                ),
+              ),
+              child: Row(
+                children: [
+
+                  Padding(
+                    padding: EdgeInsetsGeometry.symmetric(
+                      horizontal: 10
+                    ),
+                    child: Icon(
+                      Icons.energy_savings_leaf_outlined,
+                      color: titleColor,
+                    ),
+                  ),
+
+
+                  Expanded(
+                    child: DropdownMenu(
+                      hintText: "季節",
+                      //width: MediaQuery.of(context).size.width*0.3,
+                      //width: 80,
+                      onSelected: (value) {
+                        //選択されたステータスを変換する
+                        if(value==null){
+                          return;
+                        }
+                        //入力がされていたらproviderの値を更新
+                        ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(season: OnAirSeason.values[value]);
+                        ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(season: true);
+                      },
+                      dropdownMenuEntries: const[
+                        DropdownMenuEntry(value: 0, label: "春"),
+                        DropdownMenuEntry(value: 1, label: "夏"),
+                        DropdownMenuEntry(value: 2, label: "秋"),
+                        DropdownMenuEntry(value: 3, label: "冬"),
+                      ],
+                      
+                      inputDecorationTheme: const InputDecorationTheme(
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: 0
+                        ),
+                        constraints: BoxConstraints.tightFor(height: 50),
+                      ),
+                    ),
+                  ),
+
+
+
+                ],
+              ),
+
+              // child: DropdownMenu(
+              //   label: Text("季節"),
+              //   //width: MediaQuery.of(context).size.width*0.3,
+              //   width: double.infinity,
+              //   onSelected: (value) {
+              //     //選択されたステータスを変換する
+              //     if(value==null){
+              //       return;
+              //     }
+              //     //入力がされていたらproviderの値を更新
+              //     ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(season: OnAirSeason.values[value]);
+              //     ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(season: true);
+              //   },
+              //   dropdownMenuEntries: const[
+              //     DropdownMenuEntry(value: 0, label: "春"),
+              //     DropdownMenuEntry(value: 1, label: "夏"),
+              //     DropdownMenuEntry(value: 2, label: "秋"),
+              //     DropdownMenuEntry(value: 3, label: "冬"),
+              //   ]
+              // ),
+            ),
+            // child: DropdownMenu(
+            //   label: Text("季節"),
+            //   width: MediaQuery.of(context).size.width*0.3,
+            //   onSelected: (value) {
+            //     //選択されたステータスを変換する
+            //     if(value==null){
+            //       return;
+            //     }
+            //     //入力がされていたらproviderの値を更新
+            //     ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(season: OnAirSeason.values[value]);
+            //     ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(season: true);
+            //   },
+            //   dropdownMenuEntries: const[
+            //     DropdownMenuEntry(value: 0, label: "春"),
+            //     DropdownMenuEntry(value: 1, label: "夏"),
+            //     DropdownMenuEntry(value: 2, label: "秋"),
+            //     DropdownMenuEntry(value: 3, label: "冬"),
+            //   ]
+            // )
+          ),
+
+
         ],
       ),
+      // child: Container(
+      //   padding: EdgeInsets.symmetric(
+      //     horizontal: 15,
+      //     vertical: 0
+      //   ),
+      //   decoration: BoxDecoration(
+      //     borderRadius: BorderRadius.circular(10),
+      //     border: Border.all(
+      //       color: Colors.grey
+      //     ),
+      //   ),
+      //   child: Row(
+      //     children: [
+
+      //       Expanded(
+      //         child: TextFormField(
+      //           autovalidateMode: AutovalidateMode.onUserInteraction,
+      //           validator: (text){
+      //             //入力が数字かつ1900~2100に収まっているかを確認
+      //             //入力が空
+      //             if(text==null){
+      //               return "値を入力してください";
+      //             }
+      //             //入力が数字ではない
+      //             if(int.tryParse(text)==null){
+      //               return "数値を入力してください";
+      //             }
+      //             int inputYear=int.tryParse(text) ?? 0;
+      //             //1900~2100に収まっていない
+      //             if(inputYear>2100 || inputYear<1900){
+      //               return "1900~2100で入力してください";
+      //             }
+      //           },
+      //           onChanged: (text){
+      //             //入力が空白 or 文字
+      //             if(text=="" || int.tryParse(text)==null){
+      //               ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: false);
+      //               return;
+      //             } 
+                  
+      //             int inputNum = int.tryParse(text) ?? 0;
+
+      //             //入力が1900~2100に収まっていない
+      //             if(inputNum>2100 || inputNum<1900){
+      //               ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: false);
+      //               return;
+      //             }
+
+      //             //入力が正しい
+      //             ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(onAirYear: inputNum);
+      //             ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: true);
+
+      //           },
+      //           controller: _onAirDateController,
+      //           decoration: InputDecoration(
+      //             hintText: "放送年",
+      //             hintStyle: TextStyle(
+      //               color: Colors.grey
+      //             ),
+      //             icon: Icon(
+      //               Icons.monitor,
+      //               color: titleColor
+      //             ),
+      //             border: InputBorder.none
+      //           ),
+      //         ),
+      //       ),
+
+      //       IconButton(
+      //       onPressed:() async {
+      //         //年選択画面を表示
+      //         int? selectedYear = await inputOnAirYear(context);
+              
+      //         if(selectedYear==null) return;
+
+      //         //テキストコントローラの値を更新
+      //         _onAirDateController.text=selectedYear.toString();
+      //         //providerの値を更新
+      //         ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(onAirYear: selectedYear);
+      //         ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: true);
+      //       },
+      //         icon: Icon(Icons.calendar_month_outlined)
+      //       ),
+            
+      //       Text("年"),
+
+
+      //       Text("hi")
+      //     ],
+      //   )
+      // ),
     );
+
+
+
+
+    // return SizedBox(
+    //   width: MediaQuery.of(context).size.width*0.9,
+    //   child: Row(
+    //     children: [
+    //       SizedBox( //年入力欄
+    //         width: MediaQuery.of(context).size.width*0.4,
+    //         child: TextFormField(
+    //           autovalidateMode: AutovalidateMode.onUserInteraction,
+    //           validator: (text){
+    //             //入力が数字かつ1900~2100に収まっているかを確認
+    //             //入力が空
+    //             if(text==null){
+    //               return "値を入力してください";
+    //             }
+    //             //入力が数字ではない
+    //             if(int.tryParse(text)==null){
+    //               return "数値を入力してください";
+    //             }
+    //             int inputYear=int.tryParse(text) ?? 0;
+    //             //1900~2100に収まっていない
+    //             if(inputYear>2100 || inputYear<1900){
+    //               return "1900~2100で入力してください";
+    //             }
+    //           },
+    //           onChanged: (text){
+    //             //入力が空白 or 文字
+    //             if(text=="" || int.tryParse(text)==null){
+    //               ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: false);
+    //               return;
+    //             } 
+                
+    //             int inputNum = int.tryParse(text) ?? 0;
+
+    //             //入力が1900~2100に収まっていない
+    //             if(inputNum>2100 || inputNum<1900){
+    //               ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: false);
+    //               return;
+    //             }
+
+    //             //入力が正しい
+    //             ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(onAirYear: inputNum);
+    //             ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: true);
+
+    //           },
+    //           controller: _onAirDateController,
+    //           decoration: InputDecoration(
+    //             border: OutlineInputBorder(),
+    //             labelText: "放送年",
+    //           ),
+    //         ),
+    //       ),
+
+    //       IconButton( //年選択画面を出すボタン
+    //         onPressed:() async {
+    //           //年選択画面を表示
+    //           int? selectedYear = await inputOnAirYear(context);
+              
+    //           if(selectedYear==null) return;
+
+    //           //テキストコントローラの値を更新
+    //           _onAirDateController.text=selectedYear.toString();
+    //           //providerの値を更新
+    //           ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(onAirYear: selectedYear);
+    //           ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: true);
+    //         },
+    //         icon:Icon(
+    //           Icons.calendar_month_outlined,
+    //           size:29,
+    //         )
+    //       ),
+
+    //       Expanded(child: SizedBox()),
+          
+    //       DropdownMenu(
+    //         label: Text("季節"),
+    //         width: MediaQuery.of(context).size.width*0.3,
+    //         onSelected: (value) {
+    //           //選択されたステータスを変換する
+    //           if(value==null){
+    //             return;
+    //           }
+    //           //入力がされていたらproviderの値を更新
+    //           ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(season: OnAirSeason.values[value]);
+    //           ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(season: true);
+    //         },
+    //         dropdownMenuEntries: const[
+    //           DropdownMenuEntry(value: 0, label: "春"),
+    //           DropdownMenuEntry(value: 1, label: "夏"),
+    //           DropdownMenuEntry(value: 2, label: "秋"),
+    //           DropdownMenuEntry(value: 3, label: "冬"),
+    //         ]
+    //       )
+    //     ],
+    //   ),
+    // );
   }
 }
 

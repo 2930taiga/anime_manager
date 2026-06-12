@@ -21,6 +21,17 @@ version: 1.0.0+1
 environment:
   sdk: ^3.9.2
 
+
+# #自分で書いた部分------------------------------------------------
+
+# assets:
+#   - assets/ #assetsフォルダを読み込む
+
+# fonts:
+#   - family: 
+
+# #---------------------------------------------------------------
+
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
 # consider running `flutter pub upgrade --major-versions`. Alternatively,
