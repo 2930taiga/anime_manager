@@ -73,6 +73,8 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
           iconShape: _iconShape
         );
       }
+      //新規登録でないならproviderの登録判定を更新
+      ref.read(genreCorrectInputProvider.notifier).state=ref.read(genreCorrectInputProvider).copyWith(title: true);
     });
   }
 
