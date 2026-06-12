@@ -9,6 +9,11 @@ import 'package:anime_administration/providers/isar_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:anime_administration/models/anime.dart';
 
+
+//パラメータ
+//タイトル，日付
+const Color titleColor = Color.fromARGB(255,38, 89, 254);
+
 //-----------------------------------ドロップダウンメニュー--------------------------
 class StatusDropDownMenu extends ConsumerWidget {
 
@@ -57,32 +62,50 @@ class InputFieldTitle extends ConsumerStatefulWidget {
 class _InputFieldTitleState extends ConsumerState<InputFieldTitle> {
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width*0.9,
-      child: TextFormField(
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        validator: (text){
-          if(text=="" || text==null){ //入力が正しくない
-            return "タイトルを入力してください";
-          }
-          else{ //入力が正しい
-            return null;
-          }
-        },
-        onChanged: (text){
-          if(text==""){ //入力が正しくない
-            //providerのflagを書き換える
-            ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(title: false);
-          }
-          else{ //入力が正しい
-            //providerのflagを書き換える
-            ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(title: text);
-            ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(title: true);
-          }
-        },
-        decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: "タイトル",
+    return Padding(
+      padding: EdgeInsetsGeometry.symmetric(
+        vertical: 5
+      ),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: 15,
+          vertical: 0
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: Colors.grey
+          ),
+        ),
+        child: TextFormField(
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: (text){
+            if(text=="" || text==null){ //入力が正しくない
+              return "タイトルを入力してください";
+            }
+            else{ //入力が正しい
+              return null;
+            }
+          },
+          onChanged: (text){
+            if(text==""){ //入力が正しくない
+              //providerのflagを書き換える
+              ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(title: false);
+            }
+            else{ //入力が正しい
+              //providerのflagを書き換える
+              ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(title: text);
+              ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(title: true);
+            }
+          },
+          decoration: InputDecoration(
+            hintText: "タイトル",
+            icon: Icon(
+              Icons.title,
+              color: titleColor
+            ),
+            border: InputBorder.none
+          ),
         ),
       ),
     );
@@ -101,32 +124,43 @@ class _InputFieldTitleKanaState extends ConsumerState<InputFieldTitleKana> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width*0.9,
-      child: TextFormField(
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        validator: (text){
-          if(text=="" || text==null){ //入力が正しくない
-            return "タイトル（かな）を入力してください";
-          }
-          else{
-            return null;
-          }
-        },
-        onChanged: (text){
-          if(text==""){ //入力が正しくない
-            //providerのflagを書き換える
-            ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(titleKana: false);
-          }
-          else{
-            //providerの値を更新
-            ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(titleKana: text);
+    return Padding(
+      padding: EdgeInsetsGeometry.symmetric(
+        vertical: 5
+      ),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: 15,
+          vertical: 0
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: Colors.grey
+          ),
+        ),
+        child: TextField(
+          // autovalidateMode: AutovalidateMode.onUserInteraction,
+          // validator: (text){
+          //   if(text=="" || text==null){ //入力が正しくない
+          //     return "タイトルを入力してください";
+          //   }
+          //   else{ //入力が正しい
+          //     return null;
+          //   }
+          // },
+          onChanged: (text){
+            //providerに値をセットする
             ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(titleKana: true);
-          }
-        },
-        decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: "タイトル（かな）",
+          },
+          decoration: InputDecoration(
+            hintText: "タイトル（かな）",
+            icon: Icon(
+              Icons.title,
+              color: titleColor
+            ),
+            border: InputBorder.none
+          ),
         ),
       ),
     );
@@ -154,125 +188,337 @@ class _InputFieldDateState extends ConsumerState<InputFieldDate> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          width: MediaQuery.of(context).size.width*0.9,
-          child: TextFormField(
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            validator: (text){
-              //正しい入力がされているかを判定
-              if(text!=null){
-                try{
-                  //正しい値が入力されていないとここでエラーになる
-                  DateFormat("yyyy/MM/dd").parseStrict(text);
-                  return null;
-                }
-                catch(e){
-                  //正しい値が入力されていない
-                  return "正しい値を入力してください";
-                }
-              }
-            },
-            onChanged: (text){
-              //正しい入力がされているかを判定
-                try{
-                  //正しい値が入力されていないとここでエラーになる
-                  DateTime inputDate = DateFormat("yyyy/MM/DD").parseStrict(text);
-                  //正しい値が入力されているならproviderの値を更新
-                  ref.read(animeInputProvider.notifier).state = ref.read(animeInputProvider).copyWith(date: inputDate);
-                  ref.read(animeCorrectInputProvider.notifier).state = ref.read(animeCorrectInputProvider).copyWith(date: true);
-                }
-                catch(e){
-                  //正しい値が入力されていない
-                  ref.read(animeCorrectInputProvider.notifier).state = ref.read(animeCorrectInputProvider).copyWith(date: false);
-                }
-            },
-            controller: _dateController,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: "日付",
-            ),
+
+    return Padding(
+      padding: EdgeInsetsGeometry.symmetric(
+        vertical: 5
+      ),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: 15,
+          vertical: 0
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: Colors.grey
           ),
         ),
+        child: Column(
+          children: [
 
-        SizedBox(height: 6,),
+            
+            //日付入力欄
+            Padding( 
+              padding: EdgeInsetsGeometry.symmetric(
 
-        SizedBox(
-          width: MediaQuery.of(context).size.width * 0.9,
-          child: Row(
-            children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.44,
-                child: ElevatedButton(
-                  onPressed: (){
-                    DateTime selectedDate=inputDate_today();
-                    //テキストフィールド用にフォーマット
-                    String formattedDate="${selectedDate.year}/${selectedDate.month.toString().padLeft(2, '0')}/${selectedDate.day.toString().padLeft(2, '0')}";
-                    //テキストコントローラの値を更新
-                    _dateController.text=formattedDate;
-                    //テキストフィールドのフォーカスを外す
-                    FocusManager.instance.primaryFocus?.unfocus();
-                    //providerに値を入れる
-                    ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(date: selectedDate);
-                    //ボタンを押すと必ず正しい値が入力されるので，flagをtrueにする
-                    ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(date: true);
-                  }, 
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    )
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.calendar_today_outlined),
-                      SizedBox(width: MediaQuery.of(context).size.width*0.03,),
-                      const Text("今日の日付")
-                    ],
-                  )
-                  )
               ),
-              SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.44,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    DateTime selectedDate = await inputDate_select(context);
-                    //テキストフィールド用にフォーマット
-                    String formattedDate = "${selectedDate.year}/${selectedDate.month.toString().padLeft(2, '0')}/${selectedDate.day.toString().padLeft(2, '0')}";
-                    //テキストコントローラの値を更新
-                    _dateController.text = formattedDate;
-                    //テキストフィールドのフォーカスを外す
-                    FocusManager.instance.primaryFocus?.unfocus();
-                    FocusManager.instance.primaryFocus?.unfocus();
-                    //providerに値を入れる
-                    ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(date: selectedDate);
-                    //ボタンを押すと必ず正しい値が入力されるので，flagをtrueにする
-                    ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(date: true);
-                  }, 
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    )
+              child: TextFormField(
+                controller: _dateController,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (text){
+                  //正しい入力がされているかを判定
+                  if(text!=null){
+                    try{
+                      //正しい値が入力されていないとここでエラーになる
+                      DateFormat("yyyy/MM/dd").parseStrict(text);
+                      return null;
+                    }
+                    catch(e){
+                      //正しい値が入力されていない
+                      return "正しい値を入力してください";
+                    }
+                  }
+                },
+                onChanged: (text){
+                  //正しい入力がされているかを判定
+                    try{
+                      //正しい値が入力されていないとここでエラーになる
+                      DateTime inputDate = DateFormat("yyyy/MM/DD").parseStrict(text);
+                      //正しい値が入力されているならproviderの値を更新
+                      ref.read(animeInputProvider.notifier).state = ref.read(animeInputProvider).copyWith(date: inputDate);
+                      ref.read(animeCorrectInputProvider.notifier).state = ref.read(animeCorrectInputProvider).copyWith(date: true);
+                    }
+                    catch(e){
+                      //正しい値が入力されていない
+                      ref.read(animeCorrectInputProvider.notifier).state = ref.read(animeCorrectInputProvider).copyWith(date: false);
+                    }
+                },
+                decoration: InputDecoration(
+                  hintText: "日付",
+                  icon: Icon(
+                    Icons.calendar_today,
+                    color: titleColor,
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.calendar_today),
-                      SizedBox(width: MediaQuery.of(context).size.width*0.03,),
-                      const Text("日付選択"),
-                      SizedBox(width: MediaQuery.of(context).size.width*0.03,),
-                      const Icon(Icons.navigate_next_outlined)
-                    ],
-                  )
-                  )
-              )
-            ],
-          ),
+                  border: InputBorder.none
+                ),
+              ),
+            ),
+
+
+            //日付入力ボタン
+            Padding(
+              padding: EdgeInsetsGeometry.only(
+                bottom: 7
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+
+
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsetsGeometry.only(
+                        right: 5
+                      ),
+                      child: ElevatedButton(
+                        onPressed: (){
+                          DateTime selectedDate=inputDate_today();
+                          //テキストフィールド用にフォーマット
+                          String formattedDate="${selectedDate.year}/${selectedDate.month.toString().padLeft(2, '0')}/${selectedDate.day.toString().padLeft(2, '0')}";
+                          //テキストコントローラの値を更新
+                          _dateController.text=formattedDate;
+                          //テキストフィールドのフォーカスを外す
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          //providerに値を入れる
+                          ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(date: selectedDate);
+                          //ボタンを押すと必ず正しい値が入力されるので，flagをtrueにする
+                          ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(date: true);
+                        }, 
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 0
+                          ),
+                          backgroundColor: titleColor.withValues(alpha: 0.1),
+                          elevation: 0
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.calendar_today_outlined,
+                              color: titleColor,
+                            ),
+                            Padding(
+                              padding: EdgeInsetsGeometry.symmetric(
+                                horizontal: 10
+                              ),
+                              child: Text(
+                                "今日の日付",
+                                style: TextStyle(
+                                  color: titleColor,
+                                  fontWeight: FontWeight.bold
+                                ),
+                              ),
+                            )
+                          ],
+                        )
+                      ),
+                    ),
+                  ),
+                  
+
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsetsGeometry.only(
+                        right: 5
+                      ),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          DateTime selectedDate = await inputDate_select(context);
+                          //テキストフィールド用にフォーマット
+                          String formattedDate = "${selectedDate.year}/${selectedDate.month.toString().padLeft(2, '0')}/${selectedDate.day.toString().padLeft(2, '0')}";
+                          //テキストコントローラの値を更新
+                          _dateController.text = formattedDate;
+                          //テキストフィールドのフォーカスを外す
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          //providerに値を入れる
+                          ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(date: selectedDate);
+                          //ボタンを押すと必ず正しい値が入力されるので，flagをtrueにする
+                          ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(date: true);
+                        }, 
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 0
+                          ),
+                          backgroundColor: titleColor.withValues(alpha: 0.1),
+                          elevation: 0
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(width: 18,),
+
+                                  Icon(
+                                    Icons.calendar_today_outlined,
+                                    color: titleColor,
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsetsGeometry.symmetric(
+                                      horizontal: 10
+                                    ),
+                                    child: Text(
+                                      "日付入力",
+                                      style: TextStyle(
+                                        color: titleColor,
+                                        fontWeight: FontWeight.bold
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              )
+                            ),
+                            
+                            Icon(
+                              Icons.navigate_next,
+                              color: titleColor,
+                            )
+                            
+                          ],
+                        )
+                      ),
+                    ),
+                  ),
+                  
+                  
+                ],
+              ),
+            )
+            
+
+
+
+          ],
         )
-      ],
+      ),
     );
+
+    // return Column(
+    //   children: [
+    //     SizedBox(
+    //       width: MediaQuery.of(context).size.width*0.9,
+    //       child: TextFormField(
+    //         autovalidateMode: AutovalidateMode.onUserInteraction,
+    //         validator: (text){
+    //           //正しい入力がされているかを判定
+    //           if(text!=null){
+    //             try{
+    //               //正しい値が入力されていないとここでエラーになる
+    //               DateFormat("yyyy/MM/dd").parseStrict(text);
+    //               return null;
+    //             }
+    //             catch(e){
+    //               //正しい値が入力されていない
+    //               return "正しい値を入力してください";
+    //             }
+    //           }
+    //         },
+    //         onChanged: (text){
+    //           //正しい入力がされているかを判定
+    //             try{
+    //               //正しい値が入力されていないとここでエラーになる
+    //               DateTime inputDate = DateFormat("yyyy/MM/DD").parseStrict(text);
+    //               //正しい値が入力されているならproviderの値を更新
+    //               ref.read(animeInputProvider.notifier).state = ref.read(animeInputProvider).copyWith(date: inputDate);
+    //               ref.read(animeCorrectInputProvider.notifier).state = ref.read(animeCorrectInputProvider).copyWith(date: true);
+    //             }
+    //             catch(e){
+    //               //正しい値が入力されていない
+    //               ref.read(animeCorrectInputProvider.notifier).state = ref.read(animeCorrectInputProvider).copyWith(date: false);
+    //             }
+    //         },
+    //         controller: _dateController,
+    //         decoration: InputDecoration(
+    //           border: OutlineInputBorder(),
+    //           labelText: "日付",
+    //         ),
+    //       ),
+    //     ),
+
+    //     SizedBox(height: 6,),
+
+    //     SizedBox(
+    //       width: MediaQuery.of(context).size.width * 0.9,
+    //       child: Row(
+    //         children: [
+    //           SizedBox(
+    //             width: MediaQuery.of(context).size.width * 0.44,
+    //             child: ElevatedButton(
+    //               onPressed: (){
+    //                 DateTime selectedDate=inputDate_today();
+    //                 //テキストフィールド用にフォーマット
+    //                 String formattedDate="${selectedDate.year}/${selectedDate.month.toString().padLeft(2, '0')}/${selectedDate.day.toString().padLeft(2, '0')}";
+    //                 //テキストコントローラの値を更新
+    //                 _dateController.text=formattedDate;
+    //                 //テキストフィールドのフォーカスを外す
+    //                 FocusManager.instance.primaryFocus?.unfocus();
+    //                 //providerに値を入れる
+    //                 ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(date: selectedDate);
+    //                 //ボタンを押すと必ず正しい値が入力されるので，flagをtrueにする
+    //                 ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(date: true);
+    //               }, 
+    //               style: ElevatedButton.styleFrom(
+    //                 shape: RoundedRectangleBorder(
+    //                   borderRadius: BorderRadius.circular(15),
+    //                 )
+    //               ),
+    //               child: Row(
+    //                 mainAxisAlignment: MainAxisAlignment.center,
+    //                 children: [
+    //                   const Icon(Icons.calendar_today_outlined),
+    //                   SizedBox(width: MediaQuery.of(context).size.width*0.03,),
+    //                   const Text("今日の日付")
+    //                 ],
+    //               )
+    //               )
+    //           ),
+    //           SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
+    //           SizedBox(
+    //             width: MediaQuery.of(context).size.width * 0.44,
+    //             child: ElevatedButton(
+    //               onPressed: () async {
+    //                 DateTime selectedDate = await inputDate_select(context);
+    //                 //テキストフィールド用にフォーマット
+    //                 String formattedDate = "${selectedDate.year}/${selectedDate.month.toString().padLeft(2, '0')}/${selectedDate.day.toString().padLeft(2, '0')}";
+    //                 //テキストコントローラの値を更新
+    //                 _dateController.text = formattedDate;
+    //                 //テキストフィールドのフォーカスを外す
+    //                 FocusManager.instance.primaryFocus?.unfocus();
+    //                 FocusManager.instance.primaryFocus?.unfocus();
+    //                 //providerに値を入れる
+    //                 ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(date: selectedDate);
+    //                 //ボタンを押すと必ず正しい値が入力されるので，flagをtrueにする
+    //                 ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(date: true);
+    //               }, 
+    //               style: ElevatedButton.styleFrom(
+    //                 shape: RoundedRectangleBorder(
+    //                   borderRadius: BorderRadius.circular(15),
+    //                 )
+    //               ),
+    //               child: Row(
+    //                 mainAxisAlignment: MainAxisAlignment.center,
+    //                 children: [
+    //                   const Icon(Icons.calendar_today),
+    //                   SizedBox(width: MediaQuery.of(context).size.width*0.03,),
+    //                   const Text("日付選択"),
+    //                   SizedBox(width: MediaQuery.of(context).size.width*0.03,),
+    //                   const Icon(Icons.navigate_next_outlined)
+    //                 ],
+    //               )
+    //               )
+    //           )
+    //         ],
+    //       ),
+    //     )
+    //   ],
+    // );
   }
 }
 

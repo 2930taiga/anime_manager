@@ -292,51 +292,84 @@ class AnimeRegistar extends ConsumerWidget{
           alignment: Alignment.topCenter,
           child: Column(
             children: [
-              const SizedBox(height: 20,),//-----------------------------------------------------
+              // const SizedBox(height: 20,),//-----------------------------------------------------
 
               //ステータス
               StatusDropDownMenu(),
 
-              const SizedBox(height: 20,),//-----------------------------------------------------
+              // const SizedBox(height: 20,),//-----------------------------------------------------
 
-              //タイトル
-              InputFieldTitle(),
+              // const SizedBox(height: 20,),//-----------------------------------------------------
 
-              const SizedBox(height: 20,),//-----------------------------------------------------
+              Padding( //タイトル，日付
+                padding: EdgeInsetsGeometry.symmetric(
+                  horizontal: 10,
+                  vertical: 5
+                ),
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 10
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        blurRadius: 3
+                      )
+                    ]
+                  ),
+                  child: Column(
+                    children: [
+                      //タイトル
+                      InputFieldTitle(),
 
-              //タイトルかな
-              InputFieldTitleKana(),
+                      //タイトルかな
+                      InputFieldTitleKana(),
 
-              const SizedBox(height: 20,),//-----------------------------------------------------
+                      //日付
+                      InputFieldDate(),
 
-              //日付
-              InputFieldDate(),
+                      //放送年
+                      InputOnAirDate(),
+                    ],
+                  ),
+                ),
+              ),
 
-              const SizedBox(height: 20,),//-----------------------------------------------------
+              
 
-              InputOnAirDate(),
+              // const SizedBox(height: 20,),//-----------------------------------------------------
 
-              const SizedBox(height: 20,),//-----------------------------------------------------
+              
+
+              // const SizedBox(height: 20,),//-----------------------------------------------------
+
+
+
+              // const SizedBox(height: 20,),//-----------------------------------------------------
 
               //ジャンル選択ボタン
               SelectedGenreText(),
 
-              const SizedBox(height: 20,),//-----------------------------------------------------
+              // const SizedBox(height: 20,),//-----------------------------------------------------
 
               //話数
               InputFieldEpNum(),
 
-              const SizedBox(height: 20,),//-----------------------------------------------------
+              // const SizedBox(height: 20,),//-----------------------------------------------------
 
               //時間
               InputFieldEpTime(),
               
-              const SizedBox(height: 20,),//-----------------------------------------------------
+              // const SizedBox(height: 20,),//-----------------------------------------------------
 
               //評価
               EvaluationIcons(),
 
-              const SizedBox(height: 20,),//-----------------------------------------------------
+              // const SizedBox(height: 20,),//-----------------------------------------------------
               
               //メモ
               InputFieldMemo(),
