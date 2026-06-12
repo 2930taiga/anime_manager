@@ -12,7 +12,9 @@ final onEditiongFlagProvider = StateProvider<bool>((ref){
 
 //タイトル入力欄---------------------------------------------------------------------------------------
 class TitleIputField extends ConsumerStatefulWidget {
-  const TitleIputField({super.key});
+  //テキストの初期値
+  final String initialText;
+  const TitleIputField({super.key,required this.initialText});
 
   @override
   ConsumerState<TitleIputField> createState() => _TitleIputFieldState();
@@ -25,7 +27,7 @@ class _TitleIputFieldState extends ConsumerState<TitleIputField> {
       width: MediaQuery.of(context).size.width*0.9,
       child: TextFormField(
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        initialValue: ref.read(genreInputProvider.notifier).state.title,
+        initialValue: widget.initialText,
         validator: (text){
           if(text==null || text ==""){
             return "ジャンル名を入力してください";

@@ -396,7 +396,7 @@ class _GenreRegistarState extends ConsumerState<GenreRegistar> {
               //ジャンル名入力欄
               TitleText(titleText: "ジャンル名"),
               SizedBox(height: 10,),
-              TitleIputField(),
+              TitleIputField(initialText: _title,),
 
               SizedBox(height: 20,),
 
