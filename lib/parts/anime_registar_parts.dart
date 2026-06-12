@@ -1420,7 +1420,12 @@ class _EvaluationIconsState extends ConsumerState<EvaluationIcons> {
             onPressed: (){
               FocusScope.of(context).unfocus(); //テキストのフォーカスを外す
               setState(() {
-                _evaluation=1;
+                if(_evaluation==1){
+                  _evaluation=0;
+                }
+                else{
+                  _evaluation=1;
+                }
               });
               //providerの評価を書き換える
               ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(evaluation: _evaluation);
@@ -1435,7 +1440,12 @@ class _EvaluationIconsState extends ConsumerState<EvaluationIcons> {
             onPressed: (){
               FocusScope.of(context).unfocus(); //テキストのフォーカスを外す
               setState(() {
-                _evaluation=2;
+                if(_evaluation==2){
+                  _evaluation=0;
+                }
+                else{
+                  _evaluation=2;
+                }
               });
               //providerの評価を書き換える
               ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(evaluation: _evaluation);
@@ -1450,7 +1460,12 @@ class _EvaluationIconsState extends ConsumerState<EvaluationIcons> {
             onPressed: (){
               FocusScope.of(context).unfocus(); //テキストのフォーカスを外す
               setState(() {
-                _evaluation=3;
+                if(_evaluation==3){
+                  _evaluation=0;
+                }
+                else{
+                  _evaluation=3;
+                }
               });
               //providerの評価を書き換える
               ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(evaluation: _evaluation);
@@ -1465,7 +1480,12 @@ class _EvaluationIconsState extends ConsumerState<EvaluationIcons> {
             onPressed: (){
               FocusScope.of(context).unfocus(); //テキストのフォーカスを外す
               setState(() {
-                _evaluation=4;
+                if(_evaluation==4){
+                  _evaluation=0;
+                }
+                else{
+                  _evaluation=4;
+                }
               });
               //providerの評価を書き換える
               ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(evaluation: _evaluation);
@@ -1480,7 +1500,12 @@ class _EvaluationIconsState extends ConsumerState<EvaluationIcons> {
             onPressed: (){
               FocusScope.of(context).unfocus(); //テキストのフォーカスを外す
               setState(() {
-                _evaluation=5;
+                if(_evaluation==5){
+                  _evaluation=0;
+                }
+                else{
+                  _evaluation=5;
+                }
               });
               //providerの評価を書き換える
               ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(evaluation: _evaluation);

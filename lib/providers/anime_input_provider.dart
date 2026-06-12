@@ -87,11 +87,11 @@ class AnimeCorrectInputData {
   const AnimeCorrectInputData({
     this.status = false,
     this.title = false,
-    this.titleKana= false,
+    this.titleKana= true,
     this.date = false,
     this.onAirYear = false,
     this.season = false,
-    this.genreId = false,
+    this.genreId = true,
     this.epNum = false,
     this.epTime = false,
     this.evaluation = true,
