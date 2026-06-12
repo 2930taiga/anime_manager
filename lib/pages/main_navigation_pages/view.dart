@@ -295,11 +295,11 @@ class _ViewPageState extends ConsumerState<ViewPage> {
                                       Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          //簡易版info
-                                          AnimeInfoSimpleInfo(anime: _animes[index]),
+                                          //一覧版info
+                                          AnimeViewInfoSimpleInfo(anime: _animes[index]),
 
                                           //評価
-                                          AnimeInfoEvaluation(anime: _animes[index]),
+                                          //AnimeInfoEvaluation(anime: _animes[index]),
 
                                           if(_animes[index].memo != "") //メモ欄（空白なら表示しない）
                                           AnimeInfoSimpleMemo(anime: _animes[index])
@@ -422,39 +422,45 @@ class _ViewPageState extends ConsumerState<ViewPage> {
                                   if(_animes[index].status==AnimeStatus.watching)
                                   Padding(
                                     padding: EdgeInsetsGeometry.symmetric(
-                                      vertical: 3
+                                      vertical: 0
                                     ),
                                     child: Row(
                                       children: [
-                                        IconButton(
-                                          onPressed: () async {
-                                            //話数を増やす
-                                            try{
-                                              await isar.writeTxn(() async {
-                                                //現在の情報をコピー
-                                                final newAnime = _animes[index];
-                                                //話数だけ増やす
-                                                newAnime.epNum = _animes[index].epNum+1;
-                                                //データベースに保存する
-                                                await isar.animes.put(newAnime);
-                                                //スナックバーにメッセージを表示
+                                        SizedBox(
+                                          // height: 10,
+                                          // width: 10,
+                                          child: IconButton(
+                                            onPressed: () async {
+                                              //話数を増やす
+                                              try{
+                                                await isar.writeTxn(() async {
+                                                  //現在の情報をコピー
+                                                  final newAnime = _animes[index];
+                                                  //話数だけ増やす
+                                                  newAnime.epNum = _animes[index].epNum+1;
+                                                  //データベースに保存する
+                                                  await isar.animes.put(newAnime);
+                                                  //スナックバーにメッセージを表示
+                                                  showSnackBar(
+                                                    context,
+                                                    "${_animes[index].title}の話数を増やしました"
+                                                  );
+                                                });
+                                                //画面を更新
+                                                _refreshAnimes();
+                                              }
+                                              catch(e){
+                                                //失敗したメッセージを表示
                                                 showSnackBar(
                                                   context,
-                                                  "${_animes[index].title}の話数を増やしました"
+                                                  "話数の更新に失敗しました．デバッグモードで確認してください"
                                                 );
-                                              });
-                                              //画面を更新
-                                              _refreshAnimes();
-                                            }
-                                            catch(e){
-                                              //失敗したメッセージを表示
-                                              showSnackBar(
-                                                context,
-                                                "話数の更新に失敗しました．デバッグモードで確認してください"
-                                              );
-                                            }
-                                          },
-                                          icon: Icon(Icons.add)
+                                              }
+                                            },
+                                            icon: Icon(
+                                              Icons.add
+                                            )
+                                          ),
                                         ),
                                         IconButton(
                                           onPressed: () async {

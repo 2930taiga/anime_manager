@@ -26,7 +26,7 @@ class AnimeInfoTitle extends StatelessWidget {
       ? TextOverflow.ellipsis
       : null,
       style: TextStyle(
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: FontWeight.bold
       ),
     );
@@ -81,7 +81,7 @@ class AnimeInfoSimpleGenre extends StatelessWidget {
             child: Text(
               genre.name,
               style: TextStyle(
-                fontSize: 10.5,
+                fontSize: 10,
                 fontWeight: FontWeight.bold,
                 color: Color.fromARGB(
                   255,
@@ -93,6 +93,174 @@ class AnimeInfoSimpleGenre extends StatelessWidget {
             ),
           );
         }).toList(),
+      ),
+    );
+  }
+}
+
+//アニメ情報欄（一覧表示ver）
+class AnimeViewInfoSimpleInfo extends StatelessWidget {
+  final Anime anime;
+  const AnimeViewInfoSimpleInfo({super.key,required this.anime});
+
+  //季節の日本語
+  static List<String> seasonJP = [
+    "春",
+    "夏",
+    "秋",
+    "冬"
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: EdgeInsets.symmetric(
+            vertical: 1
+          ),
+          child: Text(
+            "${anime.onAirYear}年 "
+            "${seasonJP[anime.season.index]}"
+            "アニメ｜"
+            "${anime.date.year}"
+            "/"
+            "${anime.date.month}"
+            "/"
+            "${anime.date.day}"
+            "｜"
+            "${anime.epNum}"
+            "話",
+            style: TextStyle(
+              fontSize: 12
+            ),
+          ),
+        ),
+        Container(
+          padding: EdgeInsets.symmetric(
+            vertical: 1
+          ),
+          child: Row( //評価アイコン
+            children: [
+              Icon(
+                Icons.star,
+                size: 15,
+                color: anime.evaluation>=1
+                ? Color.fromARGB(255, 255, 192, 0)
+                : Colors.grey,
+              ),
+              Icon(
+                Icons.star,
+                size: 15,
+                color: anime.evaluation>=2
+                ? Color.fromARGB(255, 255, 192, 0)
+                : Colors.grey,
+              ),
+              Icon(
+                Icons.star,
+                size: 15,
+                color: anime.evaluation>=3
+                ? Color.fromARGB(255, 255, 192, 0)
+                : Colors.grey,
+              ),
+              Icon(
+                Icons.star,
+                size: 15,
+                color: anime.evaluation>=4
+                ? Color.fromARGB(255, 255, 192, 0)
+                : Colors.grey,
+              ),
+              Icon(
+                Icons.star,
+                size: 15,
+                color: anime.evaluation>=5
+                ? Color.fromARGB(255, 255, 192, 0)
+                : Colors.grey,
+              ),
+              Text( //評価テキスト
+                " ${anime.evaluation.toString()}.0 / 5.0",
+                style: TextStyle(
+                  fontSize: 12
+                ),
+              ),
+            ],
+          ),
+        ),
+        // Container(
+        //   padding: EdgeInsets.symmetric(
+        //     vertical: 1
+        //   ),
+        //   child: Text(
+        //     "${anime.epNum}"
+        //     "話｜"
+        //     "${anime.epTime}"
+        //     "分 / 話",
+        //     style: TextStyle(
+        //       fontSize: 13.5
+        //     ),
+        //   ),
+        // ),
+      ],
+    );
+  }
+}
+
+//評価欄（一覧表示ver）
+class AnimeViewInfoEvaluation extends StatelessWidget {
+  final Anime anime;
+  const AnimeViewInfoEvaluation({super.key, required this.anime});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        vertical: 1
+      ),
+      child: Row( //評価アイコン
+        children: [
+          Icon(
+            Icons.star,
+            size: 17,
+            color: anime.evaluation>=1
+            ? Color.fromARGB(255, 255, 192, 0)
+            : Colors.grey,
+          ),
+          Icon(
+            Icons.star,
+            size: 17,
+            color: anime.evaluation>=2
+            ? Color.fromARGB(255, 255, 192, 0)
+            : Colors.grey,
+          ),
+          Icon(
+            Icons.star,
+            size: 17,
+            color: anime.evaluation>=3
+            ? Color.fromARGB(255, 255, 192, 0)
+            : Colors.grey,
+          ),
+          Icon(
+            Icons.star,
+            size: 17,
+            color: anime.evaluation>=4
+            ? Color.fromARGB(255, 255, 192, 0)
+            : Colors.grey,
+          ),
+          Icon(
+            Icons.star,
+            size: 17,
+            color: anime.evaluation>=5
+            ? Color.fromARGB(255, 255, 192, 0)
+            : Colors.grey,
+          ),
+          Text( //評価テキスト
+            " ${anime.evaluation.toString()}.0 / 5.0",
+            style: TextStyle(
+              fontSize: 14
+            ),
+          ),
+        ],
       ),
     );
   }
