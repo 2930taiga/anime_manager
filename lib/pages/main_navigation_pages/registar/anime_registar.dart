@@ -10,12 +10,31 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:anime_administration/parts/anime_registar_parts.dart';
 //UIの設定に関するパラメータをインポート
 import 'package:anime_administration/parameter_settings.dart';
+import 'package:isar/isar.dart';
 
-class AnimeRegistar extends ConsumerWidget{
+class AnimeRegistar extends ConsumerStatefulWidget {
   const AnimeRegistar({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref){
+  ConsumerState<AnimeRegistar> createState() => _AnimeRegistarState();
+}
+
+class _AnimeRegistarState extends ConsumerState<AnimeRegistar> {
+
+  List<Genre> genres = [];
+
+  @override
+  void initState(){
+    super.initState();
+
+    Future(()async{
+      genres = await ref.read(isarProvider).genres.where().findAll();
+    });
+
+  }
+
+  @override
+  Widget build(BuildContext context){
     //providerのインスタンスを作成
     final animeInput = ref.watch(animeInputProvider);
     final animeCorrectInput = ref.watch(animeCorrectInputProvider);
@@ -301,7 +320,9 @@ class AnimeRegistar extends ConsumerWidget{
 
               // const SizedBox(height: 20,),//-----------------------------------------------------
 
-              Padding( //タイトル，日付
+
+              //タイトル，日付
+              Padding(
                 padding: EdgeInsetsGeometry.symmetric(
                   horizontal: 10,
                   vertical: 5
@@ -340,6 +361,65 @@ class AnimeRegistar extends ConsumerWidget{
               ),
 
               
+              //ジャンル
+              Padding(
+                padding: EdgeInsetsGeometry.symmetric(
+                  horizontal: 10,
+                  vertical: 5
+                ),
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        blurRadius: 3
+                      )
+                    ]
+                  ),
+                  child: SelectedGenreText(genres: genres,),
+                ),
+              ),
+
+
+              //話数，時間入力欄
+              Padding(
+                padding: EdgeInsetsGeometry.symmetric(
+                  horizontal: 0,
+                  vertical: 5
+                ),
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        blurRadius: 3
+                      )
+                    ]
+                  ),
+                  child: Column(
+                    children: [
+                      //話数
+                      InputFieldEpNum(),
+
+                      //時間
+                      InputFieldEpTime(),
+                    ],
+                  ),
+                ),
+              ),
+              
 
               // const SizedBox(height: 20,),//-----------------------------------------------------
 
@@ -347,22 +427,7 @@ class AnimeRegistar extends ConsumerWidget{
 
               // const SizedBox(height: 20,),//-----------------------------------------------------
 
-
-
-              // const SizedBox(height: 20,),//-----------------------------------------------------
-
-              //ジャンル選択ボタン
-              SelectedGenreText(),
-
-              // const SizedBox(height: 20,),//-----------------------------------------------------
-
-              //話数
-              InputFieldEpNum(),
-
-              // const SizedBox(height: 20,),//-----------------------------------------------------
-
-              //時間
-              InputFieldEpTime(),
+              
               
               // const SizedBox(height: 20,),//-----------------------------------------------------
 
@@ -396,3 +461,401 @@ class AnimeRegistar extends ConsumerWidget{
     );
   }
 }
+
+
+// class AnimeRegistar extends ConsumerWidget{
+//   const AnimeRegistar({super.key});
+
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref){
+//     //providerのインスタンスを作成
+//     final animeInput = ref.watch(animeInputProvider);
+//     final animeCorrectInput = ref.watch(animeCorrectInputProvider);
+//     final isar = ref.watch(isarProvider);
+
+//     //保存に関する関数を定義
+//     Future<void> Save () async {
+//       //保存できる状態かを確認する
+//       if(animeCorrectInput.isInvalid==true){ //保存できる
+//         //アニメのモデルを生成
+//         final anime = Anime()
+//         ..status = animeInput.status
+//         ..title = animeInput.title
+//         ..titleKana = animeInput.titleKana
+//         ..date = animeInput.date
+//         ..onAirYear = animeInput.onAirYear
+//         ..season = animeInput.season
+//         ..epNum = animeInput.epNum
+//         ..epTime = animeInput.epTime
+//         ..evaluation = animeInput.evaluation
+//         ..memo = animeInput.memo;
+
+//         try{
+//           await isar.writeTxn(() async {
+//             //アニメ本体を保存
+//             await isar.animes.put(anime);
+
+//             //選択されたジャンルを取得
+//             final genres = await isar.genres.getAll(
+//               animeInput.genreId.toList(),
+//             );
+
+//             //nullを除去してリンクへ追加
+//             anime.genres.addAll(
+//               genres.whereType<Genre>(),
+//             );
+
+//             //リンク保存
+//             await anime.genres.save();
+//           });
+
+//           //スナックバーにメッセージを表示
+//           showSnackBar(context, "「${animeInput.title}」を保存しました");
+
+//           //画面を戻る
+//           Navigator.pop(context);
+//         }
+//         catch(e){
+//           //保存に失敗したらメッセージを出す
+//           showSnackBar(context, "保存に失敗しました．デバッグモードで確認してください");
+//         }
+
+        
+//       }
+//       else{ //保存できない
+//         //入力に不備がある箇所を取得
+//         List<String> erroeParameters = animeCorrectInput.invalidFields;
+
+//         //パラメータのリスト
+//         List<String> parametors = [
+//           "status",
+//           "title",
+//           "titleKana",
+//           "date",
+//           "onAirYear",
+//           "season",
+//           "genre",
+//           "epNum",
+//           "epTime",
+//           "evaluation",
+//           "memo"
+//         ];
+
+//         //パラメータのリスト（日本語）
+//         List<String> parametorsJP = [
+//           "ステータス",
+//           "タイトル",
+//           "タイトル（かな）",
+//           "日付",
+//           "放送年",
+//           "季節",
+//           "ジャンル",
+//           "話数",
+//           "1話あたりの時間",
+//           "評価",
+//           "メモ"
+//         ];
+
+//         //エラーのパラメータ
+//         Map<String,bool> errorParametorFlags = {
+//           "status" : true,
+//           "title" : true,
+//           "titleKana" : true,
+//           "date" : true,
+//           "onAirYear" : true,
+//           "season" : true,
+//           "genre" : true,
+//           "epNum" : true,
+//           "epTime" : true,
+//           "evaluation" : true,
+//           "memo" : true
+//         };
+
+//         //エラー判定を行い，エラーメッセージを作成
+//         if(erroeParameters.contains("status")){ //ステータスに不備
+//           errorParametorFlags["status"]=false;
+//         }
+//         if(erroeParameters.contains("title")){ //タイトルに不備
+//           errorParametorFlags["title"]=false;
+//         }
+//         if(erroeParameters.contains("titleKana")){ //タイトル（かな）に不備
+//           errorParametorFlags["titleKana"]=false;
+//         }
+//         if(erroeParameters.contains("genreId")){ //ジャンルに不備
+//           errorParametorFlags["genre"]=false;
+//         }
+//         if(erroeParameters.contains("date")){ //日付に不備
+//           errorParametorFlags["date"]=false;
+//         }
+//         if(erroeParameters.contains("onAirYear")){ //放送年に不備
+//           errorParametorFlags["onAirYear"]=false;
+//         }
+//         if(erroeParameters.contains("season")){ //放送時期に不備
+//           errorParametorFlags["season"]=false;
+//         }
+//         if(erroeParameters.contains("epNum")){ //話数に不備
+//           errorParametorFlags["epNum"]=false;
+//         }
+//         if(erroeParameters.contains("epTime")){ //時間に不備
+//           errorParametorFlags["epTime"]=false;
+//         }
+//         if(erroeParameters.contains("evaluation")){ //評価に不備
+//           errorParametorFlags["evaluation"]=false;
+//         }
+
+//         //エラーメッセージに表示するエラー項目を作成
+//         List<Widget> errorParameterWidgets = 
+//           List.generate(errorParametorFlags.length,(index){
+//             return SizedBox(
+//               child: Row(
+//                 children: [
+//                   Icon(
+//                     errorParametorFlags[parametors[index]] ?? false
+//                     ? Icons.done
+//                     : Icons.close,
+//                     color: errorParametorFlags[parametors[index]] ?? false
+//                     ? Colors.lightGreen
+//                     :Colors.red,
+//                   ),
+
+//                   SizedBox(width: MediaQuery.of(context).size.width*0.02,),
+
+//                   Expanded(
+//                     child: Text(
+//                       parametorsJP[index],
+//                       style: TextStyle(
+//                         fontSize: 17
+//                       ),
+//                     )
+//                   )
+//                 ],
+//               ),
+//             );
+//           });
+
+//         //print("ここまで実行");
+//         //ダイアログを表示
+//         showDialog(context: context,
+//         builder: (content){
+//           return Dialog(
+//             child: SizedBox(
+//               width: MediaQuery.of(context).size.width * 0.9,
+//               height: 490,
+//               child: Column(
+//                 children: [
+
+//                   SizedBox(height: 30,),
+                  
+//                   Text( //タイトル
+//                     "エラー",
+//                     style: TextStyle(
+//                       fontSize: 27,
+//                       color: Texts.errorMessageColor,
+//                       fontWeight: FontWeight.bold
+//                     ),
+//                   ),
+
+//                   SizedBox(height: 15,),
+
+//                   Text( //サブメッセージ
+//                     "入力を確認してください",
+//                     style: TextStyle(
+//                       color: Texts.subMessageColor,
+//                       fontSize: 17
+//                     ),
+//                   ),
+                  
+//                   SizedBox(height: 20,),
+
+//                   Expanded( //エラー項目を表示する
+//                     child: Row(
+//                       children: [
+//                         SizedBox(width: MediaQuery.of(context).size.width * 0.1,),
+
+//                         Expanded(
+//                         child: Column(
+//                           children: errorParameterWidgets,
+//                         )
+//                       ),
+
+//                         SizedBox(width: MediaQuery.of(context).size.width * 0.05,),
+//                       ],
+//                     )
+//                   ),
+
+//                   SizedBox(height: 20,),
+
+//                   SizedBox( //OKボタン
+//                     width: MediaQuery.of(context).size.width * 0.6,
+//                     height: 50,
+//                     child: ElevatedButton(
+//                       onPressed: (){
+//                         Navigator.pop(context);
+//                         FocusManager.instance.primaryFocus?.unfocus();
+//                       },
+//                       style: ElevatedButton.styleFrom(
+//                         backgroundColor: ElevatedButtons.backgroundColor
+//                       ),
+//                       child: Text(
+//                         "OK",
+//                         style: TextStyle(
+//                           color: ElevatedButtons.fontColor,
+//                           fontSize: 18
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+
+//                   SizedBox(height: 25,),
+//                 ],
+//               ),
+//             ),
+//           );
+//         }
+//         );
+//       }
+//     }
+
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text("アニメ登録"),
+//         leading: IconButton( //戻るボタン
+//           onPressed: (){
+//             Navigator.pop(context);
+//           },
+//           icon: Icon(Icons.arrow_back)
+//         ),
+//         actions: [
+//           TextButton(
+//             onPressed: Save,
+//             child: Text(
+//               "保存",
+//               style: TextStyle(
+//                 color: Colors.blue,
+//                 //fontWeight: FontWeight.bold,
+//                 fontSize: 16
+//               ),
+//             )
+//           )
+//         ],
+//       ),
+//       body: SingleChildScrollView(
+//         child: Align(
+//           alignment: Alignment.topCenter,
+//           child: Column(
+//             children: [
+//               // const SizedBox(height: 20,),//-----------------------------------------------------
+
+//               //ステータス
+//               StatusDropDownMenu(),
+
+//               // const SizedBox(height: 20,),//-----------------------------------------------------
+
+//               // const SizedBox(height: 20,),//-----------------------------------------------------
+
+//               Padding( //タイトル，日付
+//                 padding: EdgeInsetsGeometry.symmetric(
+//                   horizontal: 10,
+//                   vertical: 5
+//                 ),
+//                 child: Container(
+//                   padding: EdgeInsets.symmetric(
+//                     horizontal: 10,
+//                     vertical: 10
+//                   ),
+//                   decoration: BoxDecoration(
+//                     color: Colors.white,
+//                     borderRadius: BorderRadius.circular(10),
+//                     boxShadow: [
+//                       BoxShadow(
+//                         color: Colors.grey,
+//                         blurRadius: 3
+//                       )
+//                     ]
+//                   ),
+//                   child: Column(
+//                     children: [
+//                       //タイトル
+//                       InputFieldTitle(),
+
+//                       //タイトルかな
+//                       InputFieldTitleKana(),
+
+//                       //日付
+//                       InputFieldDate(),
+
+//                       //放送年
+//                       InputOnAirDate(),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+
+              
+//               Padding( //ジャンル
+//                 padding: EdgeInsetsGeometry.symmetric(
+//                   horizontal: 10,
+//                   vertical: 5
+//                 ),
+//                 child: Container(
+//                   padding: EdgeInsets.symmetric(
+//                     horizontal: 10,
+//                     vertical: 10
+//                   ),
+//                   decoration: BoxDecoration(
+//                     color: Colors.white,
+//                     borderRadius: BorderRadius.circular(10),
+//                     boxShadow: [
+//                       BoxShadow(
+//                         color: Colors.grey,
+//                         blurRadius: 3
+//                       )
+//                     ]
+//                   ),
+//                   child: SelectedGenreText(),
+//                 ),
+//               ),
+              
+
+//               // const SizedBox(height: 20,),//-----------------------------------------------------
+
+//               //話数
+//               InputFieldEpNum(),
+
+//               // const SizedBox(height: 20,),//-----------------------------------------------------
+
+//               //時間
+//               InputFieldEpTime(),
+              
+//               // const SizedBox(height: 20,),//-----------------------------------------------------
+
+//               //評価
+//               EvaluationIcons(),
+
+//               // const SizedBox(height: 20,),//-----------------------------------------------------
+              
+//               //メモ
+//               InputFieldMemo(),
+
+//               //下までスクロールできるようにするためのbox
+//               const SizedBox(height: 50,),
+
+//               // TextButton(
+//               //   onPressed: (){
+//               //     print(animeInput.onAirYear);
+//               //   },
+//               //   child: Text("テスト用")
+//               // ),
+//               // TextButton(
+//               //   onPressed: (){
+//               //     print(animeCorrectInput.onAirYear);
+//               //   },
+//               //   child: Text("テスト用1")
+//               // ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }

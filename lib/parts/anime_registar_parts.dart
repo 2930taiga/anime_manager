@@ -13,6 +13,8 @@ import 'package:anime_administration/models/anime.dart';
 //パラメータ
 //タイトル，日付
 const Color titleColor = Color.fromARGB(255,38, 89, 254);
+//ジャンル
+const Color genreColor = Color.fromARGB(255, 65, 76, 255);
 
 //-----------------------------------ドロップダウンメニュー--------------------------
 class StatusDropDownMenu extends ConsumerWidget {
@@ -1081,7 +1083,8 @@ Future<int?> inputOnAirYear(BuildContext context) async{
 
 //-----------------------------------ジャンル入力ボタン--------------------------
 class SelectedGenreText extends ConsumerStatefulWidget {
-  const SelectedGenreText({super.key});
+  final List<Genre> genres;
+  const SelectedGenreText({super.key,required this.genres});
 
   @override
   ConsumerState<SelectedGenreText> createState() => _SelectedGenreTextState();
@@ -1089,7 +1092,7 @@ class SelectedGenreText extends ConsumerStatefulWidget {
 
 class _SelectedGenreTextState extends ConsumerState<SelectedGenreText> {
   //入力されているジャンルを表示するテキスト
-  String select_genre_text = "ジャンルが選択されていません";
+  //String select_genre_text = "ジャンルが選択されていません";
   //選択されているジャンルのidを保持するリスト
   Set<int> selected_genre_id={};
 
@@ -1249,41 +1252,42 @@ class _SelectedGenreTextState extends ConsumerState<SelectedGenreText> {
                           }
                           //ジャンル表示テキストに表示する用のテキストを作成
                           //初期文字列
-                          String genre_text_temp="";
+                          //String genre_text_temp="";
                           //選択されているジャンルのSet<int>を小さい順に並び替え，文字列を作成
-                          for(int _id in selected_genre_id.toList()..sort()){
-                            //選択されているジャンルのidから，文字列を作成
-                            genre_text_temp += _genres.firstWhere((g) => g.id == _id).name; //データベースからidが一致するものを探し出し，nameを取得する
-                            //","で区切る
-                            genre_text_temp += "，";
-                          }
+                          // for(int _id in selected_genre_id.toList()..sort()){
+                          //   //選択されているジャンルのidから，文字列を作成
+                          //   genre_text_temp += _genres.firstWhere((g) => g.id == _id).name; //データベースからidが一致するものを探し出し，nameを取得する
+                          //   //","で区切る
+                          //   genre_text_temp += "，";
+                          // }
 
-                          //最後の","を取る
-                          if(genre_text_temp!=""){
-                            genre_text_temp = genre_text_temp.substring(0 , genre_text_temp.length - 1 );
-                          }
+                          // //最後の","を取る
+                          // if(genre_text_temp!=""){
+                          //   genre_text_temp = genre_text_temp.substring(0 , genre_text_temp.length - 1 );
+                          // }
 
                           //もし文字列が空白のままなら，「ジャンルが選択されていません」に戻し，providerの値を更新する
-                          if(genre_text_temp == ""){ //何も入力されていない
-                            genre_text_temp = "ジャンルが選択されていません";
-                            //providerの値を更新する
-                            ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(genreId: false);
-                          }
-                          else{ //ジャンルが選択されている
-                            //providerの値を更新する
-                            ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(genreId: true);
-                          }
+                          // if(genre_text_temp == ""){ //何も入力されていない
+                          //   genre_text_temp = "ジャンルが選択されていません";
+                          //   //providerの値を更新する
+                          //   ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(genreId: false);
+                          // }
+                          // else{ //ジャンルが選択されている
+                          //   //providerの値を更新する
+                          //   ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(genreId: true);
+                          // }
 
-                          //選択されているジャンルを表示するTextの中身を書き換える
-                          setState(() {
-                            select_genre_text=genre_text_temp;
-                          });
+                          // //選択されているジャンルを表示するTextの中身を書き換える
+                          // setState(() {
+                          //   select_genre_text=genre_text_temp;
+                          // });
 
                           //providerに結果を渡す
                           ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(genreId: selected_genre_id);
                           
                           //戻る
                           Navigator.pop(context);
+
                           //テキストのフォーカスを外す
                           FocusScope.of(context).unfocus();
                         },
@@ -1316,40 +1320,186 @@ class _SelectedGenreTextState extends ConsumerState<SelectedGenreText> {
     
     return Column(
       children: [
-        Container( //テキスト表示エリア
-          height: 55,
-          width: MediaQuery.of(context).size.width*0.9,
-          decoration: BoxDecoration(
-            border: Border.all(),
-            borderRadius: BorderRadius.circular(7)
+        if(ref.read(animeInputProvider.notifier).state.genreId.isEmpty)
+        Padding(
+          padding: EdgeInsetsGeometry.symmetric(
+            vertical: 10
           ),
-          child: Center(
-            child: Text(
-              select_genre_text,
-              style: TextStyle(
-                fontSize: 17
-              ),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255, 250, 251, 255),
+              borderRadius: BorderRadius.circular(10)
             ),
-          )
-          
+            padding: EdgeInsets.symmetric(
+              vertical: 20
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.local_offer,
+                  size: 20,
+                  color: Color.fromARGB(255, 80, 95, 118),
+                ),
+                SizedBox(width: 10,),
+                Text(
+                  "ジャンルが選択されていません",
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Color.fromARGB(255, 80, 95, 118)
+                  ),
+                )
+              ],
+            ),
+          ),
         ),
+
+        if(ref.read(animeInputProvider.notifier).state.genreId.isEmpty==false)
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(
+            vertical: 10
+          ),
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            alignment: WrapAlignment.start,
+            children: (ref.read(animeInputProvider.notifier).state.genreId.toList()..sort()).map((id){
+              return Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal:10,
+                  vertical: 5
+                ),
+                decoration: BoxDecoration(
+                  color:  Color.fromARGB(
+                    255,
+                    widget.genres.firstWhere(
+                      (genre)=>genre.id==id
+                    ).redValue,
+                    widget.genres.firstWhere(
+                      (genre)=>genre.id==id
+                    ).greenValue,
+                    widget.genres.firstWhere(
+                      (genre)=>genre.id==id
+                    ).blueValue,
+                  ).withValues(alpha: 0.2),
+                  borderRadius: BorderRadiusDirectional.circular(8)
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  //mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(
+                      IconShapeDatas[
+                        widget.genres.firstWhere(
+                          (genre)=>genre.id==id
+                        ).iconShape.index
+                      ],
+                      color: Color.fromARGB(
+                        255,
+                        widget.genres.firstWhere(
+                          (genre)=>genre.id==id
+                        ).redValue,
+                        widget.genres.firstWhere(
+                          (genre)=>genre.id==id
+                        ).greenValue,
+                        widget.genres.firstWhere(
+                          (genre)=>genre.id==id
+                        ).blueValue,
+                      ),
+                    ),
+
+                    Text(
+                      widget.genres.firstWhere(
+                        (genre)=>genre.id==id
+                      ).name,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(
+                          255,
+                          widget.genres.firstWhere(
+                            (genre)=>genre.id==id
+                          ).redValue,
+                          widget.genres.firstWhere(
+                            (genre)=>genre.id==id
+                          ).greenValue,
+                          widget.genres.firstWhere(
+                            (genre)=>genre.id==id
+                          ).blueValue,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              );
+            }).toList()
+          ),
+        ),
+
+        // Container( //テキスト表示エリア
+        //   height: 55,
+        //   width: MediaQuery.of(context).size.width*0.9,
+        //   decoration: BoxDecoration(
+        //     border: Border.all(),
+        //     borderRadius: BorderRadius.circular(7)
+        //   ),
+        //   child: Center(
+        //     child: Text(
+        //       select_genre_text,
+        //       style: TextStyle(
+        //         fontSize: 17
+        //       ),
+        //     ),
+        //   )
+          
+        // ),
 
         SizedBox(height: 6,), //----------------------------------------
 
         SizedBox( //ジャンル選択ボタン
           width: MediaQuery.of(context).size.width*0.9,
           child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: genreColor.withValues(alpha: 0.1),
+              elevation: 0,
+            ),
             onPressed: (){
               showSelectGenreDialog(isar);
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.local_offer),
-                SizedBox(width: MediaQuery.of(context).size.width*0.03,),
-                const Text("ジャンル選択"),
-                SizedBox(width: MediaQuery.of(context).size.width*0.03,),
-                const Icon(Icons.navigate_next)
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(width: 20,),
+
+                      Icon(
+                        Icons.add,
+                        color: genreColor,
+                      ),
+                      Padding(
+                        padding: EdgeInsetsGeometry.symmetric(
+                          horizontal: 10
+                        ),
+                        child: Text(
+                          "ジャンル選択",
+                          style: TextStyle(
+                            color: genreColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      )
+                    ],
+                  )
+                ),
+
+                Icon(
+                  Icons.navigate_next,
+                  color: genreColor,
+                )
               ],
             )
           ),
