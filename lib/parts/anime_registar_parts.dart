@@ -9,12 +9,69 @@ import 'package:anime_administration/providers/isar_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:anime_administration/models/anime.dart';
 
+//ボタンのwidgetを定義して，コードの簡略化を目指す
+//ノーマルボタン
+class SetButton extends StatelessWidget {
+  //色
+  final Color color ;
+  //テキスト
+  final String text;
+  //アイコン
+  final IconData icon;
+  //関数
+  final Function func;
+
+  const SetButton({
+    super.key,
+    required this.color,
+    required this.text,
+    required this.icon,
+    required this.func
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: func(), 
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        backgroundColor: epColor.withValues(alpha: 0.1),
+        elevation: 0,
+        padding: EdgeInsets.symmetric(horizontal: 2) //余白を小さくする
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            color: color,
+          ),
+
+          SizedBox(width: MediaQuery.of(context).size.width*0.02,),
+
+          Text(
+            text,
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.bold
+            ),
+          )
+        ],
+      )
+    );
+  }
+}
+
 
 //パラメータ
 //タイトル，日付
 const Color titleColor = Color.fromARGB(255,38, 89, 254);
 //ジャンル
 const Color genreColor = Color.fromARGB(255, 65, 76, 255);
+//話数，時間
+const Color epColor = Color.fromARGB(255, 41, 170, 132);
 
 //-----------------------------------ドロップダウンメニュー--------------------------
 class StatusDropDownMenu extends ConsumerWidget {
@@ -410,126 +467,6 @@ class _InputFieldDateState extends ConsumerState<InputFieldDate> {
         )
       ),
     );
-
-    // return Column(
-    //   children: [
-    //     SizedBox(
-    //       width: MediaQuery.of(context).size.width*0.9,
-    //       child: TextFormField(
-    //         autovalidateMode: AutovalidateMode.onUserInteraction,
-    //         validator: (text){
-    //           //正しい入力がされているかを判定
-    //           if(text!=null){
-    //             try{
-    //               //正しい値が入力されていないとここでエラーになる
-    //               DateFormat("yyyy/MM/dd").parseStrict(text);
-    //               return null;
-    //             }
-    //             catch(e){
-    //               //正しい値が入力されていない
-    //               return "正しい値を入力してください";
-    //             }
-    //           }
-    //         },
-    //         onChanged: (text){
-    //           //正しい入力がされているかを判定
-    //             try{
-    //               //正しい値が入力されていないとここでエラーになる
-    //               DateTime inputDate = DateFormat("yyyy/MM/DD").parseStrict(text);
-    //               //正しい値が入力されているならproviderの値を更新
-    //               ref.read(animeInputProvider.notifier).state = ref.read(animeInputProvider).copyWith(date: inputDate);
-    //               ref.read(animeCorrectInputProvider.notifier).state = ref.read(animeCorrectInputProvider).copyWith(date: true);
-    //             }
-    //             catch(e){
-    //               //正しい値が入力されていない
-    //               ref.read(animeCorrectInputProvider.notifier).state = ref.read(animeCorrectInputProvider).copyWith(date: false);
-    //             }
-    //         },
-    //         controller: _dateController,
-    //         decoration: InputDecoration(
-    //           border: OutlineInputBorder(),
-    //           labelText: "日付",
-    //         ),
-    //       ),
-    //     ),
-
-    //     SizedBox(height: 6,),
-
-    //     SizedBox(
-    //       width: MediaQuery.of(context).size.width * 0.9,
-    //       child: Row(
-    //         children: [
-    //           SizedBox(
-    //             width: MediaQuery.of(context).size.width * 0.44,
-    //             child: ElevatedButton(
-    //               onPressed: (){
-    //                 DateTime selectedDate=inputDate_today();
-    //                 //テキストフィールド用にフォーマット
-    //                 String formattedDate="${selectedDate.year}/${selectedDate.month.toString().padLeft(2, '0')}/${selectedDate.day.toString().padLeft(2, '0')}";
-    //                 //テキストコントローラの値を更新
-    //                 _dateController.text=formattedDate;
-    //                 //テキストフィールドのフォーカスを外す
-    //                 FocusManager.instance.primaryFocus?.unfocus();
-    //                 //providerに値を入れる
-    //                 ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(date: selectedDate);
-    //                 //ボタンを押すと必ず正しい値が入力されるので，flagをtrueにする
-    //                 ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(date: true);
-    //               }, 
-    //               style: ElevatedButton.styleFrom(
-    //                 shape: RoundedRectangleBorder(
-    //                   borderRadius: BorderRadius.circular(15),
-    //                 )
-    //               ),
-    //               child: Row(
-    //                 mainAxisAlignment: MainAxisAlignment.center,
-    //                 children: [
-    //                   const Icon(Icons.calendar_today_outlined),
-    //                   SizedBox(width: MediaQuery.of(context).size.width*0.03,),
-    //                   const Text("今日の日付")
-    //                 ],
-    //               )
-    //               )
-    //           ),
-    //           SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
-    //           SizedBox(
-    //             width: MediaQuery.of(context).size.width * 0.44,
-    //             child: ElevatedButton(
-    //               onPressed: () async {
-    //                 DateTime selectedDate = await inputDate_select(context);
-    //                 //テキストフィールド用にフォーマット
-    //                 String formattedDate = "${selectedDate.year}/${selectedDate.month.toString().padLeft(2, '0')}/${selectedDate.day.toString().padLeft(2, '0')}";
-    //                 //テキストコントローラの値を更新
-    //                 _dateController.text = formattedDate;
-    //                 //テキストフィールドのフォーカスを外す
-    //                 FocusManager.instance.primaryFocus?.unfocus();
-    //                 FocusManager.instance.primaryFocus?.unfocus();
-    //                 //providerに値を入れる
-    //                 ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(date: selectedDate);
-    //                 //ボタンを押すと必ず正しい値が入力されるので，flagをtrueにする
-    //                 ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(date: true);
-    //               }, 
-    //               style: ElevatedButton.styleFrom(
-    //                 shape: RoundedRectangleBorder(
-    //                   borderRadius: BorderRadius.circular(15),
-    //                 )
-    //               ),
-    //               child: Row(
-    //                 mainAxisAlignment: MainAxisAlignment.center,
-    //                 children: [
-    //                   const Icon(Icons.calendar_today),
-    //                   SizedBox(width: MediaQuery.of(context).size.width*0.03,),
-    //                   const Text("日付選択"),
-    //                   SizedBox(width: MediaQuery.of(context).size.width*0.03,),
-    //                   const Icon(Icons.navigate_next_outlined)
-    //                 ],
-    //               )
-    //               )
-    //           )
-    //         ],
-    //       ),
-    //     )
-    //   ],
-    // );
   }
 }
 
@@ -735,243 +672,12 @@ class _InputOnAirDateState extends ConsumerState<InputOnAirDate> {
 
                 ],
               ),
-
-              // child: DropdownMenu(
-              //   label: Text("季節"),
-              //   //width: MediaQuery.of(context).size.width*0.3,
-              //   width: double.infinity,
-              //   onSelected: (value) {
-              //     //選択されたステータスを変換する
-              //     if(value==null){
-              //       return;
-              //     }
-              //     //入力がされていたらproviderの値を更新
-              //     ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(season: OnAirSeason.values[value]);
-              //     ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(season: true);
-              //   },
-              //   dropdownMenuEntries: const[
-              //     DropdownMenuEntry(value: 0, label: "春"),
-              //     DropdownMenuEntry(value: 1, label: "夏"),
-              //     DropdownMenuEntry(value: 2, label: "秋"),
-              //     DropdownMenuEntry(value: 3, label: "冬"),
-              //   ]
-              // ),
             ),
-            // child: DropdownMenu(
-            //   label: Text("季節"),
-            //   width: MediaQuery.of(context).size.width*0.3,
-            //   onSelected: (value) {
-            //     //選択されたステータスを変換する
-            //     if(value==null){
-            //       return;
-            //     }
-            //     //入力がされていたらproviderの値を更新
-            //     ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(season: OnAirSeason.values[value]);
-            //     ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(season: true);
-            //   },
-            //   dropdownMenuEntries: const[
-            //     DropdownMenuEntry(value: 0, label: "春"),
-            //     DropdownMenuEntry(value: 1, label: "夏"),
-            //     DropdownMenuEntry(value: 2, label: "秋"),
-            //     DropdownMenuEntry(value: 3, label: "冬"),
-            //   ]
-            // )
           ),
-
-
         ],
       ),
-      // child: Container(
-      //   padding: EdgeInsets.symmetric(
-      //     horizontal: 15,
-      //     vertical: 0
-      //   ),
-      //   decoration: BoxDecoration(
-      //     borderRadius: BorderRadius.circular(10),
-      //     border: Border.all(
-      //       color: Colors.grey
-      //     ),
-      //   ),
-      //   child: Row(
-      //     children: [
-
-      //       Expanded(
-      //         child: TextFormField(
-      //           autovalidateMode: AutovalidateMode.onUserInteraction,
-      //           validator: (text){
-      //             //入力が数字かつ1900~2100に収まっているかを確認
-      //             //入力が空
-      //             if(text==null){
-      //               return "値を入力してください";
-      //             }
-      //             //入力が数字ではない
-      //             if(int.tryParse(text)==null){
-      //               return "数値を入力してください";
-      //             }
-      //             int inputYear=int.tryParse(text) ?? 0;
-      //             //1900~2100に収まっていない
-      //             if(inputYear>2100 || inputYear<1900){
-      //               return "1900~2100で入力してください";
-      //             }
-      //           },
-      //           onChanged: (text){
-      //             //入力が空白 or 文字
-      //             if(text=="" || int.tryParse(text)==null){
-      //               ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: false);
-      //               return;
-      //             } 
-                  
-      //             int inputNum = int.tryParse(text) ?? 0;
-
-      //             //入力が1900~2100に収まっていない
-      //             if(inputNum>2100 || inputNum<1900){
-      //               ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: false);
-      //               return;
-      //             }
-
-      //             //入力が正しい
-      //             ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(onAirYear: inputNum);
-      //             ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: true);
-
-      //           },
-      //           controller: _onAirDateController,
-      //           decoration: InputDecoration(
-      //             hintText: "放送年",
-      //             hintStyle: TextStyle(
-      //               color: Colors.grey
-      //             ),
-      //             icon: Icon(
-      //               Icons.monitor,
-      //               color: titleColor
-      //             ),
-      //             border: InputBorder.none
-      //           ),
-      //         ),
-      //       ),
-
-      //       IconButton(
-      //       onPressed:() async {
-      //         //年選択画面を表示
-      //         int? selectedYear = await inputOnAirYear(context);
-              
-      //         if(selectedYear==null) return;
-
-      //         //テキストコントローラの値を更新
-      //         _onAirDateController.text=selectedYear.toString();
-      //         //providerの値を更新
-      //         ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(onAirYear: selectedYear);
-      //         ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: true);
-      //       },
-      //         icon: Icon(Icons.calendar_month_outlined)
-      //       ),
-            
-      //       Text("年"),
-
-
-      //       Text("hi")
-      //     ],
-      //   )
-      // ),
     );
 
-
-
-
-    // return SizedBox(
-    //   width: MediaQuery.of(context).size.width*0.9,
-    //   child: Row(
-    //     children: [
-    //       SizedBox( //年入力欄
-    //         width: MediaQuery.of(context).size.width*0.4,
-    //         child: TextFormField(
-    //           autovalidateMode: AutovalidateMode.onUserInteraction,
-    //           validator: (text){
-    //             //入力が数字かつ1900~2100に収まっているかを確認
-    //             //入力が空
-    //             if(text==null){
-    //               return "値を入力してください";
-    //             }
-    //             //入力が数字ではない
-    //             if(int.tryParse(text)==null){
-    //               return "数値を入力してください";
-    //             }
-    //             int inputYear=int.tryParse(text) ?? 0;
-    //             //1900~2100に収まっていない
-    //             if(inputYear>2100 || inputYear<1900){
-    //               return "1900~2100で入力してください";
-    //             }
-    //           },
-    //           onChanged: (text){
-    //             //入力が空白 or 文字
-    //             if(text=="" || int.tryParse(text)==null){
-    //               ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: false);
-    //               return;
-    //             } 
-                
-    //             int inputNum = int.tryParse(text) ?? 0;
-
-    //             //入力が1900~2100に収まっていない
-    //             if(inputNum>2100 || inputNum<1900){
-    //               ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: false);
-    //               return;
-    //             }
-
-    //             //入力が正しい
-    //             ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(onAirYear: inputNum);
-    //             ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: true);
-
-    //           },
-    //           controller: _onAirDateController,
-    //           decoration: InputDecoration(
-    //             border: OutlineInputBorder(),
-    //             labelText: "放送年",
-    //           ),
-    //         ),
-    //       ),
-
-    //       IconButton( //年選択画面を出すボタン
-    //         onPressed:() async {
-    //           //年選択画面を表示
-    //           int? selectedYear = await inputOnAirYear(context);
-              
-    //           if(selectedYear==null) return;
-
-    //           //テキストコントローラの値を更新
-    //           _onAirDateController.text=selectedYear.toString();
-    //           //providerの値を更新
-    //           ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(onAirYear: selectedYear);
-    //           ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(onAirYear: true);
-    //         },
-    //         icon:Icon(
-    //           Icons.calendar_month_outlined,
-    //           size:29,
-    //         )
-    //       ),
-
-    //       Expanded(child: SizedBox()),
-          
-    //       DropdownMenu(
-    //         label: Text("季節"),
-    //         width: MediaQuery.of(context).size.width*0.3,
-    //         onSelected: (value) {
-    //           //選択されたステータスを変換する
-    //           if(value==null){
-    //             return;
-    //           }
-    //           //入力がされていたらproviderの値を更新
-    //           ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(season: OnAirSeason.values[value]);
-    //           ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(season: true);
-    //         },
-    //         dropdownMenuEntries: const[
-    //           DropdownMenuEntry(value: 0, label: "春"),
-    //           DropdownMenuEntry(value: 1, label: "夏"),
-    //           DropdownMenuEntry(value: 2, label: "秋"),
-    //           DropdownMenuEntry(value: 3, label: "冬"),
-    //         ]
-    //       )
-    //     ],
-    //   ),
-    // );
   }
 }
 
@@ -1250,37 +956,6 @@ class _SelectedGenreTextState extends ConsumerState<SelectedGenreText> {
                             }
                             j=j+1;
                           }
-                          //ジャンル表示テキストに表示する用のテキストを作成
-                          //初期文字列
-                          //String genre_text_temp="";
-                          //選択されているジャンルのSet<int>を小さい順に並び替え，文字列を作成
-                          // for(int _id in selected_genre_id.toList()..sort()){
-                          //   //選択されているジャンルのidから，文字列を作成
-                          //   genre_text_temp += _genres.firstWhere((g) => g.id == _id).name; //データベースからidが一致するものを探し出し，nameを取得する
-                          //   //","で区切る
-                          //   genre_text_temp += "，";
-                          // }
-
-                          // //最後の","を取る
-                          // if(genre_text_temp!=""){
-                          //   genre_text_temp = genre_text_temp.substring(0 , genre_text_temp.length - 1 );
-                          // }
-
-                          //もし文字列が空白のままなら，「ジャンルが選択されていません」に戻し，providerの値を更新する
-                          // if(genre_text_temp == ""){ //何も入力されていない
-                          //   genre_text_temp = "ジャンルが選択されていません";
-                          //   //providerの値を更新する
-                          //   ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(genreId: false);
-                          // }
-                          // else{ //ジャンルが選択されている
-                          //   //providerの値を更新する
-                          //   ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(genreId: true);
-                          // }
-
-                          // //選択されているジャンルを表示するTextの中身を書き換える
-                          // setState(() {
-                          //   select_genre_text=genre_text_temp;
-                          // });
 
                           //providerに結果を渡す
                           ref.read(animeInputProvider.notifier).state=ref.read(animeInputProvider).copyWith(genreId: selected_genre_id);
@@ -1437,24 +1112,6 @@ class _SelectedGenreTextState extends ConsumerState<SelectedGenreText> {
           ),
         ),
 
-        // Container( //テキスト表示エリア
-        //   height: 55,
-        //   width: MediaQuery.of(context).size.width*0.9,
-        //   decoration: BoxDecoration(
-        //     border: Border.all(),
-        //     borderRadius: BorderRadius.circular(7)
-        //   ),
-        //   child: Center(
-        //     child: Text(
-        //       select_genre_text,
-        //       style: TextStyle(
-        //         fontSize: 17
-        //       ),
-        //     ),
-        //   )
-          
-        // ),
-
         SizedBox(height: 6,), //----------------------------------------
 
         SizedBox( //ジャンル選択ボタン
@@ -1532,8 +1189,19 @@ class _InputFieldEpNumState extends ConsumerState<InputFieldEpNum> {
 
     return Column(
       children: [
-        SizedBox(
-          width: MediaQuery.of(context).size.width*0.9,
+        
+        //文字入力欄
+        Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: 15,
+            vertical: 0
+          ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: Colors.grey
+            ),
+          ),
           child: TextFormField(
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: (text){
@@ -1561,11 +1229,18 @@ class _InputFieldEpNumState extends ConsumerState<InputFieldEpNum> {
                 ref.read(animeCorrectInputProvider.notifier).state=ref.read(animeCorrectInputProvider).copyWith(epNum: false);
               }
             },
-            controller: _epNumController,
             decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: "話数",
+              hintText: "話数",
+              hintStyle: TextStyle(
+                color: Colors.grey
+              ),
+              icon: Icon(
+                Icons.local_library_outlined,
+                color: epColor
+              ),
+              border: InputBorder.none
             ),
+            controller: _epNumController,
           ),
         ),
 
@@ -1575,8 +1250,8 @@ class _InputFieldEpNumState extends ConsumerState<InputFieldEpNum> {
           width: MediaQuery.of(context).size.width * 0.9,
           child: Row(
             children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.255,
+              Expanded(
+                flex: 3,
                 child: ElevatedButton(
                   onPressed: (){
                     //TextFieldのフォーカスを外す
@@ -1590,16 +1265,27 @@ class _InputFieldEpNumState extends ConsumerState<InputFieldEpNum> {
                   }, 
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(20),
                     ),
+                    backgroundColor: epColor.withValues(alpha: 0.1),
+                    elevation: 0,
                     padding: EdgeInsets.symmetric(horizontal: 2) //余白を小さくする
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.local_library_outlined),
+                      const Icon(
+                        Icons.local_library_outlined,
+                        color: epColor,
+                      ),
                       SizedBox(width: MediaQuery.of(context).size.width*0.02,),
-                      const Text("12話")
+                      const Text(
+                        "12話",
+                        style: TextStyle(
+                          color: epColor,
+                          fontWeight: FontWeight.bold
+                        ),
+                      )
                     ],
                   )
                 )
@@ -1607,8 +1293,8 @@ class _InputFieldEpNumState extends ConsumerState<InputFieldEpNum> {
 
               SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
 
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.255,
+              Expanded(
+                flex: 3,
                 child: ElevatedButton(
                   onPressed: (){
                     //TextFieldのフォーカスを外す
@@ -1623,16 +1309,27 @@ class _InputFieldEpNumState extends ConsumerState<InputFieldEpNum> {
                   }, 
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(20),
                     ),
+                    elevation: 0,
+                    backgroundColor: epColor.withValues(alpha: 0.1),
                     padding: EdgeInsets.symmetric(horizontal: 2) //余白を小さくする
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.local_library_outlined),
+                      const Icon(
+                        Icons.local_library_outlined,
+                        color: epColor,
+                      ),
                       SizedBox(width: MediaQuery.of(context).size.width*0.02,),
-                      const Text("24話")
+                      const Text(
+                        "24話",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: epColor
+                        ),
+                      )
                     ],
                   )
                 )
@@ -1640,8 +1337,8 @@ class _InputFieldEpNumState extends ConsumerState<InputFieldEpNum> {
 
               SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
 
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.35,
+              Expanded(
+                flex: 5,
                 child: ElevatedButton(
                   onPressed: () async{
                     final result = (await inputEpNum(context)).toString();
@@ -1656,16 +1353,27 @@ class _InputFieldEpNumState extends ConsumerState<InputFieldEpNum> {
                   }, 
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(20),
                     ),
+                    elevation: 0,
+                    backgroundColor: epColor.withValues(alpha: 0.1),
                     padding: EdgeInsets.symmetric(horizontal: 2) //余白を小さくする
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.local_library),
+                      const Icon(
+                        Icons.local_library,
+                        color: epColor,
+                      ),
                       SizedBox(width: MediaQuery.of(context).size.width*0.02,),
-                      const Text("話数選択"),
+                      const Text(
+                        "話数選択",
+                        style: TextStyle(
+                          color: epColor,
+                          fontWeight: FontWeight.bold
+                        ),
+                      ),
                       SizedBox(width: MediaQuery.of(context).size.width*0.02,),
                       const Icon(Icons.navigate_next)
                     ],
@@ -1840,8 +1548,9 @@ class _InputFieldEpTimeState extends ConsumerState<InputFieldEpTime> {
           width: MediaQuery.of(context).size.width * 0.9,
           child: Row(
             children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.255,
+
+              Expanded(
+                flex: 3,
                 child: ElevatedButton(
                   onPressed: (){
                     //コントローラの値を更新
@@ -1870,8 +1579,8 @@ class _InputFieldEpTimeState extends ConsumerState<InputFieldEpTime> {
 
               SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
 
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.255,
+              Expanded(
+                flex: 3,
                 child: ElevatedButton(
                   onPressed: (){
                     //コントローラの値を更新
@@ -1900,8 +1609,8 @@ class _InputFieldEpTimeState extends ConsumerState<InputFieldEpTime> {
 
               SizedBox(width: MediaQuery.of(context).size.width * 0.02), //ボタン同士がぴったりくっついてるとダサいので，間隔を開ける
 
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.35,
+              Expanded(
+                flex: 5,
                 child: ElevatedButton(
                   onPressed: ()async {
                     //入力時点での入力値を保持しておく

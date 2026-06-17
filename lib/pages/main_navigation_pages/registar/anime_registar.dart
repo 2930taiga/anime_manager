@@ -390,7 +390,7 @@ class _AnimeRegistarState extends ConsumerState<AnimeRegistar> {
               //話数，時間入力欄
               Padding(
                 padding: EdgeInsetsGeometry.symmetric(
-                  horizontal: 0,
+                  horizontal: 10,
                   vertical: 5
                 ),
                 child: Container(
@@ -412,6 +412,8 @@ class _AnimeRegistarState extends ConsumerState<AnimeRegistar> {
                     children: [
                       //話数
                       InputFieldEpNum(),
+
+                      SizedBox(height: 10,),
 
                       //時間
                       InputFieldEpTime(),
